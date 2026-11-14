@@ -8,12 +8,15 @@ interface PromiseCardProps {
 export const PromiseCard: React.FC<PromiseCardProps> = ({ onCheckOutMore }) => {
   return (
     <div className="relative rounded-3xl sm:rounded-[32px] overflow-hidden glass-panel border border-white/[0.08] px-6 py-8 sm:px-10 sm:py-12 lg:px-14 lg:py-14 text-center sm:text-left shadow-xl transition duration-300 hover:border-white/[0.14]">
-      {/* Mobile Top Forehead Region: Teal medical gloves image with fade to right edge */}
-      <div className="sm:hidden relative w-full h-44 -mt-1 mb-3 flex items-center justify-center overflow-hidden" aria-hidden="true">
+      {/* Mobile Image: Fills from top, left, and right edges of card with zero border radius and fade to right edge */}
+      <div 
+        className="sm:hidden absolute inset-x-0 top-0 h-48 overflow-hidden pointer-events-none select-none flex items-center justify-center" 
+        aria-hidden="true"
+      >
         <img
           src={`${import.meta.env.BASE_URL}banners/Hands%20Donning%20Teal%20Medical%20Gloves.png`}
           alt="Hands Donning Teal Medical Gloves"
-          className="h-full w-auto object-contain filter brightness-[0.92] contrast-[1.05]"
+          className="w-full h-full object-cover object-center filter brightness-[0.92] contrast-[1.05]"
           style={{
             maskImage: 'linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 55%, rgba(0, 0, 0, 0.45) 80%, rgba(0, 0, 0, 0) 100%)',
             WebkitMaskImage: 'linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 55%, rgba(0, 0, 0, 0.45) 80%, rgba(0, 0, 0, 0) 100%)',
@@ -29,7 +32,7 @@ export const PromiseCard: React.FC<PromiseCardProps> = ({ onCheckOutMore }) => {
         <img
           src={`${import.meta.env.BASE_URL}banners/Hands%20Donning%20Teal%20Medical%20Gloves.png`}
           alt="Hands Donning Teal Medical Gloves"
-          className="h-[82%] sm:h-[85%] lg:h-[88%] w-auto max-w-none object-contain object-right filter brightness-[0.88] contrast-[1.05] opacity-85"
+          className="h-full w-auto max-w-none object-cover sm:object-contain object-right filter brightness-[0.88] contrast-[1.05] opacity-85"
           style={{
             maskImage: 'linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0.55) 78%, rgba(0, 0, 0, 0) 100%)',
             WebkitMaskImage: 'linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0.55) 78%, rgba(0, 0, 0, 0) 100%)',
@@ -44,7 +47,7 @@ export const PromiseCard: React.FC<PromiseCardProps> = ({ onCheckOutMore }) => {
       </div>
 
       {/* Foreground Content - Centered on mobile, Left Aligned on sm/desktop */}
-      <div className="relative z-10 max-w-xl lg:max-w-2xl text-center sm:text-left mx-auto sm:mx-0 space-y-3 sm:space-y-4">
+      <div className="relative z-10 max-w-xl lg:max-w-2xl text-center sm:text-left mx-auto sm:mx-0 space-y-3 sm:space-y-4 pt-36 sm:pt-0">
         <div className="flex justify-center sm:justify-start">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs sm:text-sm font-medium backdrop-blur-md">
             <MaterialIcon name="volunteer_activism" size={16} />

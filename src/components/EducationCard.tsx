@@ -8,15 +8,18 @@ interface EducationCardProps {
 export const EducationCard: React.FC<EducationCardProps> = ({ onCheckOutMore }) => {
   return (
     <div className="relative rounded-3xl sm:rounded-[32px] overflow-hidden glass-panel border border-white/[0.08] px-6 py-8 sm:px-10 sm:py-12 lg:px-14 lg:py-14 text-center sm:text-left shadow-xl transition duration-300 hover:border-white/[0.14]">
-      {/* Mobile Top Forehead Region: Meeting room image with fade to bottom edge */}
-      <div className="sm:hidden relative w-full h-48 -mt-1 mb-3 overflow-hidden rounded-2xl flex items-center justify-center select-none pointer-events-none" aria-hidden="true">
+      {/* Mobile Image: Fills from top, left, and right edges of card with zero border radius and bottom edge fade */}
+      <div 
+        className="sm:hidden absolute inset-x-0 top-0 h-52 overflow-hidden pointer-events-none select-none" 
+        aria-hidden="true"
+      >
         <img
           src={`${import.meta.env.BASE_URL}banners/groupDiscussion.png`}
           alt="SRF India Education and Mentorship Group Discussion"
           className="w-full h-full object-cover object-[70%_center] filter brightness-[0.88] contrast-[1.05]"
           style={{
-            maskImage: 'linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 55%, rgba(0, 0, 0, 0.4) 80%, rgba(0, 0, 0, 0) 100%)',
-            WebkitMaskImage: 'linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 55%, rgba(0, 0, 0, 0.4) 80%, rgba(0, 0, 0, 0) 100%)',
+            maskImage: 'linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 45%, rgba(0, 0, 0, 0.45) 75%, rgba(0, 0, 0, 0) 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 45%, rgba(0, 0, 0, 0.45) 75%, rgba(0, 0, 0, 0) 100%)',
           }}
         />
       </div>
@@ -44,7 +47,7 @@ export const EducationCard: React.FC<EducationCardProps> = ({ onCheckOutMore }) 
       </div>
 
       {/* Foreground Content - Centered on mobile, Left Aligned on sm/desktop */}
-      <div className="relative z-10 max-w-xl lg:max-w-2xl text-center sm:text-left mx-auto sm:mx-0 space-y-3 sm:space-y-4">
+      <div className="relative z-10 max-w-xl lg:max-w-2xl text-center sm:text-left mx-auto sm:mx-0 space-y-3 sm:space-y-4 pt-40 sm:pt-0">
         <div className="flex justify-center sm:justify-start">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs sm:text-sm font-medium backdrop-blur-md">
             <MaterialIcon name="school" size={16} />

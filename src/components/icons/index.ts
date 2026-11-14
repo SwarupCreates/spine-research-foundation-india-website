@@ -1,0 +1,6 @@
+export { SrfLogo, ReactComponent } from './SrfLogo'
+export { default as SrfLogoDefault } from './SrfLogo'
+export { SrfLogoColored } from './SrfLogoColored'
+export { default as SrfLogoColoredDefault } from './SrfLogoColored'
+export { MaterialIcon } from './MaterialIcon'
+export type { MaterialIconProps } from './MaterialIcon'

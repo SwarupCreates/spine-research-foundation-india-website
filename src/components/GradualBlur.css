@@ -1,0 +1,33 @@
+.gradual-blur {
+  pointer-events: none;
+}
+
+@keyframes blurInTop {
+  0% {
+    opacity: 0;
+    transform: translateY(-24px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes blurInBottom {
+  0% {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.gradual-blur-in-top {
+  animation: blurInTop 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.gradual-blur-in-bottom {
+  animation: blurInBottom 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

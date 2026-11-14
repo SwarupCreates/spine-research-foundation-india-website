@@ -214,4 +214,4 @@ const serverErrorArt = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 )
-export { serverErrorArt as ReactComponent }
+export { serverErrorArt, serverErrorArt as default, serverErrorArt as ReactComponent }

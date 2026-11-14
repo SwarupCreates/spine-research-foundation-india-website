@@ -13,7 +13,7 @@ export const NAV_ITEMS: NavItem[] = [
   { id: 'home', label: 'Home', icon: 'family_home' },
   { id: 'about', label: 'About Us', icon: 'info' },
   { id: 'care', label: 'Care At SRF', icon: 'diversity_1' },
-  { id: 'patient-portal', label: 'Paitient Portal', icon: 'badge' },
+  { id: 'patient-portal', label: 'Patient Portal', icon: 'badge' },
   { id: 'discover', label: 'Discover', icon: 'travel_explore' },
   { id: 'courses', label: 'Courses', icon: 'school' },
   { id: 'treatments', label: 'Treatments', icon: 'accessibility_new' },
@@ -29,6 +29,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   onTabChange,
 }) => {
   const [currentTab, setCurrentTab] = useState(activeTab)
+
+  useEffect(() => {
+    setCurrentTab(activeTab)
+  }, [activeTab])
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   // Kinetic Brand Logo Interaction States:
   // Decoupled into visual hover (glow/scale), letter expansion (maxWidth/opacity),
@@ -101,7 +105,10 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Brand Logo & Interactive Morphing Brand Name in Jost font */}
         <a
           href="#home"
-          onClick={() => handleSelect('home')}
+          onClick={(e) => {
+            e.preventDefault()
+            handleSelect('home')
+          }}
           onMouseEnter={handleLogoMouseEnter}
           onMouseLeave={handleLogoMouseLeave}
           className={`relative flex items-center ${

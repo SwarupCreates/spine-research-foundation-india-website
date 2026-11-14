@@ -171,4 +171,4 @@ const workInProgressArt = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 )
-export { workInProgressArt as ReactComponent }
+export { workInProgressArt, workInProgressArt as default, workInProgressArt as ReactComponent }

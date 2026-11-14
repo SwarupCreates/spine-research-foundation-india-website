@@ -1,13 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState } from 'react'
+import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import Navbar from './components/Navbar'
-import Hero from './components/Hero'
-import GlassCard from './components/GlassCard'
-import EventSection from './components/EventSection'
-import PromiseCard from './components/PromiseCard'
-import EducationCard from './components/EducationCard'
-import TrusteeMessage from './components/TrusteeMessage'
-import ImpactMetrics from './components/ImpactMetrics'
-import MisconceptionsCard from './components/MisconceptionsCard'
 import FloatingActions from './components/FloatingActions'
 import CustomScrollbar from './components/CustomScrollbar'
 import GradualBlur from './components/GradualBlur'
@@ -20,113 +13,34 @@ import {
   MisconceptionsModal,
 } from './components/ActionModals'
 import { SrfLogo } from './components/icons'
+import { HomePage, WorkInProgressPage, NotFoundPage } from './pages'
 
 export const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('home')
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  // Match current active tab from pathname
+  const pathSegment = location.pathname.replace(/^\//, '').split('/')[0].toLowerCase()
+  const activeTab = pathSegment ? pathSegment : 'home'
+
+  const handleTabChange = (tabId: string) => {
+    if (tabId === 'home') {
+      navigate('/')
+    } else {
+      navigate(`/${tabId}`)
+    }
+  }
+
+  // Modals state
   const [isParticipateOpen, setIsParticipateOpen] = useState(false)
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false)
   const [isReadMoreOpen, setIsReadMoreOpen] = useState(false)
   const [isPromiseOpen, setIsPromiseOpen] = useState(false)
   const [isEducationOpen, setIsEducationOpen] = useState(false)
   const [isMisconceptionsOpen, setIsMisconceptionsOpen] = useState(false)
-  const bannerImgRef = useRef<HTMLImageElement>(null)
-
-  // Fluid delayed parallax scroll effect for the background hero banner image
-  useEffect(() => {
-    let targetY = 0
-    let currentY = 0
-    let rafId: number
-    let isRunning = false
-
-    const handleScroll = () => {
-      const scrollY = window.scrollY || window.pageYOffset
-      // Parallax translation ratio: ~28% of page scroll speed
-      targetY = scrollY * 0.28
-
-      if (!isRunning) {
-        isRunning = true
-        rafId = requestAnimationFrame(animate)
-      }
-    }
-
-    const animate = () => {
-      // Lerp with 0.075 damping factor creates luxurious delayed inertia
-      currentY += (targetY - currentY) * 0.075
-
-      if (bannerImgRef.current) {
-        bannerImgRef.current.style.transform = `translate3d(0, ${currentY.toFixed(2)}px, 0) scale(1.12)`
-      }
-
-      if (Math.abs(targetY - currentY) > 0.08) {
-        rafId = requestAnimationFrame(animate)
-      } else {
-        currentY = targetY
-        if (bannerImgRef.current) {
-          bannerImgRef.current.style.transform = `translate3d(0, ${currentY.toFixed(2)}px, 0) scale(1.12)`
-        }
-        isRunning = false
-      }
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    handleScroll()
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll)
-      cancelAnimationFrame(rafId)
-    }
-  }, [])
 
   return (
     <div className="min-h-screen bg-[#0b0c0e] text-slate-100 flex flex-col relative selection:bg-emerald-500 selection:text-white font-medium">
-      {/* Landing Scroll Level Hero Background Banner with Delayed Parallax */}
-      <div 
-        className="absolute top-0 left-0 right-0 h-screen pointer-events-none z-0 overflow-hidden"
-        aria-hidden="true"
-      >
-        {/* Background Image with Delayed Parallax Scroll */}
-        <img
-          ref={bannerImgRef}
-          src={`${import.meta.env.BASE_URL}banners/Solitary Boy Amid the Moving Crowd 1.jpg`}
-          alt="Spine Research Foundation India patient banner"
-          className="w-full h-full object-cover object-[50%_22%] select-none opacity-90 will-change-transform"
-          style={{
-            transform: 'translate3d(0, 0px, 0) scale(1.12)',
-            transformOrigin: 'center 22%',
-          }}
-        />
-
-        {/* Gradual blur softening as we move up to the overlay */}
-        <GradualBlur
-          position="bottom"
-          target="parent"
-          height="65%"
-          strength={2.5}
-          layers={8}
-          curve="linear"
-          exponential
-          zIndex={2}
-        />
-
-        {/* Vertical bottom-to-top linear gradient overlay: #000000 100% -> #000000 0% */}
-        <div 
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: 'linear-gradient(to top, #0b0c0e 0%, rgba(11, 12, 14, 0.92) 22%, rgba(11, 12, 14, 0.55) 50%, rgba(11, 12, 14, 0) 100%)',
-            zIndex: 3
-          }}
-        />
-
-        {/* Top subtle vignette for clear floating navbar contrast */}
-        <div 
-          className="absolute inset-x-0 top-0 h-40 pointer-events-none"
-          style={{
-            background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0) 100%)',
-            zIndex: 3
-          }}
-        />
-      </div>
-
       {/* Top Page-level Gradual Blur for scrolling content */}
       <GradualBlur
         position="top"
@@ -144,34 +58,153 @@ export const App: React.FC = () => {
       {/* Floating Navbar at z-50: Sits ON TOP of GradualBlur (z-30), staying 100% sharp and unblurred */}
       <Navbar
         activeTab={activeTab}
-        onTabChange={(tabId) => setActiveTab(tabId)}
+        onTabChange={handleTabChange}
       />
 
-      {/* Main Content Container at relative z-10: Scrolls on top of the landing background */}
+      {/* Main Content Container at relative z-10 */}
       <div className="relative z-10 flex flex-col flex-1">
         {/* Spacing between last card and footer calibrated to exact OuterEdgeGutter + participateButtonHeight */}
         <main className="flex-1 pb-[80px] sm:pb-[88px] lg:pb-[96px]">
-          <Hero />
+          <Routes>
+            {/* Home Page */}
+            <Route
+              path="/"
+              element={
+                <HomePage
+                  onReadMore={() => setIsReadMoreOpen(true)}
+                  onOpenPromise={() => setIsPromiseOpen(true)}
+                  onOpenEducation={() => setIsEducationOpen(true)}
+                  onOpenMisconceptions={() => setIsMisconceptionsOpen(true)}
+                />
+              }
+            />
+            <Route path="/home" element={<Navigate to="/" replace />} />
 
-          {/* Floating Glass Cards with tight, balanced gap */}
-          <div className="max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 space-y-4 sm:space-y-5">
-            <GlassCard onReadMore={() => setIsReadMoreOpen(true)} />
-            <EventSection />
-            <PromiseCard onCheckOutMore={() => setIsPromiseOpen(true)} />
-          </div>
+            {/* Child Pages (Work In Progress placeholder view with artwork and message) */}
+            <Route
+              path="/about"
+              element={
+                <WorkInProgressPage
+                  onOpenParticipate={() => setIsParticipateOpen(true)}
+                  onOpenFeedback={() => setIsFeedbackOpen(true)}
+                />
+              }
+            />
+            <Route
+              path="/care"
+              element={
+                <WorkInProgressPage
+                  onOpenParticipate={() => setIsParticipateOpen(true)}
+                  onOpenFeedback={() => setIsFeedbackOpen(true)}
+                />
+              }
+            />
+            <Route
+              path="/patient-portal"
+              element={
+                <WorkInProgressPage
+                  onOpenParticipate={() => setIsParticipateOpen(true)}
+                  onOpenFeedback={() => setIsFeedbackOpen(true)}
+                />
+              }
+            />
+            <Route
+              path="/discover"
+              element={
+                <WorkInProgressPage
+                  onOpenParticipate={() => setIsParticipateOpen(true)}
+                  onOpenFeedback={() => setIsFeedbackOpen(true)}
+                />
+              }
+            />
+            <Route
+              path="/courses"
+              element={
+                <WorkInProgressPage
+                  onOpenParticipate={() => setIsParticipateOpen(true)}
+                  onOpenFeedback={() => setIsFeedbackOpen(true)}
+                />
+              }
+            />
+            <Route
+              path="/treatments"
+              element={
+                <WorkInProgressPage
+                  onOpenParticipate={() => setIsParticipateOpen(true)}
+                  onOpenFeedback={() => setIsFeedbackOpen(true)}
+                />
+              }
+            />
 
-          {/* Managing Trustee's Message on Base Background */}
-          <TrusteeMessage />
+            {/* Child Page Nested Subpaths */}
+            <Route
+              path="/about/*"
+              element={
+                <WorkInProgressPage
+                  onOpenParticipate={() => setIsParticipateOpen(true)}
+                  onOpenFeedback={() => setIsFeedbackOpen(true)}
+                />
+              }
+            />
+            <Route
+              path="/care/*"
+              element={
+                <WorkInProgressPage
+                  onOpenParticipate={() => setIsParticipateOpen(true)}
+                  onOpenFeedback={() => setIsFeedbackOpen(true)}
+                />
+              }
+            />
+            <Route
+              path="/patient-portal/*"
+              element={
+                <WorkInProgressPage
+                  onOpenParticipate={() => setIsParticipateOpen(true)}
+                  onOpenFeedback={() => setIsFeedbackOpen(true)}
+                />
+              }
+            />
+            <Route
+              path="/discover/*"
+              element={
+                <WorkInProgressPage
+                  onOpenParticipate={() => setIsParticipateOpen(true)}
+                  onOpenFeedback={() => setIsFeedbackOpen(true)}
+                />
+              }
+            />
+            <Route
+              path="/courses/*"
+              element={
+                <WorkInProgressPage
+                  onOpenParticipate={() => setIsParticipateOpen(true)}
+                  onOpenFeedback={() => setIsFeedbackOpen(true)}
+                />
+              }
+            />
+            <Route
+              path="/treatments/*"
+              element={
+                <WorkInProgressPage
+                  onOpenParticipate={() => setIsParticipateOpen(true)}
+                  onOpenFeedback={() => setIsFeedbackOpen(true)}
+                />
+              }
+            />
 
-          {/* Education & Research, Humanitarian Impact Metrics, and Misconceptions Section */}
-          <div className="max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 space-y-4 sm:space-y-5">
-            <EducationCard onCheckOutMore={() => setIsEducationOpen(true)} />
-            <ImpactMetrics />
-            <MisconceptionsCard onCheckOutMore={() => setIsMisconceptionsOpen(true)} />
-          </div>
+            {/* 404 Error Page for any unrecognized route */}
+            <Route
+              path="*"
+              element={
+                <NotFoundPage
+                  onOpenFeedback={() => setIsFeedbackOpen(true)}
+                />
+              }
+            />
+          </Routes>
         </main>
 
-        {/* Footer */}
+        {/* Global Footer */}
         <footer className="border-t border-white/[0.06] bg-black/40 backdrop-blur-xl py-8 text-center text-xs text-gray-400 font-medium">
           <div className="max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2.5">

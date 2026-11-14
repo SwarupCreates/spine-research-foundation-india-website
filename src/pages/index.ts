@@ -1,0 +1,6 @@
+export { HomePage } from './HomePage'
+export { default as HomePageDefault } from './HomePage'
+export { WorkInProgressPage } from './WorkInProgressPage'
+export { default as WorkInProgressPageDefault } from './WorkInProgressPage'
+export { NotFoundPage } from './NotFoundPage'
+export { default as NotFoundPageDefault } from './NotFoundPage'

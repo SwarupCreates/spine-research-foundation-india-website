@@ -30,44 +30,46 @@ export const PromiseCard: React.FC<PromiseCardProps> = ({ onCheckOutMore }) => {
         />
       </div>
 
-      {/* Foreground Content - Left Aligned */}
-      <div className="relative z-10 max-w-xl lg:max-w-2xl text-left space-y-3 sm:space-y-4">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs sm:text-sm font-medium backdrop-blur-md">
-          <MaterialIcon name="volunteer_activism" size={16} />
-          <span>Core Mission &amp; Humanitarian Care</span>
-        </div>
+      {/* Foreground Content - Shifted to the Right */}
+      <div className="relative z-10 flex justify-end w-full">
+        <div className="max-w-xl lg:max-w-2xl w-full text-left space-y-3 sm:space-y-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs sm:text-sm font-medium backdrop-blur-md">
+            <MaterialIcon name="volunteer_activism" size={16} />
+            <span>Core Mission &amp; Humanitarian Care</span>
+          </div>
 
-        <h2 className="text-2xl sm:text-3xl lg:text-[var(--font-size-card-title,28px)] font-medium text-white tracking-tight leading-snug">
-          Our Promise
-        </h2>
+          <h2 className="text-2xl sm:text-3xl lg:text-[var(--font-size-card-title,28px)] font-medium text-white tracking-tight leading-snug">
+            Our Promise
+          </h2>
 
-        <p className="text-gray-300 text-sm sm:text-base lg:text-[var(--font-size-card-body,16px)] font-medium leading-relaxed max-w-xl">
-          We care for people at the lowest points in their lives, and we do it no matter who
-          they are, where they&apos;re from, or whether or not they can pay.
-        </p>
+          <p className="text-gray-300 text-sm sm:text-base lg:text-[var(--font-size-card-body,16px)] font-medium leading-relaxed max-w-xl">
+            We care for people at the lowest points in their lives, and we do it no matter who
+            they are, where they&apos;re from, or whether or not they can pay.
+          </p>
 
-        <div className="pt-2 sm:pt-3">
-          <button
-            type="button"
-            onClick={onCheckOutMore}
-            className="group inline-flex items-center gap-2 px-6 py-2.5 sm:px-7 sm:py-3 rounded-full bg-white text-gray-950 font-medium text-sm sm:text-base hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] cursor-pointer"
-          >
-            <MaterialIcon
-              name="diversity_1"
-              size={20}
-              className="text-gray-900 group-hover:text-emerald-700 transition-colors shrink-0"
-            />
-            <span className="font-medium whitespace-nowrap">Check out more</span>
-
-            {/* Bouncy expanding arrow on hover */}
-            <span className="max-w-0 opacity-0 -translate-x-3 group-hover:max-w-[28px] group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] overflow-hidden inline-flex items-center">
+          <div className="pt-2 sm:pt-3">
+            <button
+              type="button"
+              onClick={onCheckOutMore}
+              className="group inline-flex items-center gap-2 px-6 py-2.5 sm:px-7 sm:py-3 rounded-full bg-white text-gray-950 font-medium text-sm sm:text-base hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] cursor-pointer"
+            >
               <MaterialIcon
-                name="arrow_forward"
-                size={18}
-                className="text-gray-900 shrink-0 ml-1"
+                name="diversity_1"
+                size={20}
+                className="text-gray-900 group-hover:text-emerald-700 transition-colors shrink-0"
               />
-            </span>
-          </button>
+              <span className="font-medium whitespace-nowrap">Check out more</span>
+
+              {/* Bouncy expanding arrow on hover */}
+              <span className="max-w-0 opacity-0 -translate-x-3 group-hover:max-w-[28px] group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] overflow-hidden inline-flex items-center">
+                <MaterialIcon
+                  name="arrow_forward"
+                  size={18}
+                  className="text-gray-900 shrink-0 ml-1"
+                />
+              </span>
+            </button>
+          </div>
         </div>
       </div>
     </div>

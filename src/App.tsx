@@ -88,9 +88,11 @@ export const App: React.FC = () => {
         <main className="flex-1 pb-20">
           <Hero />
 
-          <GlassCard onReadMore={() => setIsReadMoreOpen(true)} />
-
-          <EventSection />
+          {/* Floating Glass Cards with tight, balanced gap */}
+          <div className="max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-4 sm:space-y-5">
+            <GlassCard onReadMore={() => setIsReadMoreOpen(true)} />
+            <EventSection />
+          </div>
         </main>
 
         {/* Footer */}

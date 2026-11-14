@@ -4,6 +4,22 @@
   :root {
     --font-sans: 'Google Sans Flex', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     --font-jost: 'Jost', sans-serif;
+
+    /* Typography Scale Tokens */
+    --font-size-hero-title: 36px;
+    --font-size-hero-subtext: 18px;
+    --font-size-card-title: 28px;
+    --font-size-card-body: 16px;
+
+    /* Glassmorphism Design Tokens */
+    --glass-card-bg: rgba(255, 255, 255, 0.03);
+    --glass-card-border: rgba(255, 255, 255, 0.08);
+    --glass-card-border-hover: rgba(255, 255, 255, 0.16);
+    --glass-card-blur: 16px;
+
+    /* Layout Spacing Tokens */
+    --section-card-gap: 1.25rem;
+    --max-content-width: 1536px;
   }
 
   body {
@@ -72,17 +88,17 @@ a:hover .material-symbols-outlined,
     'opsz' 24;
 }
 
-/* Glassmorphism containers with background blur */
+/* Glassmorphism containers with calibrated transparency and reduced blur */
 .glass-panel {
-  background: rgba(20, 21, 25, 0.55);
-  backdrop-filter: blur(28px);
-  -webkit-backdrop-filter: blur(28px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--glass-card-bg);
+  backdrop-filter: blur(var(--glass-card-blur));
+  -webkit-backdrop-filter: blur(var(--glass-card-blur));
+  border: 1px solid var(--glass-card-border);
 }
 
 .glass-panel-subtle {
-  background: rgba(255, 255, 255, 0.035);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }

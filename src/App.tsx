@@ -26,7 +26,7 @@ export const App: React.FC = () => {
         target="page"
         height="8.5rem"
         strength={3.5}
-        layers={8}
+        layers={16}
         curve="bezier"
         exponential={false}
         tint="transparent"
@@ -79,7 +79,7 @@ export const App: React.FC = () => {
         target="page"
         height="8rem"
         strength={3.5}
-        layers={8}
+        layers={16}
         curve="bezier"
         exponential={false}
         tint="transparent"

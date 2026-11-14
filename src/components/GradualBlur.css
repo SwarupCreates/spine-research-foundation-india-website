@@ -2,32 +2,28 @@
   pointer-events: none;
 }
 
-@keyframes blurInTop {
+@keyframes blurTranslateInTop {
   0% {
-    opacity: 0;
-    transform: translateY(-24px);
+    transform: translateY(-20px);
   }
   100% {
-    opacity: 1;
     transform: translateY(0);
   }
 }
 
-@keyframes blurInBottom {
+@keyframes blurTranslateInBottom {
   0% {
-    opacity: 0;
-    transform: translateY(24px);
+    transform: translateY(20px);
   }
   100% {
-    opacity: 1;
     transform: translateY(0);
   }
 }
 
 .gradual-blur-in-top {
-  animation: blurInTop 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: blurTranslateInTop 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .gradual-blur-in-bottom {
-  animation: blurInBottom 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: blurTranslateInBottom 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }

@@ -118,7 +118,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               ref={bannerImgRef}
               src={`${import.meta.env.BASE_URL}banners/Solitary%20Boy%20Amid%20the%20Moving%20Crowd%201.jpg`}
               alt="Spine Research Foundation India patient banner"
-              className="w-full h-full object-cover object-[50%_12%] sm:object-[50%_35%] select-none opacity-90 will-change-transform"
+              className="w-full h-full object-cover object-[50%_12%] sm:object-[50%_22%] select-none opacity-90 will-change-transform"
               style={{
                 transform: 'translate3d(0, 0px, 0)',
                 transformOrigin: 'center center',
@@ -144,8 +144,8 @@ export const HomePage: React.FC<HomePageProps> = ({
           <GradualBlur
             position="bottom"
             target="parent"
-            height="35%"
-            strength={2.2}
+            height="60%"
+            strength={2.4}
             layers={8}
             curve="linear"
             exponential
@@ -164,7 +164,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         <div 
           className="hidden sm:block absolute inset-0 pointer-events-none"
           style={{
-            background: 'linear-gradient(to top, #0b0c0e 0%, rgba(11, 12, 14, 0.95) 15%, rgba(11, 12, 14, 0.35) 30%, rgba(11, 12, 14, 0) 52%)',
+            background: 'linear-gradient(to top, #0b0c0e 0%, rgba(11, 12, 14, 0.96) 28%, rgba(11, 12, 14, 0.52) 58%, rgba(11, 12, 14, 0) 100%)',
             zIndex: 3
           }}
         />

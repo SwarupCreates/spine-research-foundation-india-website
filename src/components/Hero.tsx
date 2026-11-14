@@ -2,7 +2,7 @@ import React from 'react'
 
 export const Hero: React.FC = () => {
   return (
-    <section className="relative pt-56 pb-8 sm:pt-36 sm:pb-10 lg:pt-48 lg:pb-12 overflow-hidden">
+    <section className="relative pt-[270px] pb-8 sm:pt-36 sm:pb-10 lg:pt-48 lg:pb-12 overflow-hidden">
       <div className="max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 relative z-10">
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-1 sm:gap-6 lg:gap-8 pt-4 sm:pt-6">
           {/* Left Title & Tagline: Center aligned on mobile, left aligned on tablet/desktop */}
@@ -17,7 +17,7 @@ export const Hero: React.FC = () => {
               </span>
             </h1>
 
-            <p className="text-gray-300 text-sm sm:text-[20px] lg:text-[var(--font-size-hero-subtext,22px)] font-normal leading-relaxed pt-0.5 sm:pt-1">
+            <p className="text-gray-300 text-[18px] sm:text-[20px] lg:text-[var(--font-size-hero-subtext,22px)] font-normal leading-relaxed pt-0.5 sm:pt-1">
               By your side always...
             </p>
           </div>

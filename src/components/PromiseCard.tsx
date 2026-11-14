@@ -7,7 +7,7 @@ interface PromiseCardProps {
 
 export const PromiseCard: React.FC<PromiseCardProps> = ({ onCheckOutMore }) => {
   return (
-    <div className="relative rounded-3xl sm:rounded-[32px] overflow-hidden glass-panel border border-white/[0.08] px-6 py-9 sm:px-10 sm:py-12 lg:px-14 lg:py-14 text-left shadow-xl transition duration-300 hover:border-white/[0.14]">
+    <div className="relative rounded-3xl sm:rounded-[32px] overflow-hidden glass-panel border border-white/[0.08] px-6 py-9 sm:px-10 sm:py-12 lg:px-14 lg:py-14 text-center sm:text-left shadow-xl transition duration-300 hover:border-white/[0.14]">
       {/* Background Image: Hands Donning Teal Medical Gloves on the right with fade-out at the right edge */}
       <div 
         className="absolute inset-0 pointer-events-none select-none overflow-hidden flex justify-end items-center"
@@ -30,23 +30,25 @@ export const PromiseCard: React.FC<PromiseCardProps> = ({ onCheckOutMore }) => {
         />
       </div>
 
-      {/* Foreground Content - Left Aligned */}
-      <div className="relative z-10 max-w-xl lg:max-w-2xl text-left space-y-3 sm:space-y-4">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs sm:text-sm font-medium backdrop-blur-md">
-          <MaterialIcon name="volunteer_activism" size={16} />
-          <span>Core Mission &amp; Humanitarian Care</span>
+      {/* Foreground Content - Centered on mobile, Left Aligned on sm/desktop */}
+      <div className="relative z-10 max-w-xl lg:max-w-2xl text-center sm:text-left mx-auto sm:mx-0 space-y-3 sm:space-y-4">
+        <div className="flex justify-center sm:justify-start">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs sm:text-sm font-medium backdrop-blur-md">
+            <MaterialIcon name="volunteer_activism" size={16} />
+            <span>Core Mission &amp; Humanitarian Care</span>
+          </div>
         </div>
 
         <h2 className="text-2xl sm:text-3xl lg:text-[var(--font-size-card-title,28px)] font-medium text-white tracking-tight leading-snug">
           Our Promise
         </h2>
 
-        <p className="text-gray-300 text-sm sm:text-base lg:text-[var(--font-size-card-body,16px)] font-medium leading-relaxed max-w-xl">
+        <p className="text-gray-300 text-sm sm:text-base lg:text-[var(--font-size-card-body,16px)] font-medium leading-relaxed max-w-xl mx-auto sm:mx-0">
           We care for people at the lowest points in their lives, and we do it no matter who
           they are, where they&apos;re from, or whether or not they can pay.
         </p>
 
-        <div className="pt-2 sm:pt-3">
+        <div className="pt-2 sm:pt-3 flex justify-center sm:justify-start">
           <button
             type="button"
             onClick={onCheckOutMore}

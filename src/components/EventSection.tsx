@@ -157,11 +157,13 @@ export const EventSection: React.FC = () => {
           <motion.div 
             layout
             transition={{ layout: layoutTransition }}
-            className={isPlayingInline ? 'w-full space-y-4' : 'lg:col-span-7 space-y-3.5'}
+            className={`${isPlayingInline ? 'w-full space-y-4' : 'lg:col-span-7 space-y-3.5'} text-center sm:text-left`}
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs sm:text-sm font-medium backdrop-blur-md">
-              <MaterialIcon name="medical_services" size={16} />
-              <span>Clinical Excellence Series</span>
+            <div className="flex justify-center sm:justify-start">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs sm:text-sm font-medium backdrop-blur-md">
+                <MaterialIcon name="medical_services" size={16} />
+                <span>Clinical Excellence Series</span>
+              </div>
             </div>
 
             <h3 className="text-2xl sm:text-3xl lg:text-[var(--font-size-card-title,28px)] font-medium text-white tracking-tight leading-snug">
@@ -176,7 +178,7 @@ export const EventSection: React.FC = () => {
             </p>
 
             {/* Feature Bullets */}
-            <div className="pt-1 flex flex-wrap items-center gap-3 sm:gap-4 text-xs sm:text-sm text-gray-300">
+            <div className="pt-1 flex flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-4 text-xs sm:text-sm text-gray-300">
               <div className="flex items-center gap-1.5 bg-white/[0.03] px-3 py-1 rounded-full border border-white/[0.06]">
                 <MaterialIcon name="check_circle" size={16} className="text-emerald-400" />
                 <span>Decompression Technique</span>
@@ -192,7 +194,7 @@ export const EventSection: React.FC = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="pt-2 flex flex-wrap items-center gap-3">
+            <div className="pt-2 flex flex-wrap items-center justify-center sm:justify-start gap-3">
               {isPlayingInline && (
                 <button
                   type="button"

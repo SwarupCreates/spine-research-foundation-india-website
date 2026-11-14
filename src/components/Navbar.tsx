@@ -363,20 +363,37 @@ export const Navbar: React.FC<NavbarProps> = ({
           })}
         </nav>
 
-        {/* Mobile Hamburger Button: Perfect square button with NO background for immersive design */}
+        {/* Mobile Animated Hamburger Button */}
         <div className="flex md:hidden items-center">
           <button
             type="button"
             onClick={() => setMenuOpen(!isMenuOpen)}
             className="w-11 h-11 aspect-square flex items-center justify-center rounded-xl bg-transparent hover:bg-white/[0.08] active:bg-white/[0.12] text-white border-0 shadow-none transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 cursor-pointer"
-            aria-label="Toggle navigation menu"
+            aria-label={isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
             aria-expanded={isMenuOpen}
           >
-            <MaterialIcon
-              name={isMenuOpen ? 'close' : 'menu'}
-              size={26}
-              className="text-white"
-            />
+            <div className="relative w-6 h-5 flex items-center justify-center" aria-hidden="true">
+              {/* Top line: rotates 45 degrees into center */}
+              <motion.span
+                className="absolute w-[22px] h-[2px] bg-white rounded-full"
+                animate={isMenuOpen ? { y: 0, rotate: 45 } : { y: -7, rotate: 0 }}
+                transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+              />
+
+              {/* Center line: disappears to 0 opacity & scales out */}
+              <motion.span
+                className="absolute w-[22px] h-[2px] bg-white rounded-full"
+                animate={isMenuOpen ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1 }}
+                transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              />
+
+              {/* Bottom line: rotates -45 degrees into center */}
+              <motion.span
+                className="absolute w-[22px] h-[2px] bg-white rounded-full"
+                animate={isMenuOpen ? { y: 0, rotate: -45 } : { y: 7, rotate: 0 }}
+                transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+              />
+            </div>
           </button>
         </div>
       </div>

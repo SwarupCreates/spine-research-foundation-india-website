@@ -85,12 +85,13 @@ export const HomePage: React.FC<HomePageProps> = ({
   return (
     <>
       {/* Landing Scroll Level Hero Background Banner with Delayed Parallax & Magnetic Snap */}
+      {/* On mobile: Render at max 56% of viewport height so the portrait image is not absurdly zoomed in and merges halfway down */}
       <div 
-        className="absolute -top-[90px] left-0 right-0 h-[calc(100vh+90px)] pointer-events-none z-0 overflow-hidden"
+        className="absolute -top-[90px] left-0 right-0 h-[calc(56vh+90px)] sm:h-[calc(100vh+90px)] max-h-[calc(56vh+90px)] sm:max-h-none pointer-events-none z-0 overflow-hidden"
         aria-hidden="true"
       >
         {/* Generous overscan wrapper so downward or upward parallax translation NEVER exposes a gap */}
-        <div className="absolute inset-x-0 -top-28 sm:-top-36 -bottom-28 sm:-bottom-36 overflow-hidden">
+        <div className="absolute inset-x-0 -top-16 sm:-top-36 -bottom-16 sm:-bottom-36 overflow-hidden">
           {/* Background Image with Delayed Parallax Scroll */}
           <img
             ref={bannerImgRef}
@@ -116,11 +117,11 @@ export const HomePage: React.FC<HomePageProps> = ({
           zIndex={2}
         />
 
-        {/* Vertical bottom-to-top linear gradient overlay: #000000 100% -> #000000 0% */}
+        {/* Vertical bottom-to-top linear gradient overlay: Merges smoothly into #0b0c0e starting halfway down the screen */}
         <div 
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: 'linear-gradient(to top, #0b0c0e 0%, rgba(11, 12, 14, 0.92) 22%, rgba(11, 12, 14, 0.55) 50%, rgba(11, 12, 14, 0) 100%)',
+            background: 'linear-gradient(to top, #0b0c0e 0%, rgba(11, 12, 14, 0.95) 26%, rgba(11, 12, 14, 0.58) 55%, rgba(11, 12, 14, 0) 100%)',
             zIndex: 3
           }}
         />

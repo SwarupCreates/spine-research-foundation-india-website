@@ -5,13 +5,13 @@ export const Hero: React.FC = () => {
     <section className="relative pt-24 pb-8 sm:pt-36 sm:pb-10 lg:pt-48 lg:pb-12 overflow-hidden">
       <div className="max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 relative z-10">
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pt-4 sm:pt-6">
-          {/* Left Title & Tagline: Welcome to and Spine Research Foundation India unified in one text box for consistent line-height */}
-          <div className="space-y-2 sm:space-y-2.5">
+          {/* Left Title & Tagline: Center aligned on mobile, left aligned on tablet/desktop */}
+          <div className="space-y-2 sm:space-y-2.5 text-center sm:text-left">
             <h1 className="text-[24px] sm:text-[30px] md:text-[32px] lg:text-[var(--font-size-hero-title,36px)] tracking-tight leading-[1.2] sm:leading-[1.2]">
               <span className="font-normal text-white block">
                 Welcome to
               </span>
-              <span className="font-semibold text-white flex flex-wrap items-baseline gap-x-2.5 lg:whitespace-nowrap">
+              <span className="font-semibold text-white flex flex-wrap items-baseline justify-center sm:justify-start gap-x-2.5 lg:whitespace-nowrap">
                 <span>Spine Research Foundation</span>
                 <span className="text-white/60 font-semibold">India</span>
               </span>
@@ -22,9 +22,9 @@ export const Hero: React.FC = () => {
             </p>
           </div>
 
-          {/* Right Impact Stat */}
-          <div className="lg:text-right self-start lg:self-end">
-            <p className="text-white/95 text-[18px] sm:text-[20px] lg:text-[var(--font-size-hero-subtext,22px)] font-medium leading-relaxed max-w-md">
+          {/* Right Impact Stat: Center aligned on mobile, right aligned on desktop */}
+          <div className="text-center lg:text-right self-center lg:self-end">
+            <p className="text-white/95 text-[18px] sm:text-[20px] lg:text-[var(--font-size-hero-subtext,22px)] font-medium leading-relaxed max-w-md mx-auto lg:mx-0">
               Blessed to serve nearly{' '}
               <span className="font-medium text-emerald-400">300</span>{' '}
               underprivileged

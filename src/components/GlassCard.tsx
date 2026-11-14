@@ -7,7 +7,7 @@ interface GlassCardProps {
 
 export const GlassCard: React.FC<GlassCardProps> = ({ onReadMore }) => {
   return (
-    <div className="relative rounded-3xl sm:rounded-[32px] overflow-hidden glass-panel border border-white/[0.08] px-6 py-9 sm:px-10 sm:py-12 lg:px-14 lg:py-14 text-left shadow-xl transition duration-300 hover:border-white/[0.14]">
+    <div className="relative rounded-3xl sm:rounded-[32px] overflow-hidden glass-panel border border-white/[0.08] px-6 py-9 sm:px-10 sm:py-12 lg:px-14 lg:py-14 text-center sm:text-left shadow-xl transition duration-300 hover:border-white/[0.14]">
       {/* Background Watermark Logo shifted to the right, shortened so top is not clipped, fading out at bottom */}
       <div 
         className="absolute right-4 sm:right-8 lg:right-16 top-4 sm:top-6 bottom-0 flex items-start pointer-events-none select-none overflow-hidden"
@@ -22,17 +22,17 @@ export const GlassCard: React.FC<GlassCardProps> = ({ onReadMore }) => {
         </div>
       </div>
 
-      {/* Foreground Content - Left Aligned */}
-      <div className="relative z-10 max-w-xl lg:max-w-2xl text-left space-y-3 sm:space-y-4">
+      {/* Foreground Content - Centered on mobile, Left Aligned on sm/desktop */}
+      <div className="relative z-10 max-w-xl lg:max-w-2xl text-center sm:text-left mx-auto sm:mx-0 space-y-3 sm:space-y-4">
         <h2 className="text-2xl sm:text-3xl lg:text-[var(--font-size-card-title,28px)] font-medium text-white tracking-tight leading-snug">
           The best of health care within your reach
         </h2>
         
-        <p className="text-gray-300 text-sm sm:text-base lg:text-[var(--font-size-card-body,16px)] font-medium leading-relaxed max-w-lg">
+        <p className="text-gray-300 text-sm sm:text-base lg:text-[var(--font-size-card-body,16px)] font-medium leading-relaxed max-w-lg mx-auto sm:mx-0">
           We commit to your problems with all zeal and might
         </p>
 
-        <div className="pt-2 sm:pt-3">
+        <div className="pt-2 sm:pt-3 flex justify-center sm:justify-start">
           <button
             type="button"
             onClick={onReadMore}

@@ -31,43 +31,37 @@ export const EventSection: React.FC = () => {
     <>
       <div className="relative rounded-3xl sm:rounded-[32px] overflow-hidden glass-panel border border-white/[0.08] p-6 sm:p-8 md:p-10 shadow-xl transition duration-300 hover:border-white/[0.14]">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
-          {/* Media / Video Preview */}
+          {/* Media / Video Preview - Strictly 16:9 Canvas */}
           <div className="lg:col-span-5 w-full">
-            <div className="group relative aspect-video rounded-2xl bg-black/50 border border-white/[0.08] overflow-hidden shadow-2xl transition hover:border-white/[0.18]">
+            <div className="group relative w-full aspect-video rounded-2xl bg-black overflow-hidden border border-white/[0.08] shadow-2xl transition hover:border-white/[0.18]">
               {isPlayingInline ? (
                 <iframe
                   src={embedUrl}
                   title="Cervical Disc Replacement Surgery - Dr. Saumyajit Basu"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
-                  className="w-full h-full rounded-2xl border-0"
+                  className="w-full h-full border-0 rounded-2xl"
                 />
               ) : (
                 <div 
                   onClick={() => setIsPlayingInline(true)}
-                  className="relative w-full h-full cursor-pointer overflow-hidden flex items-center justify-center"
+                  className="relative w-full h-full cursor-pointer overflow-hidden flex items-center justify-center select-none"
                 >
-                  {/* High Quality YouTube Thumbnail */}
+                  {/* High Quality 16:9 YouTube Thumbnail - Edge to Edge */}
                   <img
-                    src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
+                    src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
                     alt="Cervical Disc Replacement Surgery by Dr. Saumyajit Basu"
-                    className="w-full h-full object-cover object-center filter brightness-90 group-hover:scale-105 transition-transform duration-500 ease-out"
+                    className="w-full h-full object-cover object-center filter brightness-95 group-hover:scale-105 transition-transform duration-500 ease-out"
                     loading="lazy"
                   />
 
-                  {/* Gradient Glass Overlay */}
+                  {/* Soft Vignette Overlay */}
                   <div 
-                    className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/20 group-hover:from-black/70 transition-colors"
+                    className="absolute inset-0 bg-black/20 group-hover:bg-black/35 transition-colors pointer-events-none"
                     aria-hidden="true" 
                   />
 
-                  {/* Status Pill */}
-                  <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-xs text-gray-200 font-medium flex items-center gap-1.5 shadow-md">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span>Featured Video</span>
-                  </div>
-
-                  {/* Expand Modal Trigger Icon Button */}
+                  {/* Expand Modal Trigger Icon in Top Right */}
                   <button
                     type="button"
                     title="Watch in Cinema Mode"
@@ -75,29 +69,20 @@ export const EventSection: React.FC = () => {
                       e.stopPropagation()
                       setIsModalOpen(true)
                     }}
-                    className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/60 hover:bg-white/20 backdrop-blur-md border border-white/15 text-white flex items-center justify-center transition-all hover:scale-110 cursor-pointer shadow-md"
+                    className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/50 hover:bg-white/20 backdrop-blur-md border border-white/15 text-white/80 hover:text-white flex items-center justify-center transition-all hover:scale-110 cursor-pointer shadow-md z-10"
                   >
                     <MaterialIcon name="open_in_full" size={16} />
                   </button>
 
-                  {/* Center Play Button with Soft Glassmorphic Halo */}
-                  <div className="relative z-10 w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/15 group-hover:bg-emerald-500/80 backdrop-blur-md border border-white/30 flex items-center justify-center text-white transition-all duration-300 group-hover:scale-110 shadow-2xl group-hover:border-emerald-400">
-                    <MaterialIcon
-                      name="play_arrow"
-                      size={32}
-                      filled
-                      className="text-white ml-1 transition-transform group-hover:scale-110"
-                    />
-                  </div>
-
-                  {/* Duration / Caption Pill at Bottom */}
-                  <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-[11px] sm:text-xs text-gray-300">
-                    <span className="font-medium bg-black/50 backdrop-blur-md px-2.5 py-0.5 rounded-full border border-white/10">
-                      Dr. Saumyajit Basu &middot; SRF India
-                    </span>
-                    <span className="bg-black/50 backdrop-blur-md px-2 py-0.5 rounded-full border border-white/10 font-mono">
-                      Full Surgical Case
-                    </span>
+                  {/* Perfectly Circular Centered Play Button with Glassmorphism Blur */}
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                    <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-full aspect-square shrink-0 bg-black/40 group-hover:bg-black/60 backdrop-blur-md border border-white/25 group-hover:border-white/50 flex items-center justify-center text-white transition-all duration-300 group-hover:scale-110 shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+                      <MaterialIcon
+                        name="play_arrow"
+                        size={36}
+                        className="text-white ml-0.5 fill-on-group-hover transition-transform group-hover:scale-105"
+                      />
+                    </div>
                   </div>
                 </div>
               )}
@@ -115,7 +100,7 @@ export const EventSection: React.FC = () => {
               Cervical Disc Replacement Surgery
             </h3>
 
-            <p className="text-gray-300 text-sm sm:text-base md:text-[var(--font-size-card-body,16px)] font-medium leading-relaxed">
+            <p className="text-gray-300 text-sm sm:text-base lg:text-[var(--font-size-card-body,16px)] font-medium leading-relaxed">
               An insightful surgical walkthrough by renowned spine specialist Dr. Saumyajit Basu,
               demonstrating advanced cervical artificial disc replacement (ADR). This motion-preserving
               procedure alleviates neural compression while maintaining natural neck kinematics.
@@ -137,25 +122,32 @@ export const EventSection: React.FC = () => {
               </div>
             </div>
 
-            {/* Action Bar */}
+            {/* Action Buttons */}
             <div className="pt-2 flex flex-wrap items-center gap-3">
+              {/* Watch in Cinema Mode */}
               <button
                 type="button"
                 onClick={() => setIsModalOpen(true)}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-medium text-xs sm:text-sm border border-white/15 transition-all duration-200 backdrop-blur-md shadow-md hover:scale-[1.02] cursor-pointer"
+                className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-medium text-xs sm:text-sm border border-white/15 transition-all duration-300 backdrop-blur-md shadow-md hover:scale-[1.02] cursor-pointer"
               >
                 <MaterialIcon name="fullscreen" size={18} />
                 <span>Watch in Cinema Mode</span>
               </button>
 
+              {/* View on YouTube with Official YouTube SVG Logo and Red Glow Hover */}
               <a
                 href="https://www.youtube.com/watch?v=MXwTXBckIQM"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full text-gray-400 hover:text-white font-medium text-xs sm:text-sm hover:bg-white/5 transition-colors"
+                className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 hover:bg-[#FF0000] text-white hover:text-white font-medium text-xs sm:text-sm border border-white/15 hover:border-[#FF0000] transition-all duration-300 backdrop-blur-md shadow-md hover:shadow-[0_0_24px_rgba(255,0,0,0.65)] hover:scale-[1.02] cursor-pointer"
               >
+                <svg 
+                  className="w-4 h-4 fill-white shrink-0 transition-transform duration-200 group-hover:scale-110" 
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                </svg>
                 <span>View on YouTube</span>
-                <MaterialIcon name="open_in_new" size={16} />
               </a>
             </div>
           </div>
@@ -220,9 +212,11 @@ export const EventSection: React.FC = () => {
                 href="https://www.youtube.com/watch?v=MXwTXBckIQM"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white text-gray-950 font-medium hover:bg-gray-100 transition-colors shrink-0"
+                className="group inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-[#FF0000] text-white font-medium border border-white/15 hover:border-[#FF0000] transition-all hover:shadow-[0_0_20px_rgba(255,0,0,0.6)] shrink-0"
               >
-                <MaterialIcon name="smart_display" size={16} />
+                <svg className="w-4 h-4 fill-white shrink-0" viewBox="0 0 24 24">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                </svg>
                 <span>Open in YouTube</span>
               </a>
             </div>

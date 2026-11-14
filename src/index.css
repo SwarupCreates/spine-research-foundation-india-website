@@ -80,7 +80,8 @@
 /* Hover filled state for interactive elements */
 button:hover .material-symbols-outlined,
 a:hover .material-symbols-outlined,
-.group:hover .group-hover-fill {
+.group:hover .group-hover-fill,
+.group:hover .fill-on-group-hover {
   font-variation-settings:
     'FILL' 1,
     'wght' 300,

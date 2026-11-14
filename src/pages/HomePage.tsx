@@ -41,13 +41,16 @@ export const HomePage: React.FC<HomePageProps> = ({
     const PARALLAX_FACTOR = 0.24
 
     const handleScroll = () => {
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 640
+      if (!isMobile) return
+
       const scrollY = window.scrollY || window.pageYOffset
 
       if (scrollY <= MAGNETIC_SNAP_THRESHOLD) {
         // Magnetically snap to resting position at top of home page
         targetY = 0
       } else {
-        // Parallax smoothly engages once scrolled past the magnetic snap zone
+        // Parallax smoothly engages once scrolled past the magnetic snap zone on mobile
         targetY = (scrollY - MAGNETIC_SNAP_THRESHOLD) * PARALLAX_FACTOR
       }
 
@@ -58,11 +61,18 @@ export const HomePage: React.FC<HomePageProps> = ({
     }
 
     const animate = () => {
-      // Lerp with 0.08 damping factor creates luxurious delayed inertia
-      currentY += (targetY - currentY) * 0.08
-
       const isMobile = typeof window !== 'undefined' && window.innerWidth < 640
-      const scaleStr = isMobile ? 'scale(1.18)' : 'scale(1.08)'
+      if (!isMobile) {
+        if (bannerImgRef.current) {
+          bannerImgRef.current.style.transform = 'translate3d(0, 0px, 0) scale(1)'
+        }
+        isRunning = false
+        return
+      }
+
+      // Lerp with 0.08 damping factor creates luxurious delayed inertia on mobile
+      currentY += (targetY - currentY) * 0.08
+      const scaleStr = 'scale(1.18)'
 
       if (bannerImgRef.current) {
         bannerImgRef.current.style.transform = `translate3d(0, ${currentY.toFixed(2)}px, 0) ${scaleStr}`
@@ -96,8 +106,8 @@ export const HomePage: React.FC<HomePageProps> = ({
         className="absolute -top-[100px] sm:-top-[110px] left-0 right-0 h-[calc(76vh+100px)] sm:h-[calc(100vh+110px)] max-h-[calc(80vh+100px)] sm:max-h-none pointer-events-none z-0 overflow-hidden"
         aria-hidden="true"
       >
-        {/* Generous overscan wrapper ensuring no top edge or gap ever exposes */}
-        <div className="absolute inset-x-0 -top-16 sm:-top-36 -bottom-16 sm:-bottom-36 overflow-hidden">
+        {/* Overscan wrapper: mobile keeps generous overscan for phone zoom; desktop stays flush at top-0 bottom-0 */}
+        <div className="absolute inset-x-0 -top-16 sm:top-0 -bottom-16 sm:bottom-0 overflow-hidden">
           {/* Background Image with Delayed Parallax Scroll: 3:5 portrait on mobile, 16:9 on desktop */}
           <picture className="w-full h-full block">
             <source
@@ -108,9 +118,9 @@ export const HomePage: React.FC<HomePageProps> = ({
               ref={bannerImgRef}
               src={`${import.meta.env.BASE_URL}banners/Solitary%20Boy%20Amid%20the%20Moving%20Crowd%201.jpg`}
               alt="Spine Research Foundation India patient banner"
-              className="w-full h-full object-cover object-[50%_12%] sm:object-[50%_20%] select-none opacity-90 will-change-transform"
+              className="w-full h-full object-cover object-[50%_12%] sm:object-[50%_35%] select-none opacity-90 will-change-transform"
               style={{
-                transform: 'translate3d(0, 0px, 0) scale(1.18)',
+                transform: 'translate3d(0, 0px, 0)',
                 transformOrigin: 'center center',
               }}
             />
@@ -134,7 +144,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           <GradualBlur
             position="bottom"
             target="parent"
-            height="60%"
+            height="35%"
             strength={2.2}
             layers={8}
             curve="linear"
@@ -154,7 +164,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         <div 
           className="hidden sm:block absolute inset-0 pointer-events-none"
           style={{
-            background: 'linear-gradient(to top, #0b0c0e 0%, rgba(11, 12, 14, 0.96) 28%, rgba(11, 12, 14, 0.52) 58%, rgba(11, 12, 14, 0) 100%)',
+            background: 'linear-gradient(to top, #0b0c0e 0%, rgba(11, 12, 14, 0.95) 15%, rgba(11, 12, 14, 0.35) 30%, rgba(11, 12, 14, 0) 52%)',
             zIndex: 3
           }}
         />

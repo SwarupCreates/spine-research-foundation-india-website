@@ -16,8 +16,10 @@ export const MisconceptionsCard: React.FC<MisconceptionsCardProps> = ({ onCheckO
         <img
           src={`${import.meta.env.BASE_URL}banners/sadDoc.jpg`}
           alt="Healthcare Specialist and Patient Perspective"
-          className="h-full w-full sm:w-auto max-w-none object-cover sm:object-contain object-right filter brightness-[0.85] contrast-[1.05]"
+          className="h-full w-full sm:w-auto max-w-none object-cover sm:object-contain object-right filter brightness-[0.88] contrast-[1.05] transition-transform duration-500"
           style={{
+            transform: 'scale(1.28)',
+            transformOrigin: 'right center',
             maskImage: 'linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.18) 22%, rgba(0, 0, 0, 0.65) 52%, rgba(0, 0, 0, 0.95) 78%, rgba(0, 0, 0, 1) 100%)',
             WebkitMaskImage: 'linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.18) 22%, rgba(0, 0, 0, 0.65) 52%, rgba(0, 0, 0, 0.95) 78%, rgba(0, 0, 0, 1) 100%)',
           }}

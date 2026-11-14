@@ -97,7 +97,8 @@ export const App: React.FC = () => {
 
       {/* Main Content Container at relative z-10: Scrolls on top of the landing background */}
       <div className="relative z-10 flex flex-col flex-1">
-        <main className="flex-1 pb-20">
+        {/* Spacing between last card and footer calibrated to exact OuterEdgeGutter + participateButtonHeight */}
+        <main className="flex-1 pb-[80px] sm:pb-[88px] lg:pb-[96px]">
           <Hero />
 
           {/* Floating Glass Cards with tight, balanced gap */}

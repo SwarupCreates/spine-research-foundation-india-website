@@ -104,6 +104,21 @@ a:hover .material-symbols-outlined,
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+/* Floating Action: Contact Button SRF Blue Hover */
+.contact-btn-srf {
+  transition: all 0.25s ease;
+}
+.contact-btn-srf:hover {
+  background-color: #1B9AF7 !important;
+  border-color: #1B9AF7 !important;
+  box-shadow: 0 0 24px rgba(27, 154, 247, 0.5) !important;
+  color: #ffffff !important;
+}
+.contact-btn-srf:hover .material-symbols-outlined {
+  color: #ffffff !important;
+  transform: scale(1.1);
+}
+
 /* Shell-level and component-level scrollbar removal */
 html,
 body,

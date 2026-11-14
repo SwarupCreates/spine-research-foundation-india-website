@@ -11,30 +11,60 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
   onOpenFeedback,
 }) => {
   const [showTooltip, setShowTooltip] = useState(false)
-  const [isNearFooter, setIsNearFooter] = useState(false)
+  const [bottomSpacing, setBottomSpacing] = useState<number | null>(null)
 
-  // Dynamically move buttons up when reaching the footer to avoid overlapping
+  // Calibrate bottom position dynamically:
+  // When footer starts to enter the viewport from bottom edge,
+  // increase bottom spacing to: OuterEdgeGutter / 2 + CalculatedFooterHeight
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY || window.pageYOffset
-      const windowHeight = window.innerHeight
-      const docHeight = document.documentElement.scrollHeight
-      const distanceToBottom = docHeight - (scrollY + windowHeight)
-      
-      // Footer height is ~90-100px. Trigger shift when within 140px of page bottom
-      setIsNearFooter(distanceToBottom < 130)
+    const getOuterEdgeGutter = (): number => {
+      if (typeof window === 'undefined') return 48
+      if (window.innerWidth >= 1024) return 48 // Desktop: 48px
+      if (window.innerWidth >= 640) return 40  // Tablet: 40px
+      return 32                               // Mobile: 32px
     }
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    handleScroll()
-    return () => window.removeEventListener('scroll', handleScroll)
+    const updatePosition = () => {
+      const footer = document.querySelector('footer')
+      const gutter = getOuterEdgeGutter()
+
+      if (!footer) {
+        setBottomSpacing(gutter)
+        return
+      }
+
+      const footerRect = footer.getBoundingClientRect()
+      const calculatedFooterHeight = footer.offsetHeight || 96
+      const isEntering = footerRect.top < window.innerHeight
+
+      if (isEntering) {
+        // OuterEdgeGutter / 2 + CalculatedFooterHeight
+        setBottomSpacing(gutter / 2 + calculatedFooterHeight)
+      } else {
+        setBottomSpacing(gutter)
+      }
+    }
+
+    window.addEventListener('scroll', updatePosition, { passive: true })
+    window.addEventListener('resize', updatePosition, { passive: true })
+    updatePosition()
+
+    return () => {
+      window.removeEventListener('scroll', updatePosition)
+      window.removeEventListener('resize', updatePosition)
+    }
   }, [])
 
   return (
     <aside 
-      className={`fixed right-8 sm:right-10 lg:right-12 z-50 flex items-center gap-3.5 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
-        isNearFooter ? 'bottom-24 sm:bottom-28 translate-y-0' : 'bottom-8 sm:bottom-10'
+      id="floating-actions"
+      data-testid="floating-actions"
+      className={`fixed right-8 sm:right-10 lg:right-12 z-50 flex items-center gap-3.5 transition-[bottom] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+        bottomSpacing === null ? 'bottom-8 sm:bottom-10 lg:bottom-12' : ''
       }`}
+      style={{
+        bottom: bottomSpacing !== null ? `${bottomSpacing}px` : undefined,
+      }}
       aria-label="Quick Actions"
     >
       {/* Primary "Participate" Pill Floating Button */}
@@ -55,19 +85,19 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
         </span>
       </button>
 
-      {/* Secondary Perfectly Circular Glass Button */}
+      {/* Secondary Perfectly Circular Button with SRF Blue Shade on Hover */}
       <button
         type="button"
         onClick={onOpenFeedback}
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
-        className="group relative h-12 w-12 rounded-full aspect-square bg-[#1c1d22]/85 hover:bg-[#25272e]/90 active:scale-95 text-gray-200 hover:text-white border border-white/[0.12] backdrop-blur-xl shadow-xl transition-all duration-200 cursor-pointer flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 flex-shrink-0"
+        className="contact-btn-srf group relative h-12 w-12 rounded-full aspect-square bg-[#1c1d22]/85 hover:bg-[#1B9AF7] hover:border-[#1B9AF7] hover:shadow-[0_0_24px_rgba(27,154,247,0.45)] active:scale-95 text-gray-200 hover:text-white border border-white/[0.12] backdrop-blur-xl shadow-xl transition-all duration-200 cursor-pointer flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1B9AF7] flex-shrink-0"
         aria-label="Feedback and inquiries"
       >
         <MaterialIcon
           name="chat"
           size={22}
-          className="text-gray-200 group-hover:text-white transition-colors"
+          className="text-gray-200 group-hover:text-white group-hover:scale-110 transition-all duration-200"
         />
 
         {/* Hover tooltip */}

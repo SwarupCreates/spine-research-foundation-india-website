@@ -159,8 +159,8 @@ export const HomePage: React.FC<HomePageProps> = ({
 
       <Hero />
 
-      {/* Floating Glass Cards with tight, balanced gap */}
-      <div className="max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 space-y-4 sm:space-y-5">
+      {/* Floating Glass Cards with uniform 20px edge gutter and inter-card gap on mobile */}
+      <div className="max-w-[1536px] mx-auto px-5 sm:px-10 lg:px-14 xl:px-16 space-y-5 sm:space-y-5">
         <GlassCard onReadMore={onReadMore} />
         <EventSection />
         <PromiseCard onCheckOutMore={onOpenPromise} />
@@ -170,7 +170,7 @@ export const HomePage: React.FC<HomePageProps> = ({
       <TrusteeMessage />
 
       {/* Education & Research, Humanitarian Impact Metrics, and Misconceptions Section */}
-      <div className="max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 space-y-4 sm:space-y-5">
+      <div className="max-w-[1536px] mx-auto px-5 sm:px-10 lg:px-14 xl:px-16 space-y-5 sm:space-y-5">
         <EducationCard onCheckOutMore={onOpenEducation} />
         <ImpactMetrics />
         <MisconceptionsCard onCheckOutMore={onOpenMisconceptions} />

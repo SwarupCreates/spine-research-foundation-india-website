@@ -4,11 +4,19 @@ import { MaterialIcon } from './icons'
 interface FloatingActionsProps {
   onOpenParticipate?: () => void
   onOpenFeedback?: () => void
+  isParticipateOpen?: boolean
+  isFeedbackOpen?: boolean
+  onCloseParticipate?: () => void
+  onCloseFeedback?: () => void
 }
 
 export const FloatingActions: React.FC<FloatingActionsProps> = ({
   onOpenParticipate,
   onOpenFeedback,
+  isParticipateOpen = false,
+  isFeedbackOpen = false,
+  onCloseParticipate,
+  onCloseFeedback,
 }) => {
   const [showTooltip, setShowTooltip] = useState(false)
   const [bottomSpacing, setBottomSpacing] = useState<number | null>(null)
@@ -80,7 +88,7 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
     <aside 
       id="floating-actions"
       data-testid="floating-actions"
-      className={`fixed left-1/2 -translate-x-1/2 sm:left-auto sm:right-10 sm:translate-x-0 lg:right-12 z-50 flex items-center gap-3.5 transition-[bottom] duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+      className={`fixed left-1/2 -translate-x-1/2 sm:left-auto sm:right-10 sm:translate-x-0 lg:right-12 z-[70] flex items-center gap-3.5 transition-[bottom] duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] ${
         bottomSpacing === null ? 'bottom-8 sm:bottom-10 lg:bottom-12' : ''
       }`}
       style={{
@@ -88,43 +96,51 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
       }}
       aria-label="Quick Actions"
     >
-      {/* Primary "Participate" Pill Floating Button */}
+      {/* Primary "Participate" Button (Converts to Cancel variant when participate modal is open) */}
       <button
         type="button"
-        onClick={onOpenParticipate}
-        className="group relative h-12 px-6 rounded-full bg-[#1da824] hover:bg-[#189b20] active:scale-95 text-white font-medium text-sm sm:text-base shadow-xl shadow-green-950/60 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
-        aria-label="Participate in SRF India initiatives"
+        onClick={isParticipateOpen ? onCloseParticipate : onOpenParticipate}
+        className={`group relative h-12 px-6 rounded-full font-medium text-sm sm:text-base transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 active:scale-95 ${
+          isParticipateOpen
+            ? 'bg-[#c92a2a] hover:bg-[#b02222] text-white shadow-xl shadow-red-950/60 border border-red-400/30 focus-visible:ring-red-400'
+            : 'bg-[#1da824] hover:bg-[#189b20] text-white shadow-xl shadow-green-950/60 border-0 focus-visible:ring-emerald-300'
+        }`}
+        aria-label={isParticipateOpen ? 'Cancel and close participation modal' : 'Participate in SRF India initiatives'}
       >
         <MaterialIcon
-          name="volunteer_activism"
+          name={isParticipateOpen ? 'close' : 'volunteer_activism'}
           size={20}
-          filled
+          filled={!isParticipateOpen}
           className="text-white group-hover:scale-110 transition-transform duration-200"
         />
         <span className="tracking-tight whitespace-nowrap font-medium">
-          Participate
+          {isParticipateOpen ? 'Cancel' : 'Participate'}
         </span>
       </button>
 
-      {/* Secondary Perfectly Circular Button with SRF Blue Shade on Hover */}
+      {/* Secondary Circular Button (Converts to Cancel variant when connect modal is open) */}
       <button
         type="button"
-        onClick={onOpenFeedback}
+        onClick={isFeedbackOpen ? onCloseFeedback : onOpenFeedback}
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
-        className="contact-btn-srf group relative h-12 w-12 rounded-full aspect-square bg-[#1c1d22]/85 hover:bg-[#1B9AF7] hover:border-[#1B9AF7] hover:shadow-[0_0_24px_rgba(27,154,247,0.45)] active:scale-95 text-gray-200 hover:text-white border border-white/[0.12] backdrop-blur-xl shadow-xl transition-all duration-200 cursor-pointer flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1B9AF7] flex-shrink-0"
-        aria-label="Feedback and inquiries"
+        className={`group relative h-12 w-12 rounded-full aspect-square transition-all duration-300 cursor-pointer flex items-center justify-center focus:outline-none focus-visible:ring-2 flex-shrink-0 active:scale-95 ${
+          isFeedbackOpen
+            ? 'bg-[#c92a2a] hover:bg-[#b02222] text-white border border-red-400/30 shadow-xl shadow-red-950/60 focus-visible:ring-red-400'
+            : 'contact-btn-srf bg-[#1c1d22]/85 hover:bg-[#1B9AF7] hover:border-[#1B9AF7] hover:shadow-[0_0_24px_rgba(27,154,247,0.45)] text-gray-200 hover:text-white border border-white/[0.12] backdrop-blur-xl shadow-xl focus-visible:ring-[#1B9AF7]'
+        }`}
+        aria-label={isFeedbackOpen ? 'Close contact dialog' : 'Feedback and inquiries'}
       >
         <MaterialIcon
-          name="chat"
-          size={22}
-          className="text-gray-200 group-hover:text-white group-hover:scale-110 transition-all duration-200"
+          name={isFeedbackOpen ? 'close' : 'chat'}
+          size={isFeedbackOpen ? 20 : 22}
+          className="text-white group-hover:scale-110 transition-all duration-200"
         />
 
         {/* Hover tooltip */}
         {showTooltip && (
           <span className="absolute bottom-full mb-2.5 left-1/2 -translate-x-1/2 sm:left-auto sm:right-0 sm:translate-x-0 px-2.5 py-1 rounded-lg bg-black/85 backdrop-blur-md text-xs text-white whitespace-nowrap border border-white/10 shadow-lg pointer-events-none transition-opacity font-medium">
-            Contact &amp; Support
+            {isFeedbackOpen ? 'Close' : 'Contact & Support'}
           </span>
         )}
       </button>

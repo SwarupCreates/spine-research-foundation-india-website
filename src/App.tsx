@@ -335,7 +335,7 @@ export const App: React.FC = () => {
         </footer>
       </div>
 
-      {/* Bottom Page-level Gradual Blur */}
+      {/* Bottom Page-level Gradual Blur (Hidden on mobile so it never blurs card text or action buttons) */}
       <GradualBlur
         position="bottom"
         target="page"
@@ -347,15 +347,26 @@ export const App: React.FC = () => {
         tint="rgba(11, 12, 14, 0.7)"
         autoHide
         zIndex={30}
+        className="hidden md:block"
       />
 
       {/* Minimal Custom Pill-Shaped Page Scroller */}
       <CustomScrollbar />
 
-      {/* Floating Action Buttons (z-50) */}
+      {/* Floating Action Buttons (z-[70]) */}
       <FloatingActions
-        onOpenParticipate={() => setIsParticipateOpen(true)}
-        onOpenFeedback={() => setIsFeedbackOpen(true)}
+        isParticipateOpen={isParticipateOpen}
+        isFeedbackOpen={isFeedbackOpen}
+        onOpenParticipate={() => {
+          setIsFeedbackOpen(false)
+          setIsParticipateOpen(true)
+        }}
+        onOpenFeedback={() => {
+          setIsParticipateOpen(false)
+          setIsFeedbackOpen(true)
+        }}
+        onCloseParticipate={() => setIsParticipateOpen(false)}
+        onCloseFeedback={() => setIsFeedbackOpen(false)}
       />
 
       {/* Interactive Modals */}

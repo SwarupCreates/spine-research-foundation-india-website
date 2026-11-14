@@ -151,8 +151,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full transition-all duration-300 bg-transparent border-0 backdrop-blur-none pt-1.5 sm:pt-2.5">
-      <div className="relative z-50 max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 h-20 flex items-center justify-between gap-4">
+    <header className="sticky top-0 z-[70] w-full transition-all duration-300 bg-transparent border-0 backdrop-blur-none pt-1.5 sm:pt-2.5">
+      <div className="relative z-[70] max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 h-20 flex items-center justify-between gap-4">
         {/* Brand Logo & Interactive Morphing Brand Name in Jost font */}
         <a
           href="#home"
@@ -437,7 +437,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               scale: 0.96,
               transition: { duration: 0.18, ease: [0.16, 1, 0.3, 1] },
             }}
-            className="md:hidden absolute top-full left-0 right-0 z-50 pointer-events-auto px-4 sm:px-6 pt-2 pb-6 overflow-visible"
+            className="md:hidden absolute top-full left-0 right-0 z-[70] pointer-events-auto px-4 sm:px-6 pt-2 pb-6 overflow-visible"
           >
             <AnimatedList
               items={ANIMATED_NAV_ITEMS}

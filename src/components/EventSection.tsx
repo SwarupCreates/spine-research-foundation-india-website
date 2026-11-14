@@ -26,7 +26,7 @@ export const EventSection: React.FC = () => {
     }
   }, [isModalOpen])
 
-  const videoId = 'MXwTXBckIQM'
+  const videoId = '1aD17KgDV2o'
   const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&enablejsapi=1&rel=0&modestbranding=1`
 
   const handlePauseAndCollapse = () => {
@@ -78,7 +78,7 @@ export const EventSection: React.FC = () => {
                   <iframe
                     ref={iframeRef}
                     src={embedUrl}
-                    title="Cervical Disc Replacement Surgery - Dr. Saumyajit Basu"
+                    title="Chiari Malformation Surgery - Dr. Saumyajit Basu"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowFullScreen
                     className="w-full h-full border-0 rounded-2xl sm:rounded-[28px]"
@@ -114,7 +114,7 @@ export const EventSection: React.FC = () => {
                   {/* High Quality 16:9 YouTube Thumbnail - Edge to Edge */}
                   <img
                     src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
-                    alt="Cervical Disc Replacement Surgery by Dr. Saumyajit Basu"
+                    alt="Chiari Malformation Surgery by Dr. Saumyajit Basu"
                     className="w-full h-full object-cover object-center filter brightness-95 group-hover:scale-105 transition-transform duration-500 ease-out"
                     loading="lazy"
                   />
@@ -165,24 +165,25 @@ export const EventSection: React.FC = () => {
             </div>
 
             <h3 className="text-2xl sm:text-3xl lg:text-[var(--font-size-card-title,28px)] font-medium text-white tracking-tight leading-snug">
-              Cervical Disc Replacement Surgery
+              Chiari Malformation Surgery
             </h3>
 
             <p className="text-gray-300 text-sm sm:text-base lg:text-[var(--font-size-card-body,16px)] font-medium leading-relaxed">
               An insightful surgical walkthrough by renowned spine specialist Dr. Saumyajit Basu,
-              demonstrating advanced cervical artificial disc replacement (ADR). This motion-preserving
-              procedure alleviates neural compression while maintaining natural neck kinematics.
+              demonstrating advanced posterior fossa decompression techniques for Chiari Malformation.
+              This procedure relieves pressure on the cerebellum and brainstem while restoring natural
+              cerebrospinal fluid (CSF) flow.
             </p>
 
             {/* Feature Bullets */}
             <div className="pt-1 flex flex-wrap items-center gap-3 sm:gap-4 text-xs sm:text-sm text-gray-300">
               <div className="flex items-center gap-1.5 bg-white/[0.03] px-3 py-1 rounded-full border border-white/[0.06]">
                 <MaterialIcon name="check_circle" size={16} className="text-emerald-400" />
-                <span>Motion Preservation</span>
+                <span>Decompression Technique</span>
               </div>
               <div className="flex items-center gap-1.5 bg-white/[0.03] px-3 py-1 rounded-full border border-white/[0.06]">
                 <MaterialIcon name="verified_user" size={16} className="text-emerald-400" />
-                <span>Minimally Invasive</span>
+                <span>Posterior Fossa Surgery</span>
               </div>
               <div className="flex items-center gap-1.5 bg-white/[0.03] px-3 py-1 rounded-full border border-white/[0.06]">
                 <MaterialIcon name="smart_display" size={16} className="text-emerald-400" />
@@ -224,7 +225,7 @@ export const EventSection: React.FC = () => {
 
               {/* View on YouTube with Official YouTube SVG Logo and Red Glow Hover */}
               <a
-                href="https://www.youtube.com/watch?v=MXwTXBckIQM"
+                href={`https://www.youtube.com/watch?v=${videoId}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 hover:bg-[#FF0000] text-white hover:text-white font-medium text-xs sm:text-sm border border-white/15 hover:border-[#FF0000] transition-all duration-300 backdrop-blur-md shadow-md hover:shadow-[0_0_24px_rgba(255,0,0,0.65)] hover:scale-[1.02] cursor-pointer"
@@ -260,7 +261,7 @@ export const EventSection: React.FC = () => {
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
                 <div>
                   <h4 className="text-white font-medium text-base sm:text-lg">
-                    Cervical Disc Replacement Surgery
+                    Chiari Malformation Surgery
                   </h4>
                   <p className="text-gray-400 text-xs font-medium">
                     Dr. Saumyajit Basu &middot; Spine Research Foundation India
@@ -282,7 +283,7 @@ export const EventSection: React.FC = () => {
             <div className="relative aspect-video w-full bg-black">
               <iframe
                 src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`}
-                title="Cervical Disc Replacement Surgery - Dr. Saumyajit Basu"
+                title="Chiari Malformation Surgery - Dr. Saumyajit Basu"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
                 className="w-full h-full border-0"
@@ -292,12 +293,12 @@ export const EventSection: React.FC = () => {
             {/* Modal Footer / Description */}
             <div className="px-6 py-4 bg-white/[0.02] border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-gray-300">
               <p className="max-w-2xl leading-relaxed">
-                Watch the complete demonstration of arthroplasty techniques preserving spinal movement
-                and enabling rapid rehabilitation.
+                Watch the complete clinical demonstration and surgical walkthrough of Chiari malformation
+                decompression surgery by Dr. Saumyajit Basu.
               </p>
 
               <a
-                href="https://www.youtube.com/watch?v=MXwTXBckIQM"
+                href={`https://www.youtube.com/watch?v=${videoId}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-[#FF0000] text-white font-medium border border-white/15 hover:border-[#FF0000] transition-all hover:shadow-[0_0_20px_rgba(255,0,0,0.6)] shrink-0"

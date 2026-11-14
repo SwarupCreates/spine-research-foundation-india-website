@@ -7,6 +7,7 @@ import PromiseCard from './components/PromiseCard'
 import EducationCard from './components/EducationCard'
 import TrusteeMessage from './components/TrusteeMessage'
 import FloatingActions from './components/FloatingActions'
+import CustomScrollbar from './components/CustomScrollbar'
 import GradualBlur from './components/GradualBlur'
 import {
   ParticipateModal,
@@ -141,6 +142,9 @@ export const App: React.FC = () => {
         autoHide
         zIndex={30}
       />
+
+      {/* Minimal Custom Pill-Shaped Page Scroller */}
+      <CustomScrollbar />
 
       {/* Floating Action Buttons (z-50) */}
       <FloatingActions

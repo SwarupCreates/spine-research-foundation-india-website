@@ -104,11 +104,18 @@ a:hover .material-symbols-outlined,
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* Hide scrollbar completely while maintaining scroll functionality */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
+/* Shell-level and component-level scrollbar removal */
+html,
+body,
 .no-scrollbar {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }

@@ -79,19 +79,19 @@ export const TrusteeMessage: React.FC = () => {
               />
             </div>
 
-            {/* Overlapping Identity Bundle centered on the bottom part of his body */}
-            <div className="relative -mt-12 sm:-mt-14 z-20 w-auto px-5 py-2.5 rounded-2xl bg-[#0f1014]/85 backdrop-blur-xl border border-white/10 shadow-2xl text-center space-y-0.5">
-              <h3 className="text-base sm:text-lg font-medium text-white tracking-tight whitespace-nowrap">
+            {/* Floating Identity Bundle directly above the bottom part of his body without container box */}
+            <div className="relative -mt-10 sm:-mt-12 z-20 text-center space-y-0.5 select-none pointer-events-none">
+              <h3 className="text-lg sm:text-xl font-medium text-white tracking-tight whitespace-nowrap drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)]">
                 Dr. Saumyajit Basu
               </h3>
               
-              <div className="flex items-center justify-center gap-1.5 text-xs text-emerald-400 font-medium whitespace-nowrap">
+              <div className="flex items-center justify-center gap-1.5 text-xs text-emerald-400 font-medium whitespace-nowrap drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
                 <MaterialIcon name="verified" size={15} filled className="text-emerald-400 shrink-0" />
                 <span>Managing Trustee, SRF India</span>
               </div>
 
-              <div className="flex items-center justify-center gap-1.5 text-[11px] sm:text-xs text-gray-300 font-medium whitespace-nowrap">
-                <MaterialIcon name="medical_services" size={15} className="text-gray-400 shrink-0" />
+              <div className="flex items-center justify-center gap-1.5 text-[11px] sm:text-xs text-gray-200 font-medium whitespace-nowrap drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
+                <MaterialIcon name="medical_services" size={15} className="text-gray-300 shrink-0" />
                 <span>Senior Consultant Spine Surgeon</span>
               </div>
             </div>

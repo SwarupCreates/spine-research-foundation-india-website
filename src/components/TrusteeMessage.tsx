@@ -50,18 +50,18 @@ export const TrusteeMessage: React.FC = () => {
     <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden">
       {/* Subtle ambient lighting on base background */}
       <div 
-        className="absolute top-1/2 left-1/3 -translate-y-1/2 w-[500px] h-[500px] bg-emerald-500/[0.04] rounded-full blur-[130px] pointer-events-none -z-10"
+        className="absolute top-1/2 left-1/3 -translate-y-1/2 w-[550px] h-[550px] bg-emerald-500/[0.04] rounded-full blur-[140px] pointer-events-none -z-10"
         aria-hidden="true"
       />
 
-      {/* Constrained width to bring left image and right text closer together */}
+      {/* Intimate constrained container bringing doctor and message close together */}
       <div className="max-w-5xl mx-auto px-6 sm:px-8 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-12 xl:gap-14">
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-14">
           
-          {/* Left Column: Doctor's Image & Overlapping Identity Bundle */}
+          {/* Left Column: Larger, dignified Doctor's Image & Floating Identity Details */}
           <div className="relative flex flex-col items-center shrink-0">
-            {/* Shorter, compact Doctor portrait with bottom gradual transparency */}
-            <div className="relative w-[240px] sm:w-[270px] lg:w-[290px] h-[280px] sm:h-[310px] lg:h-[330px] flex items-end justify-center">
+            {/* Generously sized Doctor portrait with gradual bottom transparency */}
+            <div className="relative w-[280px] sm:w-[330px] lg:w-[370px] h-[340px] sm:h-[400px] lg:h-[440px] flex items-end justify-center">
               {/* Ambient silhouette glow behind the doctor */}
               <div 
                 className="absolute inset-0 bg-gradient-to-t from-emerald-500/15 via-blue-500/10 to-transparent blur-2xl opacity-75 rounded-full scale-90"
@@ -73,8 +73,8 @@ export const TrusteeMessage: React.FC = () => {
                 alt="Dr. Saumyajit Basu - Managing Trustee, SRF India"
                 className="w-full h-full object-contain object-bottom select-none filter contrast-[1.03]"
                 style={{
-                  maskImage: 'linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 62%, rgba(0, 0, 0, 0.25) 85%, rgba(0, 0, 0, 0) 100%)',
-                  WebkitMaskImage: 'linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 62%, rgba(0, 0, 0, 0.25) 85%, rgba(0, 0, 0, 0) 100%)',
+                  maskImage: 'linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 64%, rgba(0, 0, 0, 0.25) 86%, rgba(0, 0, 0, 0) 100%)',
+                  WebkitMaskImage: 'linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 64%, rgba(0, 0, 0, 0.25) 86%, rgba(0, 0, 0, 0) 100%)',
                 }}
               />
             </div>
@@ -99,22 +99,22 @@ export const TrusteeMessage: React.FC = () => {
 
           {/* Right Column: Shortened Text Box Container & Scrollable Message */}
           <div className="max-w-lg lg:max-w-xl w-full flex flex-col justify-center">
-            {/* Minimal & Compact Heading */}
+            {/* Minimal & Consistent Heading in Google Sans Flex */}
             <div className="mb-3.5 text-center lg:text-left">
-              <span className="text-[11px] uppercase tracking-[0.18em] text-emerald-400 font-medium block">
+              <span className="text-xs uppercase tracking-[0.18em] text-emerald-400 font-medium block">
                 Leadership Perspective
               </span>
-              <h2 className="text-2xl sm:text-[28px] font-medium text-white tracking-tight font-jost mt-0.5 leading-snug">
+              <h2 className="text-2xl sm:text-3xl lg:text-[var(--font-size-card-title,28px)] font-medium text-white tracking-tight mt-1 leading-snug">
                 Managing Trustee&apos;s Message
               </h2>
-              <div className="w-10 h-0.5 bg-emerald-500/40 mt-2 rounded-full mx-auto lg:mx-0" />
+              <div className="w-10 h-0.5 bg-emerald-500/40 mt-2.5 rounded-full mx-auto lg:mx-0" />
             </div>
 
             {/* Shortened Width Container with Hidden Scrollbar and Edge Transparency */}
             <div className="relative">
               <div
                 ref={scrollRef}
-                className="overflow-y-auto no-scrollbar max-h-[250px] sm:max-h-[270px] space-y-3.5 text-gray-300 text-sm sm:text-[15px] leading-relaxed select-text"
+                className="overflow-y-auto no-scrollbar max-h-[290px] sm:max-h-[320px] lg:max-h-[350px] space-y-3.5 text-gray-300 text-sm sm:text-base lg:text-[var(--font-size-card-body,16px)] font-medium leading-relaxed select-text"
                 style={{
                   maskImage: getMaskStyle(),
                   WebkitMaskImage: getMaskStyle(),
@@ -139,19 +139,11 @@ export const TrusteeMessage: React.FC = () => {
                   our services entirely free of charge.
                 </p>
 
-                <p className="text-white/95 font-medium border-l-2 border-emerald-500/50 pl-3 italic bg-white/[0.02] py-1.5 rounded-r-lg">
+                <p className="text-white/95 font-medium border-l-2 border-emerald-500/50 pl-3 italic bg-white/[0.02] py-2 rounded-r-lg">
                   &ldquo;Delighted by getting an opportunity to serve, we will continue to work hard to
                   further our mission and vision and seek all your blessings and support for the future.&rdquo;
                 </p>
               </div>
-
-              {/* Dynamic Scroll Indicator if content continues below */}
-              {scrollState.canScrollDown && (
-                <div className="pt-2 flex items-center justify-center lg:justify-start gap-1.5 text-[11px] text-gray-400 font-medium select-none pointer-events-none">
-                  <MaterialIcon name="arrow_downward" size={14} className="text-emerald-400 animate-bounce" />
-                  <span>Scroll to continue reading</span>
-                </div>
-              )}
             </div>
           </div>
 

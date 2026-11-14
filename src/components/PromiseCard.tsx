@@ -8,18 +8,18 @@ interface PromiseCardProps {
 export const PromiseCard: React.FC<PromiseCardProps> = ({ onCheckOutMore }) => {
   return (
     <div className="relative rounded-3xl sm:rounded-[32px] overflow-hidden glass-panel border border-white/[0.08] px-6 py-9 sm:px-10 sm:py-12 lg:px-14 lg:py-14 text-left shadow-xl transition duration-300 hover:border-white/[0.14]">
-      {/* Background Image: Hands Donning Teal Medical Gloves shifted to the right with left-fading gradient */}
+      {/* Background Image: Hands Donning Teal Medical Gloves on the right with fade-out at the right edge */}
       <div 
-        className="absolute inset-0 pointer-events-none select-none overflow-hidden flex justify-end"
+        className="absolute inset-0 pointer-events-none select-none overflow-hidden flex justify-end items-center"
         aria-hidden="true"
       >
         <img
           src={`${import.meta.env.BASE_URL}banners/Hands%20Donning%20Teal%20Medical%20Gloves.png`}
           alt="Hands Donning Teal Medical Gloves"
-          className="h-full w-auto max-w-none object-contain object-right filter brightness-[0.88] contrast-[1.05] opacity-85"
+          className="h-[82%] sm:h-[85%] lg:h-[88%] w-auto max-w-none object-contain object-right filter brightness-[0.88] contrast-[1.05] opacity-85"
           style={{
-            maskImage: 'linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.18) 22%, rgba(0, 0, 0, 0.65) 52%, rgba(0, 0, 0, 0.95) 80%, rgba(0, 0, 0, 1) 100%)',
-            WebkitMaskImage: 'linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.18) 22%, rgba(0, 0, 0, 0.65) 52%, rgba(0, 0, 0, 0.95) 80%, rgba(0, 0, 0, 1) 100%)',
+            maskImage: 'linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0.55) 78%, rgba(0, 0, 0, 0) 100%)',
+            WebkitMaskImage: 'linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0.55) 78%, rgba(0, 0, 0, 0) 100%)',
           }}
         />
 

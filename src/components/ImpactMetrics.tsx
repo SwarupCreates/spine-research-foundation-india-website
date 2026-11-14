@@ -7,8 +7,7 @@ interface MetricItem {
   label: string
   targetValue: number
   suffix?: string
-  iconType: 'material' | 'scalpel'
-  iconName?: string
+  iconName: string
 }
 
 const METRICS_DATA: MetricItem[] = [
@@ -17,7 +16,6 @@ const METRICS_DATA: MetricItem[] = [
     label: 'BENEFICIARIES',
     targetValue: 300,
     suffix: '+',
-    iconType: 'material',
     iconName: 'handshake',
   },
   {
@@ -25,14 +23,13 @@ const METRICS_DATA: MetricItem[] = [
     label: 'SPINAL SURGERIES',
     targetValue: 300,
     suffix: '+',
-    iconType: 'scalpel',
+    iconName: 'surgical',
   },
   {
     id: 'spinal-fellowships',
     label: 'SPINAL FELLOWSHIPS',
     targetValue: 60,
     suffix: '+',
-    iconType: 'material',
     iconName: 'school',
   },
   {
@@ -40,7 +37,6 @@ const METRICS_DATA: MetricItem[] = [
     label: 'SHORT SEMINARS',
     targetValue: 15,
     suffix: '+',
-    iconType: 'material',
     iconName: 'groups',
   },
 ]
@@ -108,20 +104,20 @@ export const ImpactMetrics: React.FC = () => {
   return (
     <section
       ref={containerRef}
-      className="relative rounded-3xl sm:rounded-[32px] overflow-hidden glass-panel border border-white/[0.08] px-6 py-10 sm:px-10 sm:py-14 shadow-xl transition duration-300 hover:border-white/[0.14]"
+      className="relative py-8 sm:py-12 lg:py-16 overflow-hidden"
       aria-label="SRF India Humanitarian Impact Statistics"
     >
-      {/* Ambient background glows matching brand emerald & blue palette */}
+      {/* Subtle ambient background glows floating on the base background */}
       <div
-        className="absolute top-1/2 left-1/4 -translate-y-1/2 w-80 h-80 bg-emerald-500/[0.06] rounded-full blur-[100px] pointer-events-none -z-10"
+        className="absolute top-1/2 left-1/4 -translate-y-1/2 w-96 h-96 bg-emerald-500/[0.04] rounded-full blur-[130px] pointer-events-none -z-10"
         aria-hidden="true"
       />
       <div
-        className="absolute top-1/2 right-1/4 -translate-y-1/2 w-80 h-80 bg-blue-500/[0.06] rounded-full blur-[100px] pointer-events-none -z-10"
+        className="absolute top-1/2 right-1/4 -translate-y-1/2 w-96 h-96 bg-blue-500/[0.04] rounded-full blur-[130px] pointer-events-none -z-10"
         aria-hidden="true"
       />
 
-      {/* 4-Column Responsive Grid */}
+      {/* 4-Column Responsive Grid floating seamlessly */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-10 gap-x-6 sm:gap-x-8 sm:gap-y-12 items-center justify-center">
         {METRICS_DATA.map((metric, index) => {
           const delayEntrance = index * 0.14 // Staggered pop-up entrance
@@ -140,33 +136,11 @@ export const ImpactMetrics: React.FC = () => {
             >
               {/* Circular Icon with Emerald Ring & Soft Radiant Glow */}
               <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full border border-emerald-400/50 bg-emerald-500/10 flex items-center justify-center text-emerald-400 shadow-[0_0_20px_rgba(52,211,153,0.18)] group-hover:scale-108 group-hover:border-emerald-300 group-hover:shadow-[0_0_28px_rgba(52,211,153,0.32)] transition-all duration-300">
-                {metric.iconType === 'material' && metric.iconName && (
-                  <MaterialIcon
-                    name={metric.iconName}
-                    size={30}
-                    className="text-emerald-400 group-hover:text-emerald-300 transition-colors"
-                  />
-                )}
-
-                {metric.iconType === 'scalpel' && (
-                  /* Custom Scalpel icon cutting an incision line */
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="w-7 h-7 sm:w-8 sm:h-8 text-emerald-400 group-hover:text-emerald-300 transition-colors"
-                    aria-hidden="true"
-                  >
-                    {/* Angled Scalpel Blade */}
-                    <path d="m14 4 6 6-9 9-4.5.5.5-4.5 9-9Z" />
-                    <path d="m17 7-2 2" />
-                    {/* Incision Line */}
-                    <path d="M3 21h8" strokeWidth="2" />
-                  </svg>
-                )}
+                <MaterialIcon
+                  name={metric.iconName}
+                  size={30}
+                  className="text-emerald-400 group-hover:text-emerald-300 transition-colors"
+                />
               </div>
 
               {/* Metric Label: Clean Uppercase with Letter Spacing */}

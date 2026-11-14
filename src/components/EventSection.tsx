@@ -241,7 +241,7 @@ export const EventSection: React.FC = () => {
         <div 
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 lg:p-10 bg-black/85 backdrop-blur-2xl animate-fade-in"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 lg:p-10 bg-black/50 backdrop-blur-sm animate-fade-in"
           onClick={() => setIsModalOpen(false)}
         >
           <div 

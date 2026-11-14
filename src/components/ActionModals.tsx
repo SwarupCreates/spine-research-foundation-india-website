@@ -32,7 +32,7 @@ export const BaseModal: React.FC<ModalProps> = ({
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-xl animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200"
       onClick={onClose}
     >
       <div 
@@ -106,7 +106,7 @@ export const ParticipateModal: React.FC<{
                 type="button"
                 key={opt.id}
                 onClick={() => setSelectedRole(opt.id)}
-                className={`p-3 sm:p-3.5 rounded-2xl border text-left text-xs sm:text-sm font-medium transition-all cursor-pointer flex flex-col gap-2 ${
+                className={`p-3 sm:p-3.5 rounded-2xl border text-left text-xs sm:text-sm font-medium transition-all cursor-pointer flex items-center gap-2.5 sm:gap-3 ${
                   selectedRole === opt.id
                     ? 'border-emerald-500 bg-emerald-500/15 text-white shadow-[0_0_16px_rgba(16,185,129,0.12)]'
                     : 'border-white/10 bg-white/[0.03] text-gray-300 hover:bg-white/[0.06] hover:border-white/15'
@@ -116,9 +116,11 @@ export const ParticipateModal: React.FC<{
                   name={opt.icon}
                   size={20}
                   filled={selectedRole === opt.id}
-                  className={selectedRole === opt.id ? 'text-emerald-400' : 'text-gray-400'}
+                  className={`shrink-0 transition-colors ${
+                    selectedRole === opt.id ? 'text-emerald-400' : 'text-gray-400'
+                  }`}
                 />
-                <span className="font-medium leading-tight">{opt.label}</span>
+                <span className="font-medium leading-snug">{opt.label}</span>
               </button>
             ))}
           </div>

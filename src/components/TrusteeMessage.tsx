@@ -110,8 +110,8 @@ export const TrusteeMessage: React.FC = () => {
               <div className="w-10 h-0.5 bg-emerald-500/40 mt-2.5 rounded-full mx-auto lg:mx-0" />
             </div>
 
-            {/* Shortened Width Container with Hidden Scrollbar and Edge Transparency */}
-            <div className="relative">
+            {/* Shortened Width Container with Hidden Scrollbar and Edge Transparency - slightly narrowed on phone */}
+            <div className="relative px-3.5 sm:px-0">
               <div
                 ref={scrollRef}
                 className="overflow-y-auto no-scrollbar max-h-[290px] sm:max-h-[320px] lg:max-h-[350px] space-y-3.5 text-gray-300 text-sm sm:text-base lg:text-[var(--font-size-card-body,16px)] font-medium leading-relaxed select-text"

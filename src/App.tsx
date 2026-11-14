@@ -74,12 +74,12 @@ export const App: React.FC = () => {
       <GradualBlur
         position="top"
         target="page"
-        height="7.5rem"
-        strength={2.5}
+        height="10rem"
+        strength={2.8}
         layers={8}
         curve="linear"
         exponential
-        tint="rgba(11, 12, 14, 0.7)"
+        tint="rgba(11, 12, 14, 0.82)"
         autoHide
         zIndex={30}
       />

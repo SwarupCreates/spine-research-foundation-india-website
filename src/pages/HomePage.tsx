@@ -108,21 +108,42 @@ export const HomePage: React.FC<HomePageProps> = ({
           />
         </div>
 
-        {/* Gradual blur softening as we move up to the overlay */}
-        <GradualBlur
-          position="bottom"
-          target="parent"
-          height="60%"
-          strength={2.2}
-          layers={8}
-          curve="linear"
-          exponential
-          zIndex={2}
-        />
+        {/* Gradual blur softening as we move up to the overlay: reduced height (~35%) on mobile so more background image is visible */}
+        <div className="block sm:hidden">
+          <GradualBlur
+            position="bottom"
+            target="parent"
+            height="35%"
+            strength={1.8}
+            layers={8}
+            curve="linear"
+            exponential
+            zIndex={2}
+          />
+        </div>
+        <div className="hidden sm:block">
+          <GradualBlur
+            position="bottom"
+            target="parent"
+            height="60%"
+            strength={2.2}
+            layers={8}
+            curve="linear"
+            exponential
+            zIndex={2}
+          />
+        </div>
 
-        {/* Vertical bottom-to-top linear gradient overlay: Smoothly merges into #0b0c0e */}
+        {/* Vertical bottom-to-top linear gradient overlay: Smoothly merges into #0b0c0e with lower fade zone on mobile */}
         <div 
-          className="absolute inset-0 pointer-events-none"
+          className="sm:hidden absolute inset-0 pointer-events-none"
+          style={{
+            background: 'linear-gradient(to top, #0b0c0e 0%, rgba(11, 12, 14, 0.96) 16%, rgba(11, 12, 14, 0.4) 34%, rgba(11, 12, 14, 0) 60%)',
+            zIndex: 3
+          }}
+        />
+        <div 
+          className="hidden sm:block absolute inset-0 pointer-events-none"
           style={{
             background: 'linear-gradient(to top, #0b0c0e 0%, rgba(11, 12, 14, 0.96) 28%, rgba(11, 12, 14, 0.52) 58%, rgba(11, 12, 14, 0) 100%)',
             zIndex: 3

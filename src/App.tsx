@@ -6,6 +6,8 @@ import EventSection from './components/EventSection'
 import PromiseCard from './components/PromiseCard'
 import EducationCard from './components/EducationCard'
 import TrusteeMessage from './components/TrusteeMessage'
+import ImpactMetrics from './components/ImpactMetrics'
+import MisconceptionsCard from './components/MisconceptionsCard'
 import FloatingActions from './components/FloatingActions'
 import CustomScrollbar from './components/CustomScrollbar'
 import GradualBlur from './components/GradualBlur'
@@ -15,6 +17,7 @@ import {
   ReadMoreModal,
   PromiseModal,
   EducationModal,
+  MisconceptionsModal,
 } from './components/ActionModals'
 import { SrfLogo } from './components/icons'
 
@@ -25,6 +28,7 @@ export const App: React.FC = () => {
   const [isReadMoreOpen, setIsReadMoreOpen] = useState(false)
   const [isPromiseOpen, setIsPromiseOpen] = useState(false)
   const [isEducationOpen, setIsEducationOpen] = useState(false)
+  const [isMisconceptionsOpen, setIsMisconceptionsOpen] = useState(false)
 
   return (
     <div className="min-h-screen bg-[#0b0c0e] text-slate-100 flex flex-col relative selection:bg-emerald-500 selection:text-white font-medium">
@@ -101,11 +105,17 @@ export const App: React.FC = () => {
             <GlassCard onReadMore={() => setIsReadMoreOpen(true)} />
             <EventSection />
             <PromiseCard onCheckOutMore={() => setIsPromiseOpen(true)} />
-            <EducationCard onCheckOutMore={() => setIsEducationOpen(true)} />
           </div>
 
           {/* Managing Trustee's Message on Base Background */}
           <TrusteeMessage />
+
+          {/* Education & Research, Humanitarian Impact Metrics, and Misconceptions Section */}
+          <div className="max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 space-y-4 sm:space-y-5">
+            <EducationCard onCheckOutMore={() => setIsEducationOpen(true)} />
+            <ImpactMetrics />
+            <MisconceptionsCard onCheckOutMore={() => setIsMisconceptionsOpen(true)} />
+          </div>
         </main>
 
         {/* Footer */}
@@ -176,6 +186,11 @@ export const App: React.FC = () => {
       <EducationModal
         isOpen={isEducationOpen}
         onClose={() => setIsEducationOpen(false)}
+      />
+
+      <MisconceptionsModal
+        isOpen={isMisconceptionsOpen}
+        onClose={() => setIsMisconceptionsOpen(false)}
       />
     </div>
   )

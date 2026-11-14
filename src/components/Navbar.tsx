@@ -49,26 +49,26 @@ export const Navbar: React.FC<NavbarProps> = ({
           onClick={() => handleSelect('home')}
           onMouseEnter={() => setIsLogoHovered(true)}
           onMouseLeave={() => setIsLogoHovered(false)}
-          className="relative flex items-center gap-3.5 group focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 rounded-xl p-1.5 transition cursor-pointer"
+          className="relative flex items-center gap-2 sm:gap-2.5 group focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 rounded-xl p-1.5 transition cursor-pointer"
           aria-label="SRF India Home"
         >
-          {/* Brand Gradient Glow on Hover: #1B9AF7 (blue) to #87CD46 (green) - Soft, Refined & Elegant */}
-          <motion.div
-            className="absolute -inset-x-6 -inset-y-3 pointer-events-none -z-10 rounded-3xl blur-2xl"
-            initial={{ opacity: 0, scale: 0.92 }}
-            animate={{
-              opacity: isLogoHovered ? 0.58 : 0,
-              scale: isLogoHovered ? 1.06 : 0.92,
-            }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            style={{
-              background: 'radial-gradient(ellipse at 30% 50%, rgba(27, 154, 247, 0.55) 0%, rgba(135, 205, 70, 0.42) 50%, rgba(27, 154, 247, 0.12) 75%, transparent 100%)',
-            }}
-            aria-hidden="true"
-          />
-
-          {/* Logo Container with Smooth White-to-Color Transformation */}
+          {/* Logo Container with Smooth White-to-Color Transformation & Centered Glow */}
           <div className="relative w-10 h-10 sm:w-11 sm:h-11 flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
+            {/* Brand Gradient Glow strictly around the circular Logomark on the left */}
+            <motion.div
+              className="absolute -inset-2.5 sm:-inset-3 pointer-events-none -z-10 rounded-full blur-xl"
+              initial={{ opacity: 0, scale: 0.85 }}
+              animate={{
+                opacity: isLogoHovered ? 0.75 : 0,
+                scale: isLogoHovered ? 1.18 : 0.85,
+              }}
+              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              style={{
+                background: 'radial-gradient(circle, rgba(27, 154, 247, 0.7) 0%, rgba(135, 205, 70, 0.52) 55%, transparent 100%)',
+              }}
+              aria-hidden="true"
+            />
+
             {/* White Logo (default, crossfades out on hover) */}
             <motion.div
               className="absolute inset-0 flex items-center justify-center text-white"
@@ -100,7 +100,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <motion.div
               layout
               className={`font-jost select-none flex ${
-                isLogoHovered ? 'flex-col items-start gap-y-0.5' : 'flex-row items-baseline'
+                isLogoHovered ? 'flex-col items-start gap-y-0 leading-none' : 'flex-row items-baseline'
               }`}
               animate={{
                 scale: isLogoHovered ? 0.82 : 1,
@@ -112,14 +112,14 @@ export const Navbar: React.FC<NavbarProps> = ({
               }}
             >
               {/* Line 1: S[PINE] + R[ESEARCH] */}
-              <motion.div layout className="flex items-baseline whitespace-nowrap">
+              <motion.div layout className="flex items-baseline whitespace-nowrap leading-none py-0.5">
                 {/* Word 1: S + PINE */}
-                <span className="flex items-baseline">
-                  <span className="font-semibold text-white tracking-[0.14em] text-lg sm:text-[21px]">
+                <span className="flex items-baseline leading-none">
+                  <span className="font-semibold text-white tracking-[0.14em] text-lg sm:text-[21px] leading-none">
                     S
                   </span>
                   <motion.span
-                    className="overflow-hidden inline-block font-semibold text-white tracking-[0.12em] text-lg sm:text-[21px]"
+                    className="overflow-hidden inline-block font-semibold text-white tracking-[0.12em] text-lg sm:text-[21px] leading-none"
                     initial={false}
                     animate={{
                       maxWidth: isLogoHovered ? 80 : 0,
@@ -133,17 +133,17 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                 {/* Word 2: R + ESEARCH */}
                 <motion.span
-                  className="flex items-baseline"
+                  className="flex items-baseline leading-none"
                   animate={{
                     marginLeft: isLogoHovered ? '0.36em' : '0.04em',
                   }}
                   transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  <span className="font-semibold text-white tracking-[0.14em] text-lg sm:text-[21px]">
+                  <span className="font-semibold text-white tracking-[0.14em] text-lg sm:text-[21px] leading-none">
                     R
                   </span>
                   <motion.span
-                    className="overflow-hidden inline-block font-semibold text-white tracking-[0.12em] text-lg sm:text-[21px]"
+                    className="overflow-hidden inline-block font-semibold text-white tracking-[0.12em] text-lg sm:text-[21px] leading-none"
                     initial={false}
                     animate={{
                       maxWidth: isLogoHovered ? 130 : 0,
@@ -159,19 +159,19 @@ export const Navbar: React.FC<NavbarProps> = ({
               {/* Line 2: F[OUNDATION] + INDIA */}
               <motion.div
                 layout
-                className="flex items-baseline whitespace-nowrap"
+                className="flex items-baseline whitespace-nowrap leading-none py-0.5"
                 animate={{
                   marginLeft: isLogoHovered ? '0em' : '0.04em',
                 }}
                 transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
               >
                 {/* Word 3: F + OUNDATION */}
-                <span className="flex items-baseline">
-                  <span className="font-semibold text-white tracking-[0.14em] text-lg sm:text-[21px]">
+                <span className="flex items-baseline leading-none">
+                  <span className="font-semibold text-white tracking-[0.14em] text-lg sm:text-[21px] leading-none">
                     F
                   </span>
                   <motion.span
-                    className="overflow-hidden inline-block font-semibold text-white tracking-[0.12em] text-lg sm:text-[21px]"
+                    className="overflow-hidden inline-block font-semibold text-white tracking-[0.12em] text-lg sm:text-[21px] leading-none"
                     initial={false}
                     animate={{
                       maxWidth: isLogoHovered ? 160 : 0,
@@ -185,9 +185,9 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                 {/* Word 4: INDIA */}
                 <motion.span
-                  className="font-normal text-white tracking-[0.16em] inline-block text-lg sm:text-[21px]"
+                  className="font-normal text-white tracking-[0.16em] inline-block text-lg sm:text-[21px] leading-none"
                   animate={{
-                    marginLeft: isLogoHovered ? '0.36em' : '0.65em',
+                    marginLeft: isLogoHovered ? '0.34em' : '0.24em',
                     opacity: isLogoHovered ? 0.6 : 0.48,
                   }}
                   transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}

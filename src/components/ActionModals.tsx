@@ -335,3 +335,46 @@ export const EducationModal: React.FC<{
     </BaseModal>
   )
 }
+
+export const MisconceptionsModal: React.FC<{
+  isOpen: boolean
+  onClose: () => void
+}> = ({ isOpen, onClose }) => {
+  return (
+    <BaseModal isOpen={isOpen} onClose={onClose} title="Debunking Spine Surgery Myths">
+      <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
+        <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 flex items-start gap-3">
+          <MaterialIcon name="fact_check" size={24} className="shrink-0 mt-0.5 text-emerald-400" />
+          <p className="text-sm font-medium leading-relaxed">
+            &ldquo;Getting authentic information for your illness is difficult. The SRF team urges you to not fall prey to wrong ideas and notions of spine surgery.&rdquo;
+          </p>
+        </div>
+
+        <p className="text-sm text-gray-300 font-medium leading-relaxed">
+          Spine surgery in modern times has evolved with microscopic, endoscopic, and navigation-guided precision. Misconceptions about permanent paralysis or prolonged immobility often delay essential intervention when timely care could offer complete recovery.
+        </p>
+
+        <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.08] backdrop-blur-md space-y-2">
+          <h5 className="text-sm font-medium text-emerald-400 flex items-center gap-1.5">
+            <MaterialIcon name="verified" size={18} filled />
+            <span className="font-medium">Common Myths vs. Scientific Reality</span>
+          </h5>
+          <ul className="text-xs sm:text-sm text-gray-300 font-medium space-y-2 list-disc list-inside">
+            <li><strong className="text-white">Myth:</strong> Spine surgery leaves you bedridden forever.<br /><span className="text-emerald-400/90 pl-4 block text-xs">Reality: Most patients walk within 24–48 hours post-op.</span></li>
+            <li><strong className="text-white">Myth:</strong> Every back ache requires an operation.<br /><span className="text-emerald-400/90 pl-4 block text-xs">Reality: Over 90% of spinal conditions are managed non-surgically.</span></li>
+            <li><strong className="text-white">Myth:</strong> Spine surgeries always fail.<br /><span className="text-emerald-400/90 pl-4 block text-xs">Reality: Modern techniques achieve high success and long-term relief.</span></li>
+          </ul>
+        </div>
+
+        <div className="pt-2 flex justify-end">
+          <button
+            onClick={onClose}
+            className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium transition cursor-pointer"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </BaseModal>
+  )
+}

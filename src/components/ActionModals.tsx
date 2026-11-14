@@ -36,7 +36,7 @@ export const BaseModal: React.FC<ModalProps> = ({
       onClick={onClose}
     >
       <div 
-        className="relative w-full max-w-lg rounded-3xl bg-[#121317]/95 border border-white/[0.12] backdrop-blur-2xl p-6 sm:p-7 shadow-2xl overflow-hidden"
+        className="relative w-full max-w-lg rounded-3xl bg-[#121317]/95 border border-white/[0.12] backdrop-blur-2xl p-5 sm:p-7 shadow-2xl overflow-hidden"
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
@@ -95,7 +95,7 @@ export const ParticipateModal: React.FC<{
             SRF India is dedicated to providing life-changing spinal care to underprivileged patients. How would you like to participate?
           </p>
 
-          <div className="grid grid-cols-2 gap-2.5">
+          <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
             {[
               { id: 'sponsor', label: 'Support a Patient', icon: 'favorite' },
               { id: 'volunteer', label: 'Volunteer / Doctor', icon: 'medical_services' },
@@ -106,7 +106,7 @@ export const ParticipateModal: React.FC<{
                 type="button"
                 key={opt.id}
                 onClick={() => setSelectedRole(opt.id)}
-                className={`p-3 sm:p-3.5 rounded-2xl border text-left text-xs sm:text-sm font-medium transition-all cursor-pointer flex items-center gap-2.5 sm:gap-3 ${
+                className={`px-2.5 py-2.5 sm:p-3.5 rounded-2xl border text-left text-[11.5px] sm:text-sm font-medium transition-all cursor-pointer flex items-center gap-1.5 sm:gap-2.5 overflow-hidden ${
                   selectedRole === opt.id
                     ? 'border-emerald-500 bg-emerald-500/15 text-white shadow-[0_0_16px_rgba(16,185,129,0.12)]'
                     : 'border-white/10 bg-white/[0.03] text-gray-300 hover:bg-white/[0.06] hover:border-white/15'
@@ -114,13 +114,13 @@ export const ParticipateModal: React.FC<{
               >
                 <MaterialIcon
                   name={opt.icon}
-                  size={20}
+                  size={18}
                   filled={selectedRole === opt.id}
-                  className={`shrink-0 transition-colors ${
+                  className={`shrink-0 transition-colors sm:scale-110 ${
                     selectedRole === opt.id ? 'text-emerald-400' : 'text-gray-400'
                   }`}
                 />
-                <span className="font-medium leading-snug">{opt.label}</span>
+                <span className="font-medium leading-none whitespace-nowrap">{opt.label}</span>
               </button>
             ))}
           </div>

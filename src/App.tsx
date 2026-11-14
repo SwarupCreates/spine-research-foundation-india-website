@@ -26,9 +26,15 @@ export const App: React.FC = () => {
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
-  // Automatically close mobile menu and scroll to top upon navigating
+  // Automatically close mobile menu, dismiss any open modals, and scroll to top upon navigating
   useEffect(() => {
     setIsMobileMenuOpen(false)
+    setIsParticipateOpen(false)
+    setIsFeedbackOpen(false)
+    setIsReadMoreOpen(false)
+    setIsPromiseOpen(false)
+    setIsEducationOpen(false)
+    setIsMisconceptionsOpen(false)
     window.scrollTo(0, 0)
     // Synchronize ScrollTrigger coordinate triggers after route switch
     ScrollTrigger.refresh()
@@ -72,7 +78,7 @@ export const App: React.FC = () => {
         exponential
         tint={isMobileMenuOpen ? 'rgba(11, 12, 14, 0.94)' : 'rgba(11, 12, 14, 0.82)'}
         autoHide={!isMobileMenuOpen}
-        zIndex={30}
+        zIndex={isMobileMenuOpen ? 80 : 30}
         style={{
           transition: 'height 0.38s cubic-bezier(0.16, 1, 0.3, 1), background 0.38s ease',
         }}

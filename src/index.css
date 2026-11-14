@@ -89,19 +89,25 @@ a:hover .material-symbols-outlined,
     'opsz' 24;
 }
 
-/* Glassmorphism containers with calibrated transparency and reduced blur */
+/* Glassmorphism containers with calibrated transparency and robust cross-browser backdrop blur */
 .glass-panel {
   background: var(--glass-card-bg);
-  backdrop-filter: blur(var(--glass-card-blur));
-  -webkit-backdrop-filter: blur(var(--glass-card-blur));
+  -webkit-backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(var(--glass-card-blur, 16px));
+  backdrop-filter: blur(16px);
+  backdrop-filter: blur(var(--glass-card-blur, 16px));
   border: 1px solid var(--glass-card-border);
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
 }
 
 .glass-panel-subtle {
   background: rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.05);
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
 }
 
 /* Floating Action: Contact Button SRF Blue Hover */

@@ -41,17 +41,32 @@ export const Navbar: React.FC<NavbarProps> = ({
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full transition-all duration-300 bg-transparent border-0 backdrop-blur-none">
-      <div className="max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 h-20 flex items-center justify-between gap-4">
+    <header className="sticky top-0 z-50 w-full transition-all duration-300 bg-transparent border-0 backdrop-blur-none pt-1.5 sm:pt-2.5">
+      <div className="max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 h-20 flex items-center justify-between gap-4">
         {/* Brand Logo & Interactive Morphing Brand Name in Jost font */}
         <a
           href="#home"
           onClick={() => handleSelect('home')}
           onMouseEnter={() => setIsLogoHovered(true)}
           onMouseLeave={() => setIsLogoHovered(false)}
-          className="flex items-center gap-3.5 group focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 rounded-xl p-1 transition cursor-pointer"
+          className="relative flex items-center gap-3.5 group focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 rounded-xl p-1.5 transition cursor-pointer"
           aria-label="SRF India Home"
         >
+          {/* Subtle Logo Brand Gradient Glow on Hover: #1B9AF7 (blue) to #87CD46 (green) */}
+          <motion.div
+            className="absolute -inset-x-3 -inset-y-1.5 pointer-events-none -z-10 rounded-2xl blur-xl"
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{
+              opacity: isLogoHovered ? 0.65 : 0,
+              scale: isLogoHovered ? 1.05 : 0.92,
+            }}
+            transition={{ duration: 0.35, ease: 'easeOut' }}
+            style={{
+              background: 'radial-gradient(ellipse at 35% 55%, rgba(27, 154, 247, 0.45) 0%, rgba(135, 205, 70, 0.38) 55%, transparent 75%)',
+            }}
+            aria-hidden="true"
+          />
+
           {/* Logo Container with Smooth White-to-Color Transformation */}
           <div className="relative w-10 h-10 sm:w-11 sm:h-11 flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
             {/* White Logo (default, crossfades out on hover) */}
@@ -106,7 +121,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                   exit={{ opacity: 0, y: -3, filter: 'blur(3px)' }}
                   transition={{ type: 'spring', stiffness: 450, damping: 32 }}
-                  className="flex flex-col tracking-[0.12em] uppercase text-xs sm:text-[13px] leading-tight"
+                  className="flex flex-col tracking-[0.11em] uppercase text-[13px] sm:text-[15px] lg:text-[16px] leading-[1.18]"
                 >
                   <span className="font-semibold text-white whitespace-nowrap">
                     SPINE RESEARCH

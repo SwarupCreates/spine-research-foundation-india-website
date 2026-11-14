@@ -96,7 +96,7 @@ export const App: React.FC = () => {
           <Hero />
 
           {/* Floating Glass Cards with tight, balanced gap */}
-          <div className="max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-4 sm:space-y-5">
+          <div className="max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 space-y-4 sm:space-y-5">
             <GlassCard onReadMore={() => setIsReadMoreOpen(true)} />
             <EventSection />
             <PromiseCard onCheckOutMore={() => setIsPromiseOpen(true)} />
@@ -109,7 +109,7 @@ export const App: React.FC = () => {
 
         {/* Footer */}
         <footer className="border-t border-white/[0.06] bg-black/40 backdrop-blur-xl py-8 text-center text-xs text-gray-400 font-medium">
-          <div className="max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2.5">
               <div className="w-6 h-6 text-gray-300">
                 <SrfLogo className="w-full h-full text-gray-300" />

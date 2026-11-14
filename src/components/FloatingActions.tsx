@@ -32,8 +32,8 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
 
   return (
     <aside 
-      className={`fixed right-6 z-50 flex items-center gap-3 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
-        isNearFooter ? 'bottom-20 sm:bottom-24 translate-y-0' : 'bottom-6'
+      className={`fixed right-8 sm:right-10 lg:right-12 z-50 flex items-center gap-3.5 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+        isNearFooter ? 'bottom-24 sm:bottom-28 translate-y-0' : 'bottom-8 sm:bottom-10'
       }`}
       aria-label="Quick Actions"
     >

@@ -20,19 +20,18 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#0b0c0e] text-slate-100 flex flex-col relative selection:bg-emerald-500 selection:text-white font-medium">
-      {/* Top Gradual Blur with inward translating motion & dynamic scroll reveal (z-30) */}
+      {/* Top Gradual Blur from React Bits (z-30) */}
       <GradualBlur
         position="top"
         target="page"
-        height="8.5rem"
-        strength={3.5}
-        layers={16}
-        curve="bezier"
-        exponential={false}
-        tint="transparent"
+        height="7.5rem"
+        strength={2.5}
+        layers={8}
+        curve="linear"
+        exponential
+        tint="rgba(11, 12, 14, 0.7)"
         autoHide
         zIndex={30}
-        className="gradual-blur-in-top"
       />
 
       {/* Floating Navbar at z-50: Sits ON TOP of GradualBlur (z-30), staying 100% sharp and unblurred */}
@@ -41,7 +40,7 @@ export const App: React.FC = () => {
         onTabChange={(tabId) => setActiveTab(tabId)}
       />
 
-      {/* Main Content Container at relative z-10: Scrolls UNDER GradualBlur (z-30), dissolving smoothly into blur */}
+      {/* Main Content Container at relative z-10: Scrolls UNDER GradualBlur (z-30) */}
       <div className="relative z-10 flex flex-col flex-1">
         <main className="flex-1 pb-20">
           <Hero />
@@ -72,19 +71,18 @@ export const App: React.FC = () => {
         </footer>
       </div>
 
-      {/* Bottom Gradual Blur with inward translating motion & dynamic scroll reveal (z-30) */}
+      {/* Bottom Gradual Blur from React Bits (z-30) */}
       <GradualBlur
         position="bottom"
         target="page"
-        height="8rem"
-        strength={3.5}
-        layers={16}
-        curve="bezier"
-        exponential={false}
-        tint="transparent"
+        height="7.5rem"
+        strength={2.5}
+        layers={8}
+        curve="linear"
+        exponential
+        tint="rgba(11, 12, 14, 0.7)"
         autoHide
         zIndex={30}
-        className="gradual-blur-in-bottom"
       />
 
       {/* Floating Action Buttons (z-50) */}

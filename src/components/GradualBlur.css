@@ -1,29 +1,3 @@
 .gradual-blur {
   pointer-events: none;
 }
-
-@keyframes blurTranslateInTop {
-  0% {
-    transform: translateY(-20px);
-  }
-  100% {
-    transform: translateY(0);
-  }
-}
-
-@keyframes blurTranslateInBottom {
-  0% {
-    transform: translateY(20px);
-  }
-  100% {
-    transform: translateY(0);
-  }
-}
-
-.gradual-blur-in-top {
-  animation: blurTranslateInTop 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.gradual-blur-in-bottom {
-  animation: blurTranslateInBottom 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}

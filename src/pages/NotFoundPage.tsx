@@ -32,9 +32,9 @@ export const NotFoundPage: React.FC<NotFoundPageProps> = ({
           <span className="tracking-wide uppercase text-[11px] sm:text-xs font-semibold">Error 404 · Instrument Misplaced</span>
         </div>
 
-        {/* Server Error Artwork: Half height (~130px) strictly matching WIP page */}
+        {/* Server Error Artwork: Enhanced size on mobile and desktop */}
         <div className="flex justify-center mb-6 relative">
-          <div className="h-28 sm:h-32 md:h-36 max-w-full flex items-center justify-center filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.55)]">
+          <div className="h-44 sm:h-52 md:h-56 max-w-full flex items-center justify-center filter drop-shadow-[0_16px_32px_rgba(0,0,0,0.6)]">
             <ServerErrorArt className="h-full w-auto max-h-full" />
           </div>
         </div>

@@ -14,8 +14,9 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
   const [bottomSpacing, setBottomSpacing] = useState<number | null>(null)
 
   // Calibrate bottom position dynamically:
-  // When footer starts to enter the viewport from bottom edge,
-  // increase bottom spacing to: OuterEdgeGutter / 2 + CalculatedFooterHeight
+  // When footer starts to enter the viewport from bottom edge on scroll,
+  // increase bottom spacing smoothly to: OuterEdgeGutter / 2 + CalculatedFooterHeight.
+  // When scrolling back up, smoothly trickle back down to the original gutter position.
   useEffect(() => {
     const getOuterEdgeGutter = (): number => {
       if (typeof window === 'undefined') return 48
@@ -33,15 +34,35 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
         return
       }
 
-      const footerRect = footer.getBoundingClientRect()
+      const docHeight = document.documentElement.scrollHeight
+      const windowHeight = window.innerHeight
+      const maxScroll = Math.max(0, docHeight - windowHeight)
+      const scrollY = Math.max(0, window.scrollY || window.pageYOffset || 0)
       const calculatedFooterHeight = footer.offsetHeight || 96
-      const isEntering = footerRect.top < window.innerHeight
+      const targetBottom = Math.round(gutter / 2 + calculatedFooterHeight)
 
-      if (isEntering) {
-        // OuterEdgeGutter / 2 + CalculatedFooterHeight
-        setBottomSpacing(gutter / 2 + calculatedFooterHeight)
-      } else {
+      // When at top of page (scrollY <= 0) or on short pages with minimal scroll range,
+      // floating buttons must always stay at their original lower center/gutter position
+      if (maxScroll <= 24 || scrollY <= 0) {
         setBottomSpacing(gutter)
+        return
+      }
+
+      // Distance from bottom of viewport to bottom of page
+      const scrollFromBottom = Math.max(0, maxScroll - scrollY)
+
+      if (scrollFromBottom >= calculatedFooterHeight) {
+        // Footer has not yet entered the bottom area to interfere with the buttons
+        setBottomSpacing(gutter)
+      } else {
+        // Footer is actively entering/scrolling into view from bottom edge:
+        // Smoothly interpolate from gutter to targetBottom (OuterEdgeGutter / 2 + CalculatedFooterHeight)
+        const progress = Math.min(
+          1,
+          Math.max(0, (calculatedFooterHeight - scrollFromBottom) / calculatedFooterHeight)
+        )
+        const interpolated = gutter + progress * (targetBottom - gutter)
+        setBottomSpacing(Math.round(interpolated))
       }
     }
 
@@ -59,7 +80,7 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
     <aside 
       id="floating-actions"
       data-testid="floating-actions"
-      className={`fixed left-1/2 -translate-x-1/2 sm:left-auto sm:right-10 sm:translate-x-0 lg:right-12 z-50 flex items-center gap-3.5 transition-[bottom] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+      className={`fixed left-1/2 -translate-x-1/2 sm:left-auto sm:right-10 sm:translate-x-0 lg:right-12 z-50 flex items-center gap-3.5 transition-[bottom] duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] ${
         bottomSpacing === null ? 'bottom-8 sm:bottom-10 lg:bottom-12' : ''
       }`}
       style={{

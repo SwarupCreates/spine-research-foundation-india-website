@@ -59,6 +59,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   // Smooth hover transition timings:
   // Deliberate exit delay and multi-phase contraction so nav items on the right never jerk
   const handleLogoMouseEnter = () => {
+    // On mobile view, disable hover animation (expansion is driven by mobile menu state instead)
+    if (typeof window !== 'undefined' && window.innerWidth < 768) return
+
     if (leaveTimer1Ref.current) {
       clearTimeout(leaveTimer1Ref.current)
       leaveTimer1Ref.current = null
@@ -73,6 +76,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   }
 
   const handleLogoMouseLeave = () => {
+    // On mobile view, disable hover animation
+    if (typeof window !== 'undefined' && window.innerWidth < 768) return
+
     if (leaveTimer1Ref.current) clearTimeout(leaveTimer1Ref.current)
     if (leaveTimer2Ref.current) clearTimeout(leaveTimer2Ref.current)
 
@@ -89,6 +95,30 @@ export const Navbar: React.FC<NavbarProps> = ({
       setIsLogoStacked(false)
     }, 600)
   }
+
+  // Mobile View: Link logo expansion to mobile menu opening, and back to acronym on menu closing
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      if (isMenuOpen) {
+        if (leaveTimer1Ref.current) clearTimeout(leaveTimer1Ref.current)
+        if (leaveTimer2Ref.current) clearTimeout(leaveTimer2Ref.current)
+        setIsLogoStacked(true)
+        setIsLogoHovered(true)
+        setIsLogoExpanded(true)
+      } else {
+        if (leaveTimer1Ref.current) clearTimeout(leaveTimer1Ref.current)
+        if (leaveTimer2Ref.current) clearTimeout(leaveTimer2Ref.current)
+        // Smoothly animate back to acronym state when mobile menu closes
+        leaveTimer1Ref.current = setTimeout(() => {
+          setIsLogoHovered(false)
+          setIsLogoExpanded(false)
+        }, 120)
+        leaveTimer2Ref.current = setTimeout(() => {
+          setIsLogoStacked(false)
+        }, 420)
+      }
+    }
+  }, [isMenuOpen])
 
   useEffect(() => {
     return () => {
@@ -362,19 +392,19 @@ export const Navbar: React.FC<NavbarProps> = ({
             variants={{
               open: {
                 opacity: 1,
-                height: 'auto',
+                y: 0,
                 transition: {
-                  duration: 0.35,
+                  duration: 0.22,
                   ease: [0.16, 1, 0.3, 1] as const,
-                  staggerChildren: 0.045,
-                  delayChildren: 0.03,
+                  staggerChildren: 0.02,
+                  delayChildren: 0,
                 },
               },
               closed: {
                 opacity: 0,
-                height: 0,
+                y: -6,
                 transition: {
-                  duration: 0.25,
+                  duration: 0.2,
                   ease: [0.16, 1, 0.3, 1] as const,
                   staggerChildren: 0.02,
                   staggerDirection: -1,
@@ -397,7 +427,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         y: 0,
                         height: 50,
                         transition: {
-                          duration: 0.28,
+                          duration: 0.22,
                           ease: [0.16, 1, 0.3, 1] as const,
                         },
                       },

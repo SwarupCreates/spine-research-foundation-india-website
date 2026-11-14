@@ -25,9 +25,10 @@ export const App: React.FC = () => {
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
-  // Automatically close mobile menu upon navigating
+  // Automatically close mobile menu and scroll to top upon navigating
   useEffect(() => {
     setIsMobileMenuOpen(false)
+    window.scrollTo(0, 0)
   }, [location.pathname])
 
   const handleTabChange = (tabId: string) => {
@@ -49,20 +50,20 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#0b0c0e] text-slate-100 flex flex-col relative selection:bg-emerald-500 selection:text-white font-medium">
-      {/* Top Page-level Gradual Blur: dynamically expands height on mobile menu open */}
+      {/* Top Page-level Gradual Blur: dynamically rolls all the way down (100vh) on mobile menu open */}
       <GradualBlur
         position="top"
         target="page"
-        height={isMobileMenuOpen ? '32rem' : '10rem'}
-        strength={isMobileMenuOpen ? 3.5 : 2.8}
+        height={isMobileMenuOpen ? '100vh' : '10rem'}
+        strength={isMobileMenuOpen ? 4.5 : 2.8}
         layers={8}
         curve="linear"
         exponential
-        tint="rgba(11, 12, 14, 0.82)"
+        tint={isMobileMenuOpen ? 'rgba(11, 12, 14, 0.94)' : 'rgba(11, 12, 14, 0.82)'}
         autoHide={!isMobileMenuOpen}
         zIndex={30}
         style={{
-          transition: 'height 0.45s cubic-bezier(0.16, 1, 0.3, 1)',
+          transition: 'height 0.38s cubic-bezier(0.16, 1, 0.3, 1), background 0.38s ease',
         }}
       />
 

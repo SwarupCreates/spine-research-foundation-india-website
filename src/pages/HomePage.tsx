@@ -59,7 +59,7 @@ export const HomePage: React.FC<HomePageProps> = ({
       currentY += (targetY - currentY) * 0.08
 
       const isMobile = typeof window !== 'undefined' && window.innerWidth < 640
-      const scaleStr = isMobile ? 'scale(1.02)' : 'scale(1.08)'
+      const scaleStr = isMobile ? 'scale(1.15)' : 'scale(1.08)'
 
       if (bannerImgRef.current) {
         bannerImgRef.current.style.transform = `translate3d(0, ${currentY.toFixed(2)}px, 0) ${scaleStr}`
@@ -88,9 +88,9 @@ export const HomePage: React.FC<HomePageProps> = ({
   return (
     <>
       {/* Landing Scroll Level Hero Background Banner with Delayed Parallax & Magnetic Snap */}
-      {/* On mobile: Render at a calibrated height (~42% of viewport) with deep top bleed to prevent any top grey bar */}
+      {/* On mobile: Render with increased height (~58vh) and zoom to cover more background elegantly */}
       <div 
-        className="absolute -top-[100px] sm:-top-[110px] left-0 right-0 h-[calc(42vh+100px)] sm:h-[calc(100vh+110px)] max-h-[calc(44vh+100px)] sm:max-h-none pointer-events-none z-0 overflow-hidden"
+        className="absolute -top-[100px] sm:-top-[110px] left-0 right-0 h-[calc(58vh+100px)] sm:h-[calc(100vh+110px)] max-h-[calc(62vh+100px)] sm:max-h-none pointer-events-none z-0 overflow-hidden"
         aria-hidden="true"
       >
         {/* Generous overscan wrapper ensuring no top edge or gap ever exposes */}
@@ -105,9 +105,9 @@ export const HomePage: React.FC<HomePageProps> = ({
               ref={bannerImgRef}
               src={`${import.meta.env.BASE_URL}banners/Solitary%20Boy%20Amid%20the%20Moving%20Crowd%201.jpg`}
               alt="Spine Research Foundation India patient banner"
-              className="w-full h-full object-cover object-[50%_15%] sm:object-[50%_20%] select-none opacity-90 will-change-transform"
+              className="w-full h-full object-cover object-[50%_12%] sm:object-[50%_20%] select-none opacity-90 will-change-transform"
               style={{
-                transform: 'translate3d(0, 0px, 0) scale(1.02)',
+                transform: 'translate3d(0, 0px, 0) scale(1.15)',
                 transformOrigin: 'center center',
               }}
             />

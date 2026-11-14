@@ -193,7 +193,7 @@ export const EventSection: React.FC = () => {
 
             {/* Action Buttons */}
             <div className="pt-2 flex flex-wrap items-center gap-3">
-              {isPlayingInline ? (
+              {isPlayingInline && (
                 <button
                   type="button"
                   onClick={handlePauseAndCollapse}
@@ -201,15 +201,6 @@ export const EventSection: React.FC = () => {
                 >
                   <MaterialIcon name="pause" size={18} className="text-emerald-400" />
                   <span>Pause &amp; Collapse View</span>
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setIsPlayingInline(true)}
-                  className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 font-medium text-xs sm:text-sm border border-emerald-500/30 transition-all duration-300 backdrop-blur-md shadow-md hover:scale-[1.02] cursor-pointer"
-                >
-                  <MaterialIcon name="play_arrow" size={18} className="text-emerald-400" />
-                  <span>Play Video</span>
                 </button>
               )}
 

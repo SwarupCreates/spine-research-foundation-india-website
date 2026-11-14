@@ -76,10 +76,10 @@ export const WorkInProgressPage: React.FC<WorkInProgressPageProps> = ({
           <span className="tracking-wide uppercase text-[11px] sm:text-xs font-semibold">Under Construction</span>
         </div>
 
-        {/* Work In Progress Artwork */}
+        {/* Work In Progress Artwork: Half height (~130px) matching 404 page */}
         <div className="flex justify-center mb-6 relative">
-          <div className="w-52 sm:w-60 md:w-72 max-w-full h-auto filter drop-shadow-[0_16px_36px_rgba(0,0,0,0.6)]">
-            <WorkInProgressArt className="w-full h-auto" />
+          <div className="h-28 sm:h-32 md:h-36 max-w-full flex items-center justify-center filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.55)]">
+            <WorkInProgressArt className="h-full w-auto max-h-full" />
           </div>
         </div>
 

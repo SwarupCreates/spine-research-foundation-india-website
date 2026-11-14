@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { MaterialIcon } from './icons'
+import AnimatedContent from './AnimatedContent'
 
 export const EventSection: React.FC = () => {
   const [isPlayingInline, setIsPlayingInline] = useState(false)
@@ -157,81 +158,90 @@ export const EventSection: React.FC = () => {
           <motion.div 
             layout
             transition={{ layout: layoutTransition }}
-            className={`${isPlayingInline ? 'w-full space-y-4' : 'lg:col-span-7 space-y-3.5'} text-center sm:text-left`}
+            className={`${isPlayingInline ? 'w-full' : 'lg:col-span-7'}`}
           >
-            <div className="flex justify-center sm:justify-start">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs sm:text-sm font-medium backdrop-blur-md">
-                <MaterialIcon name="medical_services" size={16} />
-                <span>Clinical Excellence Series</span>
+            <AnimatedContent
+              distance={24}
+              stagger={0.08}
+              duration={0.7}
+              ease="power3.out"
+              threshold={0.1}
+              className={`${isPlayingInline ? 'space-y-4' : 'space-y-3.5'} text-center sm:text-left`}
+            >
+              <div className="flex justify-center sm:justify-start">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs sm:text-sm font-medium backdrop-blur-md">
+                  <MaterialIcon name="medical_services" size={16} />
+                  <span>Clinical Excellence Series</span>
+                </div>
               </div>
-            </div>
 
-            <h3 className="text-2xl sm:text-3xl lg:text-[var(--font-size-card-title,28px)] font-medium text-white tracking-tight leading-snug">
-              Chiari Malformation Surgery
-            </h3>
+              <h3 className="text-2xl sm:text-3xl lg:text-[var(--font-size-card-title,28px)] font-medium text-white tracking-tight leading-snug">
+                Chiari Malformation Surgery
+              </h3>
 
-            <p className="text-gray-300 text-sm sm:text-base lg:text-[var(--font-size-card-body,16px)] font-medium leading-relaxed">
-              An insightful surgical walkthrough by renowned spine specialist Dr. Saumyajit Basu,
-              demonstrating advanced posterior fossa decompression techniques for Chiari Malformation.
-              This procedure relieves pressure on the cerebellum and brainstem while restoring natural
-              cerebrospinal fluid (CSF) flow.
-            </p>
+              <p className="text-gray-300 text-sm sm:text-base lg:text-[var(--font-size-card-body,16px)] font-medium leading-relaxed">
+                An insightful surgical walkthrough by renowned spine specialist Dr. Saumyajit Basu,
+                demonstrating advanced posterior fossa decompression techniques for Chiari Malformation.
+                This procedure relieves pressure on the cerebellum and brainstem while restoring natural
+                cerebrospinal fluid (CSF) flow.
+              </p>
 
-            {/* Feature Bullets */}
-            <div className="pt-1 flex flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-4 text-xs sm:text-sm text-gray-300">
-              <div className="flex items-center gap-1.5 bg-white/[0.03] px-3 py-1 rounded-full border border-white/[0.06]">
-                <MaterialIcon name="check_circle" size={16} className="text-emerald-400" />
-                <span>Decompression Technique</span>
+              {/* Feature Bullets */}
+              <div className="pt-1 flex flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-4 text-xs sm:text-sm text-gray-300">
+                <div className="flex items-center gap-1.5 bg-white/[0.03] px-3 py-1 rounded-full border border-white/[0.06]">
+                  <MaterialIcon name="check_circle" size={16} className="text-emerald-400" />
+                  <span>Decompression Technique</span>
+                </div>
+                <div className="flex items-center gap-1.5 bg-white/[0.03] px-3 py-1 rounded-full border border-white/[0.06]">
+                  <MaterialIcon name="verified_user" size={16} className="text-emerald-400" />
+                  <span>Posterior Fossa Surgery</span>
+                </div>
+                <div className="flex items-center gap-1.5 bg-white/[0.03] px-3 py-1 rounded-full border border-white/[0.06]">
+                  <MaterialIcon name="smart_display" size={16} className="text-emerald-400" />
+                  <span>SRF Case Study</span>
+                </div>
               </div>
-              <div className="flex items-center gap-1.5 bg-white/[0.03] px-3 py-1 rounded-full border border-white/[0.06]">
-                <MaterialIcon name="verified_user" size={16} className="text-emerald-400" />
-                <span>Posterior Fossa Surgery</span>
-              </div>
-              <div className="flex items-center gap-1.5 bg-white/[0.03] px-3 py-1 rounded-full border border-white/[0.06]">
-                <MaterialIcon name="smart_display" size={16} className="text-emerald-400" />
-                <span>SRF Case Study</span>
-              </div>
-            </div>
 
-            {/* Action Buttons */}
-            <div className="pt-2 flex flex-wrap items-center justify-center sm:justify-start gap-3">
-              {isPlayingInline && (
+              {/* Action Buttons */}
+              <div className="pt-2 flex flex-wrap items-center justify-center sm:justify-start gap-3">
+                {isPlayingInline && (
+                  <button
+                    type="button"
+                    onClick={handlePauseAndCollapse}
+                    className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-medium text-xs sm:text-sm border border-white/15 transition-all duration-300 backdrop-blur-md shadow-md hover:scale-[1.02] cursor-pointer"
+                  >
+                    <MaterialIcon name="pause" size={18} className="text-emerald-400" />
+                    <span>Pause &amp; Collapse View</span>
+                  </button>
+                )}
+
+                {/* Watch in Cinema Mode */}
                 <button
                   type="button"
-                  onClick={handlePauseAndCollapse}
+                  onClick={() => setIsModalOpen(true)}
                   className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-medium text-xs sm:text-sm border border-white/15 transition-all duration-300 backdrop-blur-md shadow-md hover:scale-[1.02] cursor-pointer"
                 >
-                  <MaterialIcon name="pause" size={18} className="text-emerald-400" />
-                  <span>Pause &amp; Collapse View</span>
+                  <MaterialIcon name="fullscreen" size={18} />
+                  <span>Cinema Mode</span>
                 </button>
-              )}
 
-              {/* Watch in Cinema Mode */}
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(true)}
-                className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-medium text-xs sm:text-sm border border-white/15 transition-all duration-300 backdrop-blur-md shadow-md hover:scale-[1.02] cursor-pointer"
-              >
-                <MaterialIcon name="fullscreen" size={18} />
-                <span>Cinema Mode</span>
-              </button>
-
-              {/* View on YouTube with Official YouTube SVG Logo and Red Glow Hover */}
-              <a
-                href={`https://www.youtube.com/watch?v=${videoId}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 hover:bg-[#FF0000] text-white hover:text-white font-medium text-xs sm:text-sm border border-white/15 hover:border-[#FF0000] transition-all duration-300 backdrop-blur-md shadow-md hover:shadow-[0_0_24px_rgba(255,0,0,0.65)] hover:scale-[1.02] cursor-pointer"
-              >
-                <svg 
-                  className="w-4 h-4 fill-white shrink-0 transition-transform duration-200 group-hover:scale-110" 
-                  viewBox="0 0 24 24"
+                {/* View on YouTube with Official YouTube SVG Logo and Red Glow Hover */}
+                <a
+                  href={`https://www.youtube.com/watch?v=${videoId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 hover:bg-[#FF0000] text-white hover:text-white font-medium text-xs sm:text-sm border border-white/15 hover:border-[#FF0000] transition-all duration-300 backdrop-blur-md shadow-md hover:shadow-[0_0_24px_rgba(255,0,0,0.65)] hover:scale-[1.02] cursor-pointer"
                 >
-                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-                </svg>
-                <span>View on YouTube</span>
-              </a>
-            </div>
+                  <svg 
+                    className="w-4 h-4 fill-white shrink-0 transition-transform duration-200 group-hover:scale-110" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                  </svg>
+                  <span>View on YouTube</span>
+                </a>
+              </div>
+            </AnimatedContent>
           </motion.div>
         </motion.div>
       </motion.div>

@@ -1,5 +1,6 @@
 import React from 'react'
 import { SrfLogo, MaterialIcon } from './icons'
+import AnimatedContent from './AnimatedContent'
 
 interface GlassCardProps {
   onReadMore?: () => void
@@ -36,8 +37,15 @@ export const GlassCard: React.FC<GlassCardProps> = ({ onReadMore }) => {
         </div>
       </div>
 
-      {/* Foreground Content - Centered on mobile, Left Aligned on sm/desktop */}
-      <div className="relative z-10 max-w-xl lg:max-w-2xl text-center sm:text-left mx-auto sm:mx-0 space-y-3 sm:space-y-4">
+      {/* Foreground Content - Animated reveal with staggered entrance for title, body, and CTA button */}
+      <AnimatedContent 
+        distance={24}
+        stagger={0.08}
+        duration={0.7}
+        ease="power3.out"
+        threshold={0.1}
+        className="relative z-10 max-w-xl lg:max-w-2xl text-center sm:text-left mx-auto sm:mx-0 space-y-3 sm:space-y-4"
+      >
         <h2 className="text-2xl sm:text-3xl lg:text-[var(--font-size-card-title,28px)] font-medium text-white tracking-tight leading-snug">
           The best of health care within your reach
         </h2>
@@ -69,7 +77,7 @@ export const GlassCard: React.FC<GlassCardProps> = ({ onReadMore }) => {
             </span>
           </button>
         </div>
-      </div>
+      </AnimatedContent>
     </div>
   )
 }

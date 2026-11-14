@@ -1,6 +1,7 @@
 import React from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { WorkInProgressArt, MaterialIcon } from '../components/icons'
+import AnimatedContent from '../components/AnimatedContent'
 
 interface WorkInProgressPageProps {
   sectionTitle?: string
@@ -60,7 +61,14 @@ export const WorkInProgressPage: React.FC<WorkInProgressPageProps> = ({
 
   return (
     <div className="min-h-[75vh] flex items-center justify-center py-16 sm:py-24 px-4 sm:px-6 lg:px-8 relative z-10">
-      <div className="relative w-full max-w-3xl mx-auto text-center">
+      <AnimatedContent 
+        trigger="mount"
+        distance={25}
+        stagger={0.08}
+        duration={0.7}
+        ease="power3.out"
+        className="relative w-full max-w-3xl mx-auto text-center"
+      >
         {/* Soft atmospheric ambient glow centered behind the floating artwork */}
         <div 
           className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 sm:w-[480px] h-96 sm:h-[480px] rounded-full pointer-events-none -z-10 blur-3xl opacity-30"
@@ -127,7 +135,7 @@ export const WorkInProgressPage: React.FC<WorkInProgressPageProps> = ({
             </button>
           )}
         </div>
-      </div>
+      </AnimatedContent>
     </div>
   )
 }

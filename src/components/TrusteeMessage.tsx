@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { MaterialIcon } from './icons'
+import AnimatedContent from './AnimatedContent'
 
 export const TrusteeMessage: React.FC = () => {
   const [scrollState, setScrollState] = useState({
@@ -59,7 +60,13 @@ export const TrusteeMessage: React.FC = () => {
         <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-14">
           
           {/* Left Column: Larger, dignified Doctor's Image & Floating Identity Details */}
-          <div className="relative flex flex-col items-center shrink-0">
+          <AnimatedContent
+            distance={32}
+            duration={0.8}
+            ease="power3.out"
+            threshold={0.1}
+            className="relative flex flex-col items-center shrink-0"
+          >
             {/* Generously sized Doctor portrait with gradual bottom transparency */}
             <div className="relative w-[280px] sm:w-[330px] lg:w-[370px] h-[340px] sm:h-[400px] lg:h-[440px] flex items-end justify-center">
               {/* Ambient silhouette glow behind the doctor */}
@@ -95,10 +102,17 @@ export const TrusteeMessage: React.FC = () => {
                 <span>Senior Consultant Spine Surgeon</span>
               </div>
             </div>
-          </div>
+          </AnimatedContent>
 
           {/* Right Column: Shortened Text Box Container & Scrollable Message */}
-          <div className="max-w-lg lg:max-w-xl w-full flex flex-col justify-center">
+          <AnimatedContent
+            distance={32}
+            delay={0.12}
+            duration={0.8}
+            ease="power3.out"
+            threshold={0.1}
+            className="max-w-lg lg:max-w-xl w-full flex flex-col justify-center"
+          >
             {/* Minimal & Consistent Heading in Google Sans Flex */}
             <div className="mb-3.5 text-center lg:text-left">
               <span className="text-xs uppercase tracking-[0.18em] text-emerald-400 font-medium block">
@@ -145,7 +159,7 @@ export const TrusteeMessage: React.FC = () => {
                 </p>
               </div>
             </div>
-          </div>
+          </AnimatedContent>
 
         </div>
       </div>

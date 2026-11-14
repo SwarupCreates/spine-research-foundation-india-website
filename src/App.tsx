@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Navbar from './components/Navbar'
 import FloatingActions from './components/FloatingActions'
 import CustomScrollbar from './components/CustomScrollbar'
@@ -29,6 +30,8 @@ export const App: React.FC = () => {
   useEffect(() => {
     setIsMobileMenuOpen(false)
     window.scrollTo(0, 0)
+    // Synchronize ScrollTrigger coordinate triggers after route switch
+    ScrollTrigger.refresh()
   }, [location.pathname])
 
   // Support ?connect=true query parameter to trigger Connect Modal from external or internal links

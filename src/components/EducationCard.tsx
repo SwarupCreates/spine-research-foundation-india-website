@@ -1,5 +1,6 @@
 import React from 'react'
 import { MaterialIcon } from './icons'
+import AnimatedContent from './AnimatedContent'
 
 interface EducationCardProps {
   onCheckOutMore?: () => void
@@ -46,8 +47,15 @@ export const EducationCard: React.FC<EducationCardProps> = ({ onCheckOutMore }) 
         />
       </div>
 
-      {/* Foreground Content - Centered on mobile, Left Aligned on sm/desktop */}
-      <div className="relative z-10 max-w-xl lg:max-w-2xl text-center sm:text-left mx-auto sm:mx-0 space-y-3 sm:space-y-4 pt-40 sm:pt-0">
+      {/* Foreground Content - Staggered reveal for badge, title, text, and button */}
+      <AnimatedContent
+        distance={24}
+        stagger={0.08}
+        duration={0.7}
+        ease="power3.out"
+        threshold={0.1}
+        className="relative z-10 max-w-xl lg:max-w-2xl text-center sm:text-left mx-auto sm:mx-0 space-y-3 sm:space-y-4 pt-40 sm:pt-0"
+      >
         <div className="flex justify-center sm:justify-start">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs sm:text-sm font-medium backdrop-blur-md">
             <MaterialIcon name="school" size={16} />
@@ -87,7 +95,7 @@ export const EducationCard: React.FC<EducationCardProps> = ({ onCheckOutMore }) 
             </span>
           </button>
         </div>
-      </div>
+      </AnimatedContent>
     </div>
   )
 }

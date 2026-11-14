@@ -8,9 +8,16 @@ interface GlassCardProps {
 export const GlassCard: React.FC<GlassCardProps> = ({ onReadMore }) => {
   return (
     <div className="relative rounded-3xl sm:rounded-[32px] overflow-hidden glass-panel border border-white/[0.08] px-6 py-8 sm:px-10 sm:py-12 lg:px-14 lg:py-14 text-center sm:text-left shadow-xl transition duration-300 hover:border-white/[0.14]">
-      {/* Mobile Top Forehead Region: Center-aligned watermark above content */}
-      <div className="sm:hidden flex justify-center pt-2 pb-5 select-none pointer-events-none" aria-hidden="true">
-        <div className="w-24 h-24 text-white/35 drop-shadow-[0_0_24px_rgba(255,255,255,0.1)]">
+      {/* Mobile Top Forehead Region: Larger center-aligned watermark with top-to-bottom white gradient */}
+      <div 
+        className="sm:hidden flex justify-center pt-1 pb-4 select-none pointer-events-none overflow-hidden" 
+        aria-hidden="true"
+        style={{
+          maskImage: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.12) 55%, rgba(255, 255, 255, 0) 100%)',
+          WebkitMaskImage: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.12) 55%, rgba(255, 255, 255, 0) 100%)',
+        }}
+      >
+        <div className="w-36 h-36 text-white shrink-0 drop-shadow-[0_0_24px_rgba(255,255,255,0.12)]">
           <SrfLogo className="w-full h-full text-white" />
         </div>
       </div>

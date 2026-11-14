@@ -88,9 +88,9 @@ export const HomePage: React.FC<HomePageProps> = ({
   return (
     <>
       {/* Landing Scroll Level Hero Background Banner with Delayed Parallax & Magnetic Snap */}
-      {/* On mobile: Render at a compact height (~38% of viewport) with deep top bleed to prevent any top grey bar */}
+      {/* On mobile: Render at a calibrated height (~42% of viewport) with deep top bleed to prevent any top grey bar */}
       <div 
-        className="absolute -top-[100px] sm:-top-[110px] left-0 right-0 h-[calc(38vh+100px)] sm:h-[calc(100vh+110px)] max-h-[calc(40vh+100px)] sm:max-h-none pointer-events-none z-0 overflow-hidden"
+        className="absolute -top-[100px] sm:-top-[110px] left-0 right-0 h-[calc(42vh+100px)] sm:h-[calc(100vh+110px)] max-h-[calc(44vh+100px)] sm:max-h-none pointer-events-none z-0 overflow-hidden"
         aria-hidden="true"
       >
         {/* Generous overscan wrapper ensuring no top edge or gap ever exposes */}

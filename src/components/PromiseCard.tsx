@@ -47,7 +47,7 @@ export const PromiseCard: React.FC<PromiseCardProps> = ({ onCheckOutMore }) => {
       </div>
 
       {/* Foreground Content - Centered on mobile, Left Aligned on sm/desktop */}
-      <div className="relative z-10 max-w-xl lg:max-w-2xl text-center sm:text-left mx-auto sm:mx-0 space-y-3 sm:space-y-4 pt-36 sm:pt-0">
+      <div className="relative z-10 max-w-xl lg:max-w-2xl text-center sm:text-left mx-auto sm:mx-0 space-y-3 sm:space-y-4 pt-48 sm:pt-0">
         <div className="flex justify-center sm:justify-start">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs sm:text-sm font-medium backdrop-blur-md">
             <MaterialIcon name="volunteer_activism" size={16} />

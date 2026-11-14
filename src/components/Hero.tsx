@@ -28,7 +28,7 @@ export const Hero: React.FC = () => {
               Blessed to serve nearly{' '}
               <span className="font-medium text-emerald-400">300</span>{' '}
               underprivileged
-              <br className="hidden sm:inline" /> patients and counting
+              <br /> patients and counting
             </p>
           </div>
         </div>

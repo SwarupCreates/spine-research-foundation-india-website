@@ -81,7 +81,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           {/* Morphing Brand Text in Jost Font */}
-          <div className="font-jost select-none overflow-hidden py-1">
+          <div className="font-jost select-none overflow-hidden min-h-[44px] flex items-center">
             <AnimatePresence mode="wait">
               {!isLogoHovered ? (
                 <motion.div
@@ -90,12 +90,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                   exit={{ opacity: 0, y: -3, filter: 'blur(3px)' }}
                   transition={{ type: 'spring', stiffness: 450, damping: 32 }}
-                  className="flex items-center tracking-[0.16em] uppercase text-base sm:text-lg"
+                  className="flex items-baseline tracking-[0.16em] uppercase text-lg sm:text-[22px]"
                 >
-                  <span className="font-bold text-white opacity-100">
+                  <span className="font-semibold text-white">
                     SRF
                   </span>
-                  <span className="font-medium text-white opacity-48 ml-2">
+                  <span className="font-normal text-white/50 ml-2.5">
                     INDIA
                   </span>
                 </motion.div>
@@ -106,14 +106,19 @@ export const Navbar: React.FC<NavbarProps> = ({
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                   exit={{ opacity: 0, y: -3, filter: 'blur(3px)' }}
                   transition={{ type: 'spring', stiffness: 450, damping: 32 }}
-                  className="flex items-center tracking-[0.12em] uppercase text-xs sm:text-sm whitespace-nowrap"
+                  className="flex flex-col tracking-[0.12em] uppercase text-xs sm:text-[13px] leading-tight"
                 >
-                  <span className="font-bold text-white opacity-100">
-                    SPINE RESEARCH FOUNDATION
+                  <span className="font-semibold text-white whitespace-nowrap">
+                    SPINE RESEARCH
                   </span>
-                  <span className="font-medium text-white opacity-48 ml-2">
-                    INDIA
-                  </span>
+                  <div className="flex items-center gap-1.5 whitespace-nowrap">
+                    <span className="font-semibold text-white">
+                      FOUNDATION
+                    </span>
+                    <span className="font-normal text-white/50">
+                      INDIA
+                    </span>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>

@@ -2,11 +2,11 @@ import React from 'react'
 
 export const Hero: React.FC = () => {
   return (
-    <section className="relative pt-20 pb-8 sm:pt-32 sm:pb-10 lg:pt-40 lg:pb-12 overflow-hidden">
+    <section className="relative pt-32 pb-10 sm:pt-48 sm:pb-12 lg:pt-60 lg:pb-14 overflow-hidden">
       <div className="max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 relative z-10">
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 sm:gap-8">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pt-4 sm:pt-6">
           {/* Left Title & Tagline */}
-          <div className="space-y-1 sm:space-y-1.5">
+          <div className="space-y-1.5 sm:space-y-2">
             <span className="text-white text-[24px] sm:text-[30px] md:text-[32px] lg:text-[var(--font-size-hero-title,36px)] font-normal tracking-tight block leading-tight">
               Welcome to
             </span>
@@ -20,14 +20,14 @@ export const Hero: React.FC = () => {
               </span>
             </h1>
 
-            <p className="text-gray-300 text-[15px] sm:text-[16px] lg:text-[var(--font-size-hero-subtext,18px)] font-normal pt-0.5">
+            <p className="text-gray-300 text-[18px] sm:text-[20px] lg:text-[var(--font-size-hero-subtext,22px)] font-normal pt-1">
               By your side always...
             </p>
           </div>
 
           {/* Right Impact Stat */}
           <div className="lg:text-right self-start lg:self-end">
-            <p className="text-white/95 text-[15px] sm:text-[16px] lg:text-[var(--font-size-hero-subtext,18px)] font-medium leading-relaxed max-w-sm">
+            <p className="text-white/95 text-[18px] sm:text-[20px] lg:text-[var(--font-size-hero-subtext,22px)] font-medium leading-relaxed max-w-md">
               Blessed to serve nearly{' '}
               <span className="font-medium text-emerald-400">300</span>{' '}
               underprivileged

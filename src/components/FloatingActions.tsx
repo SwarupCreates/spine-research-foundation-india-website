@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { MaterialIcon } from './icons'
 
 interface FloatingActionsProps {
@@ -11,10 +11,30 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
   onOpenFeedback,
 }) => {
   const [showTooltip, setShowTooltip] = useState(false)
+  const [isNearFooter, setIsNearFooter] = useState(false)
+
+  // Dynamically move buttons up when reaching the footer to avoid overlapping
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY || window.pageYOffset
+      const windowHeight = window.innerHeight
+      const docHeight = document.documentElement.scrollHeight
+      const distanceToBottom = docHeight - (scrollY + windowHeight)
+      
+      // Footer height is ~90-100px. Trigger shift when within 140px of page bottom
+      setIsNearFooter(distanceToBottom < 130)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll()
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   return (
     <aside 
-      className="fixed bottom-6 right-6 z-50 flex items-center gap-3"
+      className={`fixed right-6 z-50 flex items-center gap-3 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+        isNearFooter ? 'bottom-20 sm:bottom-24 translate-y-0' : 'bottom-6'
+      }`}
       aria-label="Quick Actions"
     >
       {/* Primary "Participate" Pill Floating Button */}
@@ -35,7 +55,7 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
         </span>
       </button>
 
-      {/* Secondary Perfectly Circular Glass Button with identical height and width */}
+      {/* Secondary Perfectly Circular Glass Button */}
       <button
         type="button"
         onClick={onOpenFeedback}

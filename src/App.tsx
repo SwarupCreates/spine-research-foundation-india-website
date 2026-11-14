@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import GlassCard from './components/GlassCard'
+import PromiseCard from './components/PromiseCard'
 import EventSection from './components/EventSection'
 import FloatingActions from './components/FloatingActions'
 import GradualBlur from './components/GradualBlur'
@@ -9,6 +10,7 @@ import {
   ParticipateModal,
   FeedbackModal,
   ReadMoreModal,
+  PromiseModal,
 } from './components/ActionModals'
 import { SrfLogo } from './components/icons'
 
@@ -17,6 +19,7 @@ export const App: React.FC = () => {
   const [isParticipateOpen, setIsParticipateOpen] = useState(false)
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false)
   const [isReadMoreOpen, setIsReadMoreOpen] = useState(false)
+  const [isPromiseOpen, setIsPromiseOpen] = useState(false)
 
   return (
     <div className="min-h-screen bg-[#0b0c0e] text-slate-100 flex flex-col relative selection:bg-emerald-500 selection:text-white font-medium">
@@ -91,6 +94,7 @@ export const App: React.FC = () => {
           {/* Floating Glass Cards with tight, balanced gap */}
           <div className="max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-4 sm:space-y-5">
             <GlassCard onReadMore={() => setIsReadMoreOpen(true)} />
+            <PromiseCard onCheckOutMore={() => setIsPromiseOpen(true)} />
             <EventSection />
           </div>
         </main>
@@ -150,6 +154,11 @@ export const App: React.FC = () => {
       <ReadMoreModal
         isOpen={isReadMoreOpen}
         onClose={() => setIsReadMoreOpen(false)}
+      />
+
+      <PromiseModal
+        isOpen={isPromiseOpen}
+        onClose={() => setIsPromiseOpen(false)}
       />
     </div>
   )

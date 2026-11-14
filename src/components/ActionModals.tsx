@@ -247,3 +247,47 @@ export const ReadMoreModal: React.FC<{
     </BaseModal>
   )
 }
+
+export const PromiseModal: React.FC<{
+  isOpen: boolean
+  onClose: () => void
+}> = ({ isOpen, onClose }) => {
+  return (
+    <BaseModal isOpen={isOpen} onClose={onClose} title="Our Humanitarian Promise">
+      <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
+        <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 flex items-start gap-3">
+          <MaterialIcon name="volunteer_activism" size={24} className="shrink-0 mt-0.5 text-emerald-400" />
+          <p className="text-sm font-medium leading-relaxed">
+            &ldquo;We care for people at the lowest points in their lives, and we do it no matter who they are, where they&apos;re from, or whether or not they can pay.&rdquo;
+          </p>
+        </div>
+
+        <p className="text-sm text-gray-300 font-medium leading-relaxed">
+          Founded under the clinical leadership of Dr. Saumyajit Basu, the Spine Research Foundation (SRF India) operates as a registered non-profit medical trust. We believe that world-class spine health care and mobility must be accessible to all, irrespective of socio-economic status.
+        </p>
+
+        <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.08] backdrop-blur-md space-y-2">
+          <h5 className="text-sm font-medium text-emerald-400 flex items-center gap-1.5">
+            <MaterialIcon name="verified" size={18} filled />
+            <span className="font-medium">Core Commitments</span>
+          </h5>
+          <ul className="text-xs sm:text-sm text-gray-300 font-medium space-y-1.5 list-disc list-inside">
+            <li>100% subsidized &amp; philanthropic complex spine surgeries for underprivileged families</li>
+            <li>Pediatric scoliosis correction &amp; deformity rehabilitation</li>
+            <li>Evidence-based clinical research and surgeon fellowship training</li>
+            <li>Rural screening camps &amp; rapid emergency trauma support</li>
+          </ul>
+        </div>
+
+        <div className="pt-2 flex justify-end">
+          <button
+            onClick={onClose}
+            className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium transition cursor-pointer"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </BaseModal>
+  )
+}

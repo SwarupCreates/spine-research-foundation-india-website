@@ -7,10 +7,23 @@ interface MisconceptionsCardProps {
 
 export const MisconceptionsCard: React.FC<MisconceptionsCardProps> = ({ onCheckOutMore }) => {
   return (
-    <div className="relative rounded-3xl sm:rounded-[32px] overflow-hidden glass-panel border border-white/[0.08] px-6 py-9 sm:px-10 sm:py-12 lg:px-14 lg:py-14 text-center sm:text-left shadow-xl transition duration-300 hover:border-white/[0.14]">
-      {/* Background Image: sadDoc.jpg positioned on the right with fading to the left of the image */}
+    <div className="relative rounded-3xl sm:rounded-[32px] overflow-hidden glass-panel border border-white/[0.08] px-6 py-8 sm:px-10 sm:py-12 lg:px-14 lg:py-14 text-center sm:text-left shadow-xl transition duration-300 hover:border-white/[0.14]">
+      {/* Mobile Top Forehead Region: Doctor image with fade to bottom edge */}
+      <div className="sm:hidden relative w-full h-52 -mt-1 mb-3 overflow-hidden rounded-2xl flex items-center justify-center select-none pointer-events-none" aria-hidden="true">
+        <img
+          src={`${import.meta.env.BASE_URL}banners/sadDoc.jpg`}
+          alt="Healthcare Specialist and Patient Perspective"
+          className="w-full h-full object-cover object-[center_20%] filter brightness-[0.92] contrast-[1.05]"
+          style={{
+            maskImage: 'linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 55%, rgba(0, 0, 0, 0.4) 80%, rgba(0, 0, 0, 0) 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 55%, rgba(0, 0, 0, 0.4) 80%, rgba(0, 0, 0, 0) 100%)',
+          }}
+        />
+      </div>
+
+      {/* Desktop Background Image: sadDoc.jpg positioned on the right with fading to the left of the image */}
       <div 
-        className="absolute inset-0 pointer-events-none select-none overflow-hidden flex justify-end"
+        className="hidden sm:flex absolute inset-0 pointer-events-none select-none overflow-hidden justify-end"
         aria-hidden="true"
       >
         <img

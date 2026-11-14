@@ -7,10 +7,23 @@ interface PromiseCardProps {
 
 export const PromiseCard: React.FC<PromiseCardProps> = ({ onCheckOutMore }) => {
   return (
-    <div className="relative rounded-3xl sm:rounded-[32px] overflow-hidden glass-panel border border-white/[0.08] px-6 py-9 sm:px-10 sm:py-12 lg:px-14 lg:py-14 text-center sm:text-left shadow-xl transition duration-300 hover:border-white/[0.14]">
-      {/* Background Image: Hands Donning Teal Medical Gloves on the right with fade-out at the right edge */}
+    <div className="relative rounded-3xl sm:rounded-[32px] overflow-hidden glass-panel border border-white/[0.08] px-6 py-8 sm:px-10 sm:py-12 lg:px-14 lg:py-14 text-center sm:text-left shadow-xl transition duration-300 hover:border-white/[0.14]">
+      {/* Mobile Top Forehead Region: Teal medical gloves image with fade to right edge */}
+      <div className="sm:hidden relative w-full h-44 -mt-1 mb-3 flex items-center justify-center overflow-hidden" aria-hidden="true">
+        <img
+          src={`${import.meta.env.BASE_URL}banners/Hands%20Donning%20Teal%20Medical%20Gloves.png`}
+          alt="Hands Donning Teal Medical Gloves"
+          className="h-full w-auto object-contain filter brightness-[0.92] contrast-[1.05]"
+          style={{
+            maskImage: 'linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 55%, rgba(0, 0, 0, 0.45) 80%, rgba(0, 0, 0, 0) 100%)',
+            WebkitMaskImage: 'linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 55%, rgba(0, 0, 0, 0.45) 80%, rgba(0, 0, 0, 0) 100%)',
+          }}
+        />
+      </div>
+
+      {/* Desktop Background Image: Hands Donning Teal Medical Gloves on the right with fade-out at the right edge */}
       <div 
-        className="absolute inset-0 pointer-events-none select-none overflow-hidden flex justify-end items-center"
+        className="hidden sm:flex absolute inset-0 pointer-events-none select-none overflow-hidden justify-end items-center"
         aria-hidden="true"
       >
         <img

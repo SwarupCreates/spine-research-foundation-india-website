@@ -88,13 +88,13 @@ export const HomePage: React.FC<HomePageProps> = ({
   return (
     <>
       {/* Landing Scroll Level Hero Background Banner with Delayed Parallax & Magnetic Snap */}
-      {/* On mobile: Render at a compact height (~36% of viewport) so the landscape image is legible and not over-zoomed */}
+      {/* On mobile: Render at a compact height (~38% of viewport) with deep top bleed to prevent any top grey bar */}
       <div 
-        className="absolute -top-[80px] sm:-top-[90px] left-0 right-0 h-[calc(36vh+80px)] sm:h-[calc(100vh+90px)] max-h-[calc(38vh+80px)] sm:max-h-none pointer-events-none z-0 overflow-hidden"
+        className="absolute -top-[100px] sm:-top-[110px] left-0 right-0 h-[calc(38vh+100px)] sm:h-[calc(100vh+110px)] max-h-[calc(40vh+100px)] sm:max-h-none pointer-events-none z-0 overflow-hidden"
         aria-hidden="true"
       >
-        {/* Minimal overscan wrapper preventing gaps while maintaining tight mobile zoom */}
-        <div className="absolute inset-x-0 -top-4 sm:-top-36 -bottom-4 sm:-bottom-36 overflow-hidden">
+        {/* Generous overscan wrapper ensuring no top edge or gap ever exposes */}
+        <div className="absolute inset-x-0 -top-16 sm:-top-36 -bottom-16 sm:-bottom-36 overflow-hidden">
           {/* Background Image with Delayed Parallax Scroll */}
           <img
             ref={bannerImgRef}
@@ -125,15 +125,6 @@ export const HomePage: React.FC<HomePageProps> = ({
           className="absolute inset-0 pointer-events-none"
           style={{
             background: 'linear-gradient(to top, #0b0c0e 0%, rgba(11, 12, 14, 0.96) 28%, rgba(11, 12, 14, 0.52) 58%, rgba(11, 12, 14, 0) 100%)',
-            zIndex: 3
-          }}
-        />
-
-        {/* Subtle top ambient blend */}
-        <div 
-          className="absolute inset-x-0 top-0 h-24 sm:h-28 pointer-events-none"
-          style={{
-            background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, transparent 100%)',
             zIndex: 3
           }}
         />

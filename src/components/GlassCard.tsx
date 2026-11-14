@@ -7,10 +7,17 @@ interface GlassCardProps {
 
 export const GlassCard: React.FC<GlassCardProps> = ({ onReadMore }) => {
   return (
-    <div className="relative rounded-3xl sm:rounded-[32px] overflow-hidden glass-panel border border-white/[0.08] px-6 py-9 sm:px-10 sm:py-12 lg:px-14 lg:py-14 text-center sm:text-left shadow-xl transition duration-300 hover:border-white/[0.14]">
-      {/* Background Watermark Logo shifted to the right, shortened so top is not clipped, fading out at bottom */}
+    <div className="relative rounded-3xl sm:rounded-[32px] overflow-hidden glass-panel border border-white/[0.08] px-6 py-8 sm:px-10 sm:py-12 lg:px-14 lg:py-14 text-center sm:text-left shadow-xl transition duration-300 hover:border-white/[0.14]">
+      {/* Mobile Top Forehead Region: Center-aligned watermark above content */}
+      <div className="sm:hidden flex justify-center pt-2 pb-5 select-none pointer-events-none" aria-hidden="true">
+        <div className="w-24 h-24 text-white/35 drop-shadow-[0_0_24px_rgba(255,255,255,0.1)]">
+          <SrfLogo className="w-full h-full text-white" />
+        </div>
+      </div>
+
+      {/* Desktop Background Watermark Logo shifted to the right, shortened so top is not clipped, fading out at bottom */}
       <div 
-        className="absolute right-4 sm:right-8 lg:right-16 top-4 sm:top-6 bottom-0 flex items-start pointer-events-none select-none overflow-hidden"
+        className="hidden sm:flex absolute right-4 sm:right-8 lg:right-16 top-4 sm:top-6 bottom-0 items-start pointer-events-none select-none overflow-hidden"
         aria-hidden="true"
         style={{
           maskImage: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.08) 55%, rgba(255, 255, 255, 0) 100%)',

@@ -95,51 +95,106 @@ export const Navbar: React.FC<NavbarProps> = ({
             </motion.div>
           </div>
 
-          {/* Morphing Brand Text in Jost Font - Simultaneous Instant Cross-Fade */}
-          <div className="font-jost select-none overflow-hidden min-h-[44px] grid grid-cols-1 items-center">
-            {/* Acronym "SRF INDIA" */}
+          {/* Kinetic Morphing Brand Typography: SRF expands letter-by-letter into SPINE RESEARCH FOUNDATION */}
+          <div className="overflow-visible min-h-[44px] flex items-center py-1">
             <motion.div
-              key="short-name"
+              layout
+              className={`font-jost select-none flex ${
+                isLogoHovered ? 'flex-col items-start gap-y-0.5' : 'flex-row items-baseline'
+              }`}
               animate={{
-                opacity: isLogoHovered ? 0 : 1,
-                y: isLogoHovered ? -5 : 0,
-                filter: isLogoHovered ? 'blur(2px)' : 'blur(0px)',
-                pointerEvents: isLogoHovered ? 'none' : 'auto',
+                scale: isLogoHovered ? 0.82 : 1,
               }}
-              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="col-start-1 row-start-1 flex items-baseline tracking-[0.16em] uppercase text-lg sm:text-[22px] whitespace-nowrap"
+              style={{ transformOrigin: 'left center' }}
+              transition={{
+                layout: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
+                scale: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
+              }}
             >
-              <span className="font-semibold text-white">
-                SRF
-              </span>
-              <span className="font-normal text-white/50 ml-2.5">
-                INDIA
-              </span>
-            </motion.div>
+              {/* Line 1: S[PINE] + R[ESEARCH] */}
+              <motion.div layout className="flex items-baseline whitespace-nowrap">
+                {/* Word 1: S + PINE */}
+                <span className="flex items-baseline">
+                  <span className="font-semibold text-white tracking-[0.14em] text-lg sm:text-[21px]">
+                    S
+                  </span>
+                  <motion.span
+                    className="overflow-hidden inline-block font-semibold text-white tracking-[0.12em] text-lg sm:text-[21px]"
+                    initial={false}
+                    animate={{
+                      maxWidth: isLogoHovered ? 80 : 0,
+                      opacity: isLogoHovered ? 1 : 0,
+                    }}
+                    transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    PINE
+                  </motion.span>
+                </span>
 
-            {/* Full Form "SPINE RESEARCH FOUNDATION INDIA" */}
-            <motion.div
-              key="full-name"
-              animate={{
-                opacity: isLogoHovered ? 1 : 0,
-                y: isLogoHovered ? 0 : 5,
-                filter: isLogoHovered ? 'blur(0px)' : 'blur(2px)',
-                pointerEvents: isLogoHovered ? 'auto' : 'none',
-              }}
-              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="col-start-1 row-start-1 flex flex-col tracking-[0.11em] uppercase text-[13px] sm:text-[15px] lg:text-[16px] leading-[1.18] whitespace-nowrap"
-            >
-              <span className="font-semibold text-white whitespace-nowrap">
-                SPINE RESEARCH
-              </span>
-              <div className="flex items-center gap-1.5 whitespace-nowrap">
-                <span className="font-semibold text-white">
-                  FOUNDATION
+                {/* Word 2: R + ESEARCH */}
+                <motion.span
+                  className="flex items-baseline"
+                  animate={{
+                    marginLeft: isLogoHovered ? '0.36em' : '0.04em',
+                  }}
+                  transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <span className="font-semibold text-white tracking-[0.14em] text-lg sm:text-[21px]">
+                    R
+                  </span>
+                  <motion.span
+                    className="overflow-hidden inline-block font-semibold text-white tracking-[0.12em] text-lg sm:text-[21px]"
+                    initial={false}
+                    animate={{
+                      maxWidth: isLogoHovered ? 130 : 0,
+                      opacity: isLogoHovered ? 1 : 0,
+                    }}
+                    transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    ESEARCH
+                  </motion.span>
+                </motion.span>
+              </motion.div>
+
+              {/* Line 2: F[OUNDATION] + INDIA */}
+              <motion.div
+                layout
+                className="flex items-baseline whitespace-nowrap"
+                animate={{
+                  marginLeft: isLogoHovered ? '0em' : '0.04em',
+                }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              >
+                {/* Word 3: F + OUNDATION */}
+                <span className="flex items-baseline">
+                  <span className="font-semibold text-white tracking-[0.14em] text-lg sm:text-[21px]">
+                    F
+                  </span>
+                  <motion.span
+                    className="overflow-hidden inline-block font-semibold text-white tracking-[0.12em] text-lg sm:text-[21px]"
+                    initial={false}
+                    animate={{
+                      maxWidth: isLogoHovered ? 160 : 0,
+                      opacity: isLogoHovered ? 1 : 0,
+                    }}
+                    transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    OUNDATION
+                  </motion.span>
                 </span>
-                <span className="font-normal text-white/50">
+
+                {/* Word 4: INDIA */}
+                <motion.span
+                  className="font-normal text-white tracking-[0.16em] inline-block text-lg sm:text-[21px]"
+                  animate={{
+                    marginLeft: isLogoHovered ? '0.36em' : '0.65em',
+                    opacity: isLogoHovered ? 0.6 : 0.48,
+                  }}
+                  transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                >
                   INDIA
-                </span>
-              </div>
+                </motion.span>
+              </motion.div>
             </motion.div>
           </div>
         </a>

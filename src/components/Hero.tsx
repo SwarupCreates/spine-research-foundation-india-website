@@ -2,7 +2,7 @@ import React from 'react'
 
 export const Hero: React.FC = () => {
   return (
-    <section className="relative pt-32 pb-10 sm:pt-48 sm:pb-12 lg:pt-60 lg:pb-14 overflow-hidden">
+    <section className="relative pt-24 pb-8 sm:pt-36 sm:pb-10 lg:pt-48 lg:pb-12 overflow-hidden">
       <div className="max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 relative z-10">
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pt-4 sm:pt-6">
           {/* Left Title & Tagline */}

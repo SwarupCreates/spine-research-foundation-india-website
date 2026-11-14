@@ -20,6 +20,11 @@ export const NAV_ITEMS: NavItem[] = [
   { id: 'treatments', label: 'Treatments', icon: 'accessibility_new' },
 ]
 
+const ANIMATED_NAV_ITEMS = NAV_ITEMS.map((item) => ({
+  id: item.id,
+  title: item.label,
+}))
+
 interface NavbarProps {
   activeTab?: string
   onTabChange?: (tabId: string) => void
@@ -46,28 +51,6 @@ export const Navbar: React.FC<NavbarProps> = ({
       onMobileMenuOpenChange(open)
     }
   }
-
-  // Close mobile drawer when clicking or tapping anywhere outside nav menu items or hamburger button
-  useEffect(() => {
-    if (!isMenuOpen) return
-
-    const handlePointerDown = (e: MouseEvent | TouchEvent) => {
-      const target = e.target as Node
-      if (
-        menuContainerRef.current &&
-        !menuContainerRef.current.contains(target) &&
-        hamburgerButtonRef.current &&
-        !hamburgerButtonRef.current.contains(target)
-      ) {
-        setMenuOpen(false)
-      }
-    }
-
-    document.addEventListener('pointerdown', handlePointerDown)
-    return () => {
-      document.removeEventListener('pointerdown', handlePointerDown)
-    }
-  }, [isMenuOpen])
 
   useEffect(() => {
     setCurrentTab(activeTab)
@@ -169,7 +152,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header className="sticky top-0 z-50 w-full transition-all duration-300 bg-transparent border-0 backdrop-blur-none pt-1.5 sm:pt-2.5">
-      <div className="max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 h-20 flex items-center justify-between gap-4">
+      <div className="relative z-50 max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 h-20 flex items-center justify-between gap-4">
         {/* Brand Logo & Interactive Morphing Brand Name in Jost font */}
         <a
           href="#home"
@@ -394,7 +377,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             ref={hamburgerButtonRef}
             type="button"
-            onClick={() => setMenuOpen(!isMenuOpen)}
+            onClick={(e) => {
+              e.stopPropagation()
+              setMenuOpen(!isMenuOpen)
+            }}
             className="w-11 h-11 aspect-square flex items-center justify-center rounded-xl bg-transparent hover:bg-white/[0.08] active:bg-white/[0.12] text-white border-0 shadow-none transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 cursor-pointer"
             aria-label={isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
             aria-expanded={isMenuOpen}
@@ -425,11 +411,14 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </div>
 
-      {/* Tap interceptor backdrop to close mobile drawer when clicking or tapping anywhere outside */}
+      {/* Tap interceptor backdrop: sits at z-40 behind the z-50 header bar and z-50 drawer */}
       {isMenuOpen && (
         <div
           className="fixed inset-0 z-40 bg-transparent md:hidden"
-          onClick={() => setMenuOpen(false)}
+          onClick={(e) => {
+            e.stopPropagation()
+            setMenuOpen(false)
+          }}
           aria-hidden="true"
         />
       )}
@@ -440,22 +429,18 @@ export const Navbar: React.FC<NavbarProps> = ({
           <motion.div
             key="mobile-nav-menu"
             ref={menuContainerRef}
-            initial={{ opacity: 0, y: -6, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
+            initial={false}
+            animate={{ opacity: 1 }}
             exit={{
               opacity: 0,
-              y: -6,
-              scale: 0.98,
-              transition: { duration: 0.16, ease: [0.16, 1, 0.3, 1] },
+              y: -8,
+              scale: 0.96,
+              transition: { duration: 0.18, ease: [0.16, 1, 0.3, 1] },
             }}
-            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
             className="md:hidden absolute top-full left-0 right-0 z-50 pointer-events-auto px-4 sm:px-6 pt-2 pb-6"
           >
             <AnimatedList
-              items={NAV_ITEMS.map((item) => ({
-                id: item.id,
-                title: item.label,
-              }))}
+              items={ANIMATED_NAV_ITEMS}
               initialSelectedIndex={NAV_ITEMS.findIndex((item) => item.id === currentTab)}
               onItemSelect={(_item, index) => {
                 const selectedNav = NAV_ITEMS[index]
@@ -495,7 +480,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               frame={false}
               radius={9999}
               gap={8}
-              stagger={0.035}
+              stagger={0.065}
               width="100%"
               maxHeight="none"
               className="srf-nav-animated-list"

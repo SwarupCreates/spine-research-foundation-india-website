@@ -130,7 +130,7 @@ const DEFAULT_ITEMS: AnimatedListEntry[] = [
 ];
 
 const HIDDEN: Record<Animation, Record<'above' | 'below', string>> = {
-  pop: { above: 'translate3d(0, -12px, 0) scale(0.8)', below: 'translate3d(0, 12px, 0) scale(0.8)' },
+  pop: { above: 'translate3d(0, -18px, 0) scale(0.72)', below: 'translate3d(0, 24px, 0) scale(0.72)' },
   slide: { above: 'translate3d(0, -28px, 0) scale(0.98)', below: 'translate3d(0, 28px, 0) scale(0.98)' },
   fade: { above: 'translate3d(0, -4px, 0)', below: 'translate3d(0, 4px, 0)' }
 };
@@ -219,7 +219,7 @@ const AnimatedList = ({
     const springEase = CSS.supports?.('transition-timing-function', 'linear(0, 1)')
       ? SPRING
       : 'cubic-bezier(0.34, 1.4, 0.64, 1)';
-    const transition = `transform 620ms ${springEase}, opacity 300ms cubic-bezier(0.22, 1, 0.36, 1), filter 200ms ease`;
+    const transition = `transform 650ms ${springEase}, opacity 350ms cubic-bezier(0.22, 1, 0.36, 1), filter 200ms ease`;
     const motion = { y: 0, h: 0, vy: 0, vh: 0, ty: 0, th: 0, ready: false };
     const fades = { top: '', bottom: '' };
     let boxes: (number[] | null)[] = [];

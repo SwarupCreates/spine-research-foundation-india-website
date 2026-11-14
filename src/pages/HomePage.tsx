@@ -58,8 +58,11 @@ export const HomePage: React.FC<HomePageProps> = ({
       // Lerp with 0.08 damping factor creates luxurious delayed inertia
       currentY += (targetY - currentY) * 0.08
 
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 640
+      const scaleStr = isMobile ? 'scale(1.02)' : 'scale(1.08)'
+
       if (bannerImgRef.current) {
-        bannerImgRef.current.style.transform = `translate3d(0, ${currentY.toFixed(2)}px, 0) scale(1.08)`
+        bannerImgRef.current.style.transform = `translate3d(0, ${currentY.toFixed(2)}px, 0) ${scaleStr}`
       }
 
       if (Math.abs(targetY - currentY) > 0.05) {
@@ -67,7 +70,7 @@ export const HomePage: React.FC<HomePageProps> = ({
       } else {
         currentY = targetY
         if (bannerImgRef.current) {
-          bannerImgRef.current.style.transform = `translate3d(0, ${currentY.toFixed(2)}px, 0) scale(1.08)`
+          bannerImgRef.current.style.transform = `translate3d(0, ${currentY.toFixed(2)}px, 0) ${scaleStr}`
         }
         isRunning = false
       }
@@ -85,21 +88,21 @@ export const HomePage: React.FC<HomePageProps> = ({
   return (
     <>
       {/* Landing Scroll Level Hero Background Banner with Delayed Parallax & Magnetic Snap */}
-      {/* On mobile: Render at max 56% of viewport height so the portrait image is not absurdly zoomed in and merges halfway down */}
+      {/* On mobile: Render at a compact height (~36% of viewport) so the landscape image is legible and not over-zoomed */}
       <div 
-        className="absolute -top-[90px] left-0 right-0 h-[calc(56vh+90px)] sm:h-[calc(100vh+90px)] max-h-[calc(56vh+90px)] sm:max-h-none pointer-events-none z-0 overflow-hidden"
+        className="absolute -top-[80px] sm:-top-[90px] left-0 right-0 h-[calc(36vh+80px)] sm:h-[calc(100vh+90px)] max-h-[calc(38vh+80px)] sm:max-h-none pointer-events-none z-0 overflow-hidden"
         aria-hidden="true"
       >
-        {/* Generous overscan wrapper so downward or upward parallax translation NEVER exposes a gap */}
-        <div className="absolute inset-x-0 -top-16 sm:-top-36 -bottom-16 sm:-bottom-36 overflow-hidden">
+        {/* Minimal overscan wrapper preventing gaps while maintaining tight mobile zoom */}
+        <div className="absolute inset-x-0 -top-4 sm:-top-36 -bottom-4 sm:-bottom-36 overflow-hidden">
           {/* Background Image with Delayed Parallax Scroll */}
           <img
             ref={bannerImgRef}
             src={`${import.meta.env.BASE_URL}banners/Solitary Boy Amid the Moving Crowd 1.jpg`}
             alt="Spine Research Foundation India patient banner"
-            className="w-full h-full object-cover object-[50%_20%] select-none opacity-90 will-change-transform"
+            className="w-full h-full object-cover object-[50%_10%] sm:object-[50%_20%] select-none opacity-90 will-change-transform"
             style={{
-              transform: 'translate3d(0, 0px, 0) scale(1.08)',
+              transform: 'translate3d(0, 0px, 0) scale(1.02)',
               transformOrigin: 'center center',
             }}
           />
@@ -109,26 +112,26 @@ export const HomePage: React.FC<HomePageProps> = ({
         <GradualBlur
           position="bottom"
           target="parent"
-          height="65%"
-          strength={2.5}
+          height="60%"
+          strength={2.2}
           layers={8}
           curve="linear"
           exponential
           zIndex={2}
         />
 
-        {/* Vertical bottom-to-top linear gradient overlay: Merges smoothly into #0b0c0e starting halfway down the screen */}
+        {/* Vertical bottom-to-top linear gradient overlay: Smoothly merges into #0b0c0e */}
         <div 
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: 'linear-gradient(to top, #0b0c0e 0%, rgba(11, 12, 14, 0.95) 26%, rgba(11, 12, 14, 0.58) 55%, rgba(11, 12, 14, 0) 100%)',
+            background: 'linear-gradient(to top, #0b0c0e 0%, rgba(11, 12, 14, 0.96) 28%, rgba(11, 12, 14, 0.52) 58%, rgba(11, 12, 14, 0) 100%)',
             zIndex: 3
           }}
         />
 
-        {/* Subtle top ambient blend (softened and transparent so it doesn't create a dark bar) */}
+        {/* Subtle top ambient blend */}
         <div 
-          className="absolute inset-x-0 top-0 h-28 pointer-events-none"
+          className="absolute inset-x-0 top-0 h-24 sm:h-28 pointer-events-none"
           style={{
             background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, transparent 100%)',
             zIndex: 3

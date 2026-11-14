@@ -8,12 +8,12 @@ export const Hero: React.FC = () => {
           {/* Left Title & Tagline: Center aligned on mobile, left aligned on tablet/desktop */}
           <div className="space-y-2 sm:space-y-2.5 text-center sm:text-left">
             <h1 className="text-[24px] sm:text-[30px] md:text-[32px] lg:text-[var(--font-size-hero-title,36px)] tracking-tight leading-[1.2] sm:leading-[1.2]">
-              <span className="font-normal text-white block">
+              <span className="font-normal text-white/60 block">
                 Welcome to
               </span>
               <span className="font-semibold text-white flex flex-wrap items-baseline justify-center sm:justify-start gap-x-2.5 lg:whitespace-nowrap">
                 <span>Spine Research Foundation</span>
-                <span className="text-white/60 font-semibold">India</span>
+                <span className="text-white/60 font-normal">India</span>
               </span>
             </h1>
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { SrfLogo, SrfLogoColored, MaterialIcon } from './icons'
 
 export interface NavItem {
@@ -52,23 +52,23 @@ export const Navbar: React.FC<NavbarProps> = ({
           className="relative flex items-center gap-3.5 group focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 rounded-xl p-1.5 transition cursor-pointer"
           aria-label="SRF India Home"
         >
-          {/* Subtle Logo Brand Gradient Glow on Hover: #1B9AF7 (blue) to #87CD46 (green) */}
+          {/* Brand Gradient Glow on Hover: #1B9AF7 (blue) to #87CD46 (green) - Brighter & Wider Spread */}
           <motion.div
-            className="absolute -inset-x-3 -inset-y-1.5 pointer-events-none -z-10 rounded-2xl blur-xl"
-            initial={{ opacity: 0, scale: 0.92 }}
+            className="absolute -inset-x-8 -inset-y-4 pointer-events-none -z-10 rounded-3xl blur-2xl"
+            initial={{ opacity: 0, scale: 0.9 }}
             animate={{
-              opacity: isLogoHovered ? 0.65 : 0,
-              scale: isLogoHovered ? 1.05 : 0.92,
+              opacity: isLogoHovered ? 0.88 : 0,
+              scale: isLogoHovered ? 1.12 : 0.9,
             }}
-            transition={{ duration: 0.35, ease: 'easeOut' }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
             style={{
-              background: 'radial-gradient(ellipse at 35% 55%, rgba(27, 154, 247, 0.45) 0%, rgba(135, 205, 70, 0.38) 55%, transparent 75%)',
+              background: 'radial-gradient(ellipse at 30% 50%, rgba(27, 154, 247, 0.78) 0%, rgba(135, 205, 70, 0.65) 50%, rgba(27, 154, 247, 0.22) 75%, transparent 100%)',
             }}
             aria-hidden="true"
           />
 
           {/* Logo Container with Smooth White-to-Color Transformation */}
-          <div className="relative w-10 h-10 sm:w-11 sm:h-11 flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
+          <div className="relative w-10 h-10 sm:w-11 sm:h-11 flex-shrink-0 group-hover:scale-105 transition-transform duration-250">
             {/* White Logo (default, crossfades out on hover) */}
             <motion.div
               className="absolute inset-0 flex items-center justify-center text-white"
@@ -76,7 +76,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 opacity: isLogoHovered ? 0 : 1,
                 scale: isLogoHovered ? 0.94 : 1,
               }}
-              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              transition={{ duration: 0.22, ease: 'easeInOut' }}
             >
               <SrfLogo className="w-full h-full text-white" />
             </motion.div>
@@ -89,54 +89,58 @@ export const Navbar: React.FC<NavbarProps> = ({
                 opacity: isLogoHovered ? 1 : 0,
                 scale: isLogoHovered ? 1 : 1.06,
               }}
-              transition={{ duration: 0.35, ease: 'easeInOut' }}
+              transition={{ duration: 0.22, ease: 'easeInOut' }}
             >
               <SrfLogoColored className="w-full h-full" />
             </motion.div>
           </div>
 
-          {/* Morphing Brand Text in Jost Font */}
-          <div className="font-jost select-none overflow-hidden min-h-[44px] flex items-center">
-            <AnimatePresence mode="wait">
-              {!isLogoHovered ? (
-                <motion.div
-                  key="short-name"
-                  initial={{ opacity: 0, y: 3, filter: 'blur(3px)' }}
-                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                  exit={{ opacity: 0, y: -3, filter: 'blur(3px)' }}
-                  transition={{ type: 'spring', stiffness: 450, damping: 32 }}
-                  className="flex items-baseline tracking-[0.16em] uppercase text-lg sm:text-[22px]"
-                >
-                  <span className="font-semibold text-white">
-                    SRF
-                  </span>
-                  <span className="font-normal text-white/50 ml-2.5">
-                    INDIA
-                  </span>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="full-name"
-                  initial={{ opacity: 0, y: 3, filter: 'blur(3px)' }}
-                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                  exit={{ opacity: 0, y: -3, filter: 'blur(3px)' }}
-                  transition={{ type: 'spring', stiffness: 450, damping: 32 }}
-                  className="flex flex-col tracking-[0.11em] uppercase text-[13px] sm:text-[15px] lg:text-[16px] leading-[1.18]"
-                >
-                  <span className="font-semibold text-white whitespace-nowrap">
-                    SPINE RESEARCH
-                  </span>
-                  <div className="flex items-center gap-1.5 whitespace-nowrap">
-                    <span className="font-semibold text-white">
-                      FOUNDATION
-                    </span>
-                    <span className="font-normal text-white/50">
-                      INDIA
-                    </span>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+          {/* Morphing Brand Text in Jost Font - Simultaneous Instant Cross-Fade */}
+          <div className="font-jost select-none overflow-hidden min-h-[44px] grid grid-cols-1 items-center">
+            {/* Acronym "SRF INDIA" */}
+            <motion.div
+              key="short-name"
+              animate={{
+                opacity: isLogoHovered ? 0 : 1,
+                y: isLogoHovered ? -5 : 0,
+                filter: isLogoHovered ? 'blur(2px)' : 'blur(0px)',
+                pointerEvents: isLogoHovered ? 'none' : 'auto',
+              }}
+              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="col-start-1 row-start-1 flex items-baseline tracking-[0.16em] uppercase text-lg sm:text-[22px] whitespace-nowrap"
+            >
+              <span className="font-semibold text-white">
+                SRF
+              </span>
+              <span className="font-normal text-white/50 ml-2.5">
+                INDIA
+              </span>
+            </motion.div>
+
+            {/* Full Form "SPINE RESEARCH FOUNDATION INDIA" */}
+            <motion.div
+              key="full-name"
+              animate={{
+                opacity: isLogoHovered ? 1 : 0,
+                y: isLogoHovered ? 0 : 5,
+                filter: isLogoHovered ? 'blur(0px)' : 'blur(2px)',
+                pointerEvents: isLogoHovered ? 'auto' : 'none',
+              }}
+              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="col-start-1 row-start-1 flex flex-col tracking-[0.11em] uppercase text-[13px] sm:text-[15px] lg:text-[16px] leading-[1.18] whitespace-nowrap"
+            >
+              <span className="font-semibold text-white whitespace-nowrap">
+                SPINE RESEARCH
+              </span>
+              <div className="flex items-center gap-1.5 whitespace-nowrap">
+                <span className="font-semibold text-white">
+                  FOUNDATION
+                </span>
+                <span className="font-normal text-white/50">
+                  INDIA
+                </span>
+              </div>
+            </motion.div>
           </div>
         </a>
 

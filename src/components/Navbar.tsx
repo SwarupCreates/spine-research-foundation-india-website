@@ -10,7 +10,7 @@ export interface NavItem {
 }
 
 export const NAV_ITEMS: NavItem[] = [
-  { id: 'home', label: 'Home', icon: 'home' },
+  { id: 'home', label: 'Home', icon: 'family_home' },
   { id: 'about', label: 'About Us', icon: 'info' },
   { id: 'care', label: 'Care At SRF', icon: 'diversity_1' },
   { id: 'patient-portal', label: 'Paitient Portal', icon: 'badge' },
@@ -41,7 +41,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   }
 
   return (
-    <header className="sticky top-0 z-40 w-full transition-all duration-300 bg-transparent border-0 backdrop-blur-none">
+    <header className="sticky top-0 z-50 w-full transition-all duration-300 bg-transparent border-0 backdrop-blur-none">
       <div className="max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 h-20 flex items-center justify-between gap-4">
         {/* Brand Logo & Interactive Morphing Brand Name in Jost font */}
         <a

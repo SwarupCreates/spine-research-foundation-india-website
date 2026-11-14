@@ -20,7 +20,7 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#0b0c0e] text-slate-100 flex flex-col relative selection:bg-emerald-500 selection:text-white font-medium">
-      {/* Top Gradual Blur with inward translating motion & dynamic scroll reveal */}
+      {/* Top Gradual Blur with inward translating motion & dynamic scroll reveal (z-30) */}
       <GradualBlur
         position="top"
         target="page"
@@ -35,15 +35,14 @@ export const App: React.FC = () => {
         className="gradual-blur-in-top"
       />
 
-      {/* Main App Container */}
-      <div className="relative z-10 flex flex-col flex-1">
-        {/* Navigation Bar (Clear, no bg, no border, no blur) */}
-        <Navbar
-          activeTab={activeTab}
-          onTabChange={(tabId) => setActiveTab(tabId)}
-        />
+      {/* Floating Navbar at z-50: Sits ON TOP of GradualBlur (z-30), staying 100% sharp and unblurred */}
+      <Navbar
+        activeTab={activeTab}
+        onTabChange={(tabId) => setActiveTab(tabId)}
+      />
 
-        {/* Main Body */}
+      {/* Main Content Container at relative z-10: Scrolls UNDER GradualBlur (z-30), dissolving smoothly into blur */}
+      <div className="relative z-10 flex flex-col flex-1">
         <main className="flex-1 pb-20">
           <Hero />
 
@@ -73,7 +72,7 @@ export const App: React.FC = () => {
         </footer>
       </div>
 
-      {/* Bottom Gradual Blur with inward translating motion & dynamic scroll reveal */}
+      {/* Bottom Gradual Blur with inward translating motion & dynamic scroll reveal (z-30) */}
       <GradualBlur
         position="bottom"
         target="page"
@@ -88,7 +87,7 @@ export const App: React.FC = () => {
         className="gradual-blur-in-bottom"
       />
 
-      {/* Floating Action Buttons */}
+      {/* Floating Action Buttons (z-50) */}
       <FloatingActions
         onOpenParticipate={() => setIsParticipateOpen(true)}
         onOpenFeedback={() => setIsFeedbackOpen(true)}

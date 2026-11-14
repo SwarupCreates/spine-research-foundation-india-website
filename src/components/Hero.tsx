@@ -11,7 +11,7 @@ export const Hero: React.FC = () => {
               <span className="font-normal text-white/60 block">
                 Welcome to
               </span>
-              <span className="font-semibold text-white flex flex-wrap items-baseline justify-center sm:justify-start gap-x-2.5 lg:whitespace-nowrap">
+              <span className="font-semibold text-white flex flex-wrap items-baseline justify-center sm:justify-start gap-x-1.5 sm:gap-x-2 lg:whitespace-nowrap">
                 <span>Spine Research Foundation</span>
                 <span className="text-white/60 font-normal">India</span>
               </span>

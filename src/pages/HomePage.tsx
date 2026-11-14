@@ -116,13 +116,13 @@ export const HomePage: React.FC<HomePageProps> = ({
           </picture>
         </div>
 
-        {/* Gradual blur softening as we move up to the overlay: reduced height (~35%) on mobile so more background image is visible */}
+        {/* Gradual blur softening as we move up to the overlay: increased back on mobile (~55%) since more of the image is visible */}
         <div className="block sm:hidden">
           <GradualBlur
             position="bottom"
             target="parent"
-            height="35%"
-            strength={1.8}
+            height="55%"
+            strength={2.2}
             layers={8}
             curve="linear"
             exponential
@@ -142,11 +142,11 @@ export const HomePage: React.FC<HomePageProps> = ({
           />
         </div>
 
-        {/* Vertical bottom-to-top linear gradient overlay: Smoothly merges into #0b0c0e with lower fade zone on mobile */}
+        {/* Vertical bottom-to-top linear gradient overlay: Smoothly merges into #0b0c0e with soft transition on mobile */}
         <div 
           className="sm:hidden absolute inset-0 pointer-events-none"
           style={{
-            background: 'linear-gradient(to top, #0b0c0e 0%, rgba(11, 12, 14, 0.96) 16%, rgba(11, 12, 14, 0.4) 34%, rgba(11, 12, 14, 0) 60%)',
+            background: 'linear-gradient(to top, #0b0c0e 0%, rgba(11, 12, 14, 0.96) 24%, rgba(11, 12, 14, 0.5) 48%, rgba(11, 12, 14, 0) 80%)',
             zIndex: 3
           }}
         />

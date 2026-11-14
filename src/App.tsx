@@ -2,8 +2,10 @@ import React, { useState } from 'react'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import GlassCard from './components/GlassCard'
-import PromiseCard from './components/PromiseCard'
 import EventSection from './components/EventSection'
+import PromiseCard from './components/PromiseCard'
+import EducationCard from './components/EducationCard'
+import TrusteeMessage from './components/TrusteeMessage'
 import FloatingActions from './components/FloatingActions'
 import GradualBlur from './components/GradualBlur'
 import {
@@ -11,6 +13,7 @@ import {
   FeedbackModal,
   ReadMoreModal,
   PromiseModal,
+  EducationModal,
 } from './components/ActionModals'
 import { SrfLogo } from './components/icons'
 
@@ -20,6 +23,7 @@ export const App: React.FC = () => {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false)
   const [isReadMoreOpen, setIsReadMoreOpen] = useState(false)
   const [isPromiseOpen, setIsPromiseOpen] = useState(false)
+  const [isEducationOpen, setIsEducationOpen] = useState(false)
 
   return (
     <div className="min-h-screen bg-[#0b0c0e] text-slate-100 flex flex-col relative selection:bg-emerald-500 selection:text-white font-medium">
@@ -94,9 +98,13 @@ export const App: React.FC = () => {
           {/* Floating Glass Cards with tight, balanced gap */}
           <div className="max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-4 sm:space-y-5">
             <GlassCard onReadMore={() => setIsReadMoreOpen(true)} />
-            <PromiseCard onCheckOutMore={() => setIsPromiseOpen(true)} />
             <EventSection />
+            <PromiseCard onCheckOutMore={() => setIsPromiseOpen(true)} />
+            <EducationCard onCheckOutMore={() => setIsEducationOpen(true)} />
           </div>
+
+          {/* Managing Trustee's Message on Base Background */}
+          <TrusteeMessage />
         </main>
 
         {/* Footer */}
@@ -159,6 +167,11 @@ export const App: React.FC = () => {
       <PromiseModal
         isOpen={isPromiseOpen}
         onClose={() => setIsPromiseOpen(false)}
+      />
+
+      <EducationModal
+        isOpen={isEducationOpen}
+        onClose={() => setIsEducationOpen(false)}
       />
     </div>
   )

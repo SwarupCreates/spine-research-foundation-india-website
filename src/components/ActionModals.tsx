@@ -291,3 +291,47 @@ export const PromiseModal: React.FC<{
     </BaseModal>
   )
 }
+
+export const EducationModal: React.FC<{
+  isOpen: boolean
+  onClose: () => void
+}> = ({ isOpen, onClose }) => {
+  return (
+    <BaseModal isOpen={isOpen} onClose={onClose} title="Education & Research Endeavours">
+      <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
+        <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 flex items-start gap-3">
+          <MaterialIcon name="school" size={24} className="shrink-0 mt-0.5 text-emerald-400" />
+          <p className="text-sm font-medium leading-relaxed">
+            &ldquo;We strive everyday to open up new avenues in spine surgery and impact future spine surgeons through our mentorship and guidance.&rdquo;
+          </p>
+        </div>
+
+        <p className="text-sm text-gray-300 font-medium leading-relaxed">
+          Through comprehensive fellowship training and clinical immersion, SRF India prepares the next generation of spine specialists to tackle the most demanding orthopedic and spinal pathologies.
+        </p>
+
+        <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.08] backdrop-blur-md space-y-2">
+          <h5 className="text-sm font-medium text-emerald-400 flex items-center gap-1.5">
+            <MaterialIcon name="verified" size={18} filled />
+            <span className="font-medium">Academic Programs</span>
+          </h5>
+          <ul className="text-xs sm:text-sm text-gray-300 font-medium space-y-1.5 list-disc list-inside">
+            <li>Post-doctoral spine surgery fellowship training</li>
+            <li>Hands-on cadaveric workshops &amp; live surgical telecasts</li>
+            <li>Peer-reviewed research published in premier global journals</li>
+            <li>International observer programs with visiting spine faculties</li>
+          </ul>
+        </div>
+
+        <div className="pt-2 flex justify-end">
+          <button
+            onClick={onClose}
+            className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium transition cursor-pointer"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </BaseModal>
+  )
+}

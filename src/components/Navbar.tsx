@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { SrfLogo, SrfLogoColored, MaterialIcon } from './icons'
+import AnimatedList from './AnimatedList'
 
 export interface NavItem {
   id: string
@@ -36,12 +37,37 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [internalMobileMenuOpen, setInternalMobileMenuOpen] = useState(false)
   const isMenuOpen = externalMobileMenuOpen !== undefined ? externalMobileMenuOpen : internalMobileMenuOpen
 
+  const menuContainerRef = useRef<HTMLDivElement>(null)
+  const hamburgerButtonRef = useRef<HTMLButtonElement>(null)
+
   const setMenuOpen = (open: boolean) => {
     setInternalMobileMenuOpen(open)
     if (onMobileMenuOpenChange) {
       onMobileMenuOpenChange(open)
     }
   }
+
+  // Close mobile drawer when clicking or tapping anywhere outside nav menu items or hamburger button
+  useEffect(() => {
+    if (!isMenuOpen) return
+
+    const handlePointerDown = (e: MouseEvent | TouchEvent) => {
+      const target = e.target as Node
+      if (
+        menuContainerRef.current &&
+        !menuContainerRef.current.contains(target) &&
+        hamburgerButtonRef.current &&
+        !hamburgerButtonRef.current.contains(target)
+      ) {
+        setMenuOpen(false)
+      }
+    }
+
+    document.addEventListener('pointerdown', handlePointerDown)
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown)
+    }
+  }, [isMenuOpen])
 
   useEffect(() => {
     setCurrentTab(activeTab)
@@ -366,6 +392,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Mobile Animated Hamburger Button */}
         <div className="flex md:hidden items-center">
           <button
+            ref={hamburgerButtonRef}
             type="button"
             onClick={() => setMenuOpen(!isMenuOpen)}
             className="w-11 h-11 aspect-square flex items-center justify-center rounded-xl bg-transparent hover:bg-white/[0.08] active:bg-white/[0.12] text-white border-0 shadow-none transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 cursor-pointer"
@@ -398,85 +425,81 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </div>
 
-      {/* Mobile Drawer Menu: Absolute overlay, does NOT move content below, no dark grey bg */}
+      {/* Tap interceptor backdrop to close mobile drawer when clicking or tapping anywhere outside */}
+      {isMenuOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-transparent md:hidden"
+          onClick={() => setMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Mobile Drawer Menu: Powered by React Bits AnimatedList for silky 60fps/120fps hardware-accelerated spring transitions */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
             key="mobile-nav-menu"
-            initial="closed"
-            animate="open"
-            exit="closed"
-            variants={{
-              open: {
-                opacity: 1,
-                y: 0,
-                transition: {
-                  duration: 0.22,
-                  ease: [0.16, 1, 0.3, 1] as const,
-                  staggerChildren: 0.02,
-                  delayChildren: 0,
-                },
-              },
-              closed: {
-                opacity: 0,
-                y: -6,
-                transition: {
-                  duration: 0.2,
-                  ease: [0.16, 1, 0.3, 1] as const,
-                  staggerChildren: 0.02,
-                  staggerDirection: -1,
-                  when: 'afterChildren' as const,
-                },
-              },
+            ref={menuContainerRef}
+            initial={{ opacity: 0, y: -6, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{
+              opacity: 0,
+              y: -6,
+              scale: 0.98,
+              transition: { duration: 0.16, ease: [0.16, 1, 0.3, 1] },
             }}
-            className="md:hidden absolute top-full left-0 right-0 z-50 pointer-events-auto overflow-hidden bg-transparent border-0 px-4 sm:px-6 pt-2 pb-6"
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            className="md:hidden absolute top-full left-0 right-0 z-50 pointer-events-auto px-4 sm:px-6 pt-2 pb-6"
           >
-            <div className="flex flex-col gap-2">
-              {NAV_ITEMS.map((item) => {
-                const isActive = currentTab === item.id
+            <AnimatedList
+              items={NAV_ITEMS.map((item) => ({
+                id: item.id,
+                title: item.label,
+              }))}
+              initialSelectedIndex={NAV_ITEMS.findIndex((item) => item.id === currentTab)}
+              onItemSelect={(_item, index) => {
+                const selectedNav = NAV_ITEMS[index]
+                if (selectedNav) {
+                  handleSelect(selectedNav.id)
+                }
+              }}
+              renderItem={(_item, index, isSelected) => {
+                const item = NAV_ITEMS[index]
+                const isActive = isSelected || currentTab === item.id
                 return (
-                  <motion.button
-                    key={item.id}
-                    onClick={() => handleSelect(item.id)}
-                    variants={{
-                      open: {
-                        opacity: 1,
-                        y: 0,
-                        height: 50,
-                        transition: {
-                          duration: 0.22,
-                          ease: [0.16, 1, 0.3, 1] as const,
-                        },
-                      },
-                      closed: {
-                        opacity: 0,
-                        y: -8,
-                        height: 0,
-                        transition: {
-                          duration: 0.2,
-                          ease: [0.16, 1, 0.3, 1] as const,
-                        },
-                      },
-                    }}
-                    className={`group relative overflow-hidden flex items-center gap-3.5 px-5 rounded-full text-base font-medium transition-all duration-200 cursor-pointer select-none ${
-                      isActive
-                        ? 'bg-[#0f871e] text-white border border-white/40 shadow-[0_0_20px_rgba(15,135,30,0.35),inset_0_1px_1px_rgba(255,255,255,0.4)]'
-                        : 'bg-white/[0.07] hover:bg-white/[0.12] active:bg-white/[0.15] text-gray-200 hover:text-white border border-white/[0.12] backdrop-blur-md shadow-sm'
-                    }`}
-                  >
+                  <div className="flex items-center gap-3.5 w-full select-none">
                     <MaterialIcon
                       name={item.icon}
                       filled={isActive}
                       size={20}
-                      className={isActive ? 'text-white' : 'text-gray-300 group-hover:text-white'}
+                      className={`transition-colors duration-200 ${
+                        isActive ? 'text-white' : 'text-gray-300 group-hover:text-white'
+                      }`}
                     />
-                    <span className="font-medium tracking-tight text-[15px] sm:text-base">
+                    <span
+                      className={`font-medium tracking-tight text-[15px] sm:text-base ${
+                        isActive ? 'text-white font-semibold' : 'text-gray-200'
+                      }`}
+                    >
                       {item.label}
                     </span>
-                  </motion.button>
+                  </div>
                 )
-              })}
-            </div>
+              }}
+              animation="pop"
+              theme="dark"
+              selectOnHover={false}
+              enableArrowNavigation={true}
+              showGradients={false}
+              displayScrollbar={false}
+              frame={false}
+              radius={9999}
+              gap={8}
+              stagger={0.035}
+              width="100%"
+              maxHeight="none"
+              className="srf-nav-animated-list"
+            />
           </motion.div>
         )}
       </AnimatePresence>

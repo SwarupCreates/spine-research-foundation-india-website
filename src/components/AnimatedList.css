@@ -198,15 +198,20 @@
 .srf-nav-animated-list {
   width: 100% !important;
   max-width: 100% !important;
+  overflow: visible !important;
 }
 
 .srf-nav-animated-list .animated-list__viewport {
   padding: 0 !important;
   border-radius: 0 !important;
+  overflow: visible !important;
+  overflow-x: visible !important;
+  overflow-y: visible !important;
 }
 
 .srf-nav-animated-list .animated-list__track {
   gap: 8px !important;
+  overflow: visible !important;
 }
 
 .srf-nav-animated-list .animated-list__item {
@@ -224,6 +229,7 @@
   cursor: pointer !important;
   user-select: none !important;
   -webkit-tap-highlight-color: transparent !important;
+  transform-origin: center center !important;
 }
 
 .srf-nav-animated-list .animated-list__item:hover {
@@ -238,10 +244,17 @@
 
 .srf-nav-animated-list .animated-list__item[data-selected] {
   background: #0f871e !important;
-  border-color: rgba(255, 255, 255, 0.45) !important;
+  border: 1px solid #0f871e !important;
+  border-color: #0f871e !important;
   color: #ffffff !important;
-  box-shadow: 0 0 20px rgba(15, 135, 30, 0.38), inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28) !important;
   filter: none !important;
+}
+
+.srf-nav-animated-list .animated-list__item[data-selected]:hover {
+  background: #149524 !important;
+  border-color: #149524 !important;
+  color: #ffffff !important;
 }
 
 .srf-nav-animated-list .animated-list__rim {

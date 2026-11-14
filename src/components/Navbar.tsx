@@ -437,7 +437,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               scale: 0.96,
               transition: { duration: 0.18, ease: [0.16, 1, 0.3, 1] },
             }}
-            className="md:hidden absolute top-full left-0 right-0 z-50 pointer-events-auto px-4 sm:px-6 pt-2 pb-6"
+            className="md:hidden absolute top-full left-0 right-0 z-50 pointer-events-auto px-4 sm:px-6 pt-2 pb-6 overflow-visible"
           >
             <AnimatedList
               items={ANIMATED_NAV_ITEMS}

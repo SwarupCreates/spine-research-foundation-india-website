@@ -1,5 +1,5 @@
 import React from 'react'
-import { SrfLogo, MaterialIcon } from './icons'
+import { MaterialIcon } from './icons'
 
 interface EducationCardProps {
   onCheckOutMore?: () => void
@@ -8,18 +8,26 @@ interface EducationCardProps {
 export const EducationCard: React.FC<EducationCardProps> = ({ onCheckOutMore }) => {
   return (
     <div className="relative rounded-3xl sm:rounded-[32px] overflow-hidden glass-panel border border-white/[0.08] px-6 py-9 sm:px-10 sm:py-12 lg:px-14 lg:py-14 text-left shadow-xl transition duration-300 hover:border-white/[0.14]">
-      {/* Background Watermark Graphic on the right side, softly fading out at the bottom */}
+      {/* Background Image: Group Discussion with gradual left-side transparency fade */}
       <div 
-        className="absolute right-4 sm:right-8 lg:right-16 top-4 sm:top-6 bottom-0 flex items-start pointer-events-none select-none overflow-hidden"
+        className="absolute inset-0 pointer-events-none select-none overflow-hidden"
         aria-hidden="true"
-        style={{
-          maskImage: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.06) 55%, rgba(255, 255, 255, 0) 100%)',
-          WebkitMaskImage: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.06) 55%, rgba(255, 255, 255, 0) 100%)',
-        }}
       >
-        <div className="w-48 h-48 sm:w-60 sm:h-60 lg:w-72 lg:h-72 text-white shrink-0">
-          <SrfLogo className="w-full h-full text-white" />
-        </div>
+        <img
+          src={`${import.meta.env.BASE_URL}banners/groupDiscussion.png`}
+          alt="SRF India Education and Mentorship Group Discussion"
+          className="w-full h-full object-cover object-[70%_center] filter brightness-[0.72] contrast-[1.05]"
+          style={{
+            maskImage: 'linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 24%, rgba(0, 0, 0, 0.45) 50%, rgba(0, 0, 0, 0.9) 75%, rgba(0, 0, 0, 1) 100%)',
+            WebkitMaskImage: 'linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 24%, rgba(0, 0, 0, 0.45) 50%, rgba(0, 0, 0, 0.9) 75%, rgba(0, 0, 0, 1) 100%)',
+          }}
+        />
+
+        {/* Ambient darkening gradient on the left side ensuring 100% text contrast */}
+        <div 
+          className="absolute inset-0 bg-gradient-to-r from-[#0b0c0e]/95 via-[#0b0c0e]/60 to-transparent"
+          aria-hidden="true" 
+        />
       </div>
 
       {/* Foreground Content - Left Aligned */}

@@ -8,26 +8,30 @@ interface MisconceptionsCardProps {
 export const MisconceptionsCard: React.FC<MisconceptionsCardProps> = ({ onCheckOutMore }) => {
   return (
     <div className="relative rounded-3xl sm:rounded-[32px] overflow-hidden glass-panel border border-white/[0.08] px-6 py-9 sm:px-10 sm:py-12 lg:px-14 lg:py-14 text-left shadow-xl transition duration-300 hover:border-white/[0.14]">
-      {/* Subtle ambient lighting on base background */}
-      <div
-        className="absolute top-1/2 right-1/4 -translate-y-1/2 w-96 h-96 bg-emerald-500/[0.05] rounded-full blur-3xl pointer-events-none -z-10"
-        aria-hidden="true"
-      />
-      <div
-        className="absolute bottom-0 right-10 w-72 h-72 bg-blue-500/[0.04] rounded-full blur-3xl pointer-events-none -z-10"
-        aria-hidden="true"
-      />
-
-      {/* Background Graphic Accent on the right */}
-      <div
-        className="absolute right-6 sm:right-12 lg:right-16 top-1/2 -translate-y-1/2 pointer-events-none select-none text-white/[0.03] overflow-hidden hidden sm:block"
+      {/* Background Image: sadDoc.jpg positioned on the right with fading to the left of the image */}
+      <div 
+        className="absolute inset-0 pointer-events-none select-none overflow-hidden flex justify-end"
         aria-hidden="true"
       >
-        <MaterialIcon name="fact_check" size={260} className="text-white/[0.03]" />
+        <img
+          src={`${import.meta.env.BASE_URL}banners/sadDoc.jpg`}
+          alt="Healthcare Specialist and Patient Perspective"
+          className="h-full w-full sm:w-auto max-w-none object-cover sm:object-contain object-right filter brightness-[0.85] contrast-[1.05]"
+          style={{
+            maskImage: 'linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.18) 22%, rgba(0, 0, 0, 0.65) 52%, rgba(0, 0, 0, 0.95) 78%, rgba(0, 0, 0, 1) 100%)',
+            WebkitMaskImage: 'linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.18) 22%, rgba(0, 0, 0, 0.65) 52%, rgba(0, 0, 0, 0.95) 78%, rgba(0, 0, 0, 1) 100%)',
+          }}
+        />
+
+        {/* Ambient darkening gradient on the left side ensuring 100% text contrast */}
+        <div 
+          className="absolute inset-0 bg-gradient-to-r from-[#0b0c0e]/95 via-[#0b0c0e]/60 to-transparent"
+          aria-hidden="true" 
+        />
       </div>
 
       {/* Foreground Content - Left Aligned */}
-      <div className="relative z-10 max-w-xl lg:max-w-3xl text-left space-y-3 sm:space-y-4">
+      <div className="relative z-10 max-w-xl lg:max-w-2xl text-left space-y-3 sm:space-y-4">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs sm:text-sm font-medium backdrop-blur-md">
           <MaterialIcon name="fact_check" size={16} />
           <span>Patient Awareness &amp; Education</span>

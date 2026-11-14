@@ -104,20 +104,10 @@ export const ImpactMetrics: React.FC = () => {
   return (
     <section
       ref={containerRef}
-      className="relative py-8 sm:py-12 lg:py-16 overflow-hidden"
+      className="relative py-8 sm:py-12 lg:py-16"
       aria-label="SRF India Humanitarian Impact Statistics"
     >
-      {/* Subtle ambient background glows floating on the base background */}
-      <div
-        className="absolute top-1/2 left-1/4 -translate-y-1/2 w-96 h-96 bg-emerald-500/[0.04] rounded-full blur-[130px] pointer-events-none -z-10"
-        aria-hidden="true"
-      />
-      <div
-        className="absolute top-1/2 right-1/4 -translate-y-1/2 w-96 h-96 bg-blue-500/[0.04] rounded-full blur-[130px] pointer-events-none -z-10"
-        aria-hidden="true"
-      />
-
-      {/* 4-Column Responsive Grid floating seamlessly */}
+      {/* 4-Column Responsive Grid floating seamlessly with zero background glow */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-10 gap-x-6 sm:gap-x-8 sm:gap-y-12 items-center justify-center">
         {METRICS_DATA.map((metric, index) => {
           const delayEntrance = index * 0.14 // Staggered pop-up entrance
@@ -132,24 +122,24 @@ export const ImpactMetrics: React.FC = () => {
                 delay: delayEntrance,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="flex flex-col items-center text-center group cursor-default select-none"
+              className="flex flex-col items-center text-center group cursor-pointer select-none"
             >
-              {/* Circular Icon with Emerald Ring & Soft Radiant Glow */}
-              <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full border border-emerald-400/50 bg-emerald-500/10 flex items-center justify-center text-emerald-400 shadow-[0_0_20px_rgba(52,211,153,0.18)] group-hover:scale-108 group-hover:border-emerald-300 group-hover:shadow-[0_0_28px_rgba(52,211,153,0.32)] transition-all duration-300">
+              {/* Circular Icon: Clean & flat by default, radiant emerald glow ONLY on hover */}
+              <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full border border-emerald-500/30 bg-emerald-500/[0.04] flex items-center justify-center text-emerald-400 shadow-none group-hover:scale-108 group-hover:border-emerald-400 group-hover:bg-emerald-500/15 group-hover:text-emerald-300 group-hover:shadow-[0_0_24px_rgba(52,211,153,0.45)] transition-all duration-300">
                 <MaterialIcon
                   name={metric.iconName}
                   size={30}
-                  className="text-emerald-400 group-hover:text-emerald-300 transition-colors"
+                  className="text-emerald-400 group-hover:text-emerald-300 transition-colors duration-300"
                 />
               </div>
 
               {/* Metric Label: Clean Uppercase with Letter Spacing */}
-              <h3 className="text-xs sm:text-sm font-semibold tracking-[0.14em] uppercase text-gray-200 mt-4 sm:mt-5 text-center leading-snug">
+              <h3 className="text-xs sm:text-sm font-semibold tracking-[0.14em] uppercase text-gray-300 group-hover:text-white mt-4 sm:mt-5 text-center leading-snug transition-colors duration-300">
                 {metric.label}
               </h3>
 
-              {/* Bigger Dialing Counter Number in Brand Emerald */}
-              <div className="text-4xl sm:text-5xl lg:text-[56px] font-semibold text-emerald-400 tracking-tight mt-1.5 sm:mt-2 drop-shadow-[0_2px_14px_rgba(52,211,153,0.28)] leading-none">
+              {/* Bigger Dialing Counter Number: Crisp flat text by default, vibrant glow ONLY on hover */}
+              <div className="text-4xl sm:text-5xl lg:text-[56px] font-semibold text-emerald-400 tracking-tight mt-1.5 sm:mt-2 drop-shadow-none group-hover:drop-shadow-[0_0_18px_rgba(52,211,153,0.65)] group-hover:text-emerald-300 transition-all duration-300 leading-none">
                 <AnimatedDialNumber
                   targetValue={metric.targetValue}
                   suffix={metric.suffix}

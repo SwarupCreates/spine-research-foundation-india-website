@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Hero from '../components/Hero'
 import GlassCard from '../components/GlassCard'
 import EventSection from '../components/EventSection'
@@ -10,10 +11,10 @@ import MisconceptionsCard from '../components/MisconceptionsCard'
 import GradualBlur from '../components/GradualBlur'
 
 interface HomePageProps {
-  onReadMore: () => void
-  onOpenPromise: () => void
-  onOpenEducation: () => void
-  onOpenMisconceptions: () => void
+  onReadMore?: () => void
+  onOpenPromise?: () => void
+  onOpenEducation?: () => void
+  onOpenMisconceptions?: () => void
 }
 
 export const HomePage: React.FC<HomePageProps> = ({
@@ -22,6 +23,7 @@ export const HomePage: React.FC<HomePageProps> = ({
   onOpenEducation,
   onOpenMisconceptions,
 }) => {
+  const navigate = useNavigate()
   const bannerImgRef = useRef<HTMLImageElement>(null)
 
   // Fluid delayed parallax scroll effect with magnetic top snapping
@@ -161,9 +163,9 @@ export const HomePage: React.FC<HomePageProps> = ({
 
       {/* Floating Glass Cards with uniform 20px edge gutter and inter-card gap on mobile */}
       <div className="max-w-[1536px] mx-auto px-5 sm:px-10 lg:px-14 xl:px-16 space-y-5 sm:space-y-5">
-        <GlassCard onReadMore={onReadMore} />
+        <GlassCard onReadMore={onReadMore || (() => navigate('/about'))} />
         <EventSection />
-        <PromiseCard onCheckOutMore={onOpenPromise} />
+        <PromiseCard onCheckOutMore={onOpenPromise || (() => navigate('/care'))} />
       </div>
 
       {/* Managing Trustee's Message on Base Background */}
@@ -171,9 +173,9 @@ export const HomePage: React.FC<HomePageProps> = ({
 
       {/* Education & Research, Humanitarian Impact Metrics, and Misconceptions Section */}
       <div className="max-w-[1536px] mx-auto px-5 sm:px-10 lg:px-14 xl:px-16 space-y-5 sm:space-y-5">
-        <EducationCard onCheckOutMore={onOpenEducation} />
+        <EducationCard onCheckOutMore={onOpenEducation || (() => navigate('/discover'))} />
         <ImpactMetrics />
-        <MisconceptionsCard onCheckOutMore={onOpenMisconceptions} />
+        <MisconceptionsCard onCheckOutMore={onOpenMisconceptions || (() => navigate('/treatments'))} />
       </div>
     </>
   )

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import FloatingActions from './components/FloatingActions'
@@ -23,12 +23,20 @@ export const App: React.FC = () => {
   const pathSegment = location.pathname.replace(/^\//, '').split('/')[0].toLowerCase()
   const activeTab = pathSegment ? pathSegment : 'home'
 
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  // Automatically close mobile menu upon navigating
+  useEffect(() => {
+    setIsMobileMenuOpen(false)
+  }, [location.pathname])
+
   const handleTabChange = (tabId: string) => {
     if (tabId === 'home') {
       navigate('/')
     } else {
       navigate(`/${tabId}`)
     }
+    setIsMobileMenuOpen(false)
   }
 
   // Modals state
@@ -41,24 +49,29 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#0b0c0e] text-slate-100 flex flex-col relative selection:bg-emerald-500 selection:text-white font-medium">
-      {/* Top Page-level Gradual Blur for scrolling content */}
+      {/* Top Page-level Gradual Blur: dynamically expands height on mobile menu open */}
       <GradualBlur
         position="top"
         target="page"
-        height="10rem"
-        strength={2.8}
+        height={isMobileMenuOpen ? '32rem' : '10rem'}
+        strength={isMobileMenuOpen ? 3.5 : 2.8}
         layers={8}
         curve="linear"
         exponential
         tint="rgba(11, 12, 14, 0.82)"
-        autoHide
+        autoHide={!isMobileMenuOpen}
         zIndex={30}
+        style={{
+          transition: 'height 0.45s cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
       />
 
       {/* Floating Navbar at z-50: Sits ON TOP of GradualBlur (z-30), staying 100% sharp and unblurred */}
       <Navbar
         activeTab={activeTab}
         onTabChange={handleTabChange}
+        isMobileMenuOpen={isMobileMenuOpen}
+        onMobileMenuOpenChange={setIsMobileMenuOpen}
       />
 
       {/* Main Content Container at relative z-10 */}

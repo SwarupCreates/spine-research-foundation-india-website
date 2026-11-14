@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { SrfLogo, SrfLogoColored, MaterialIcon } from './icons'
 
 export interface NavItem {
@@ -22,18 +22,30 @@ export const NAV_ITEMS: NavItem[] = [
 interface NavbarProps {
   activeTab?: string
   onTabChange?: (tabId: string) => void
+  isMobileMenuOpen?: boolean
+  onMobileMenuOpenChange?: (open: boolean) => void
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   activeTab = 'home',
   onTabChange,
+  isMobileMenuOpen: externalMobileMenuOpen,
+  onMobileMenuOpenChange,
 }) => {
   const [currentTab, setCurrentTab] = useState(activeTab)
+  const [internalMobileMenuOpen, setInternalMobileMenuOpen] = useState(false)
+  const isMenuOpen = externalMobileMenuOpen !== undefined ? externalMobileMenuOpen : internalMobileMenuOpen
+
+  const setMenuOpen = (open: boolean) => {
+    setInternalMobileMenuOpen(open)
+    if (onMobileMenuOpenChange) {
+      onMobileMenuOpenChange(open)
+    }
+  }
 
   useEffect(() => {
     setCurrentTab(activeTab)
   }, [activeTab])
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   // Kinetic Brand Logo Interaction States:
   // Decoupled into visual hover (glow/scale), letter expansion (maxWidth/opacity),
   // and layout orientation (stacked flex-col vs inline flex-row) to prevent layout shifts
@@ -96,7 +108,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     if (onTabChange) {
       onTabChange(id)
     }
-    setMobileMenuOpen(false)
+    setMenuOpen(false)
   }
 
   return (
@@ -321,58 +333,106 @@ export const Navbar: React.FC<NavbarProps> = ({
           })}
         </nav>
 
-        {/* Mobile Hamburger Button */}
+        {/* Mobile Hamburger Button: Perfect square button with NO background for immersive design */}
         <div className="flex md:hidden items-center">
           <button
             type="button"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-gray-200 hover:text-white border border-white/[0.08] backdrop-blur-xl transition focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 cursor-pointer"
+            onClick={() => setMenuOpen(!isMenuOpen)}
+            className="w-11 h-11 aspect-square flex items-center justify-center rounded-xl bg-transparent hover:bg-white/[0.08] active:bg-white/[0.12] text-white border-0 shadow-none transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 cursor-pointer"
             aria-label="Toggle navigation menu"
-            aria-expanded={mobileMenuOpen}
+            aria-expanded={isMenuOpen}
           >
             <MaterialIcon
-              name={mobileMenuOpen ? 'close' : 'menu'}
-              size={24}
+              name={isMenuOpen ? 'close' : 'menu'}
+              size={26}
               className="text-white"
             />
           </button>
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden border-t border-white/[0.08] bg-[#0c0d10]/95 backdrop-blur-2xl px-4 pt-3 pb-6 animate-in slide-in-from-top-2 duration-200 shadow-2xl">
-          <div className="flex flex-col gap-1.5">
-            {NAV_ITEMS.map((item) => {
-              const isActive = currentTab === item.id
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => handleSelect(item.id)}
-                  className={`group flex items-center justify-between px-4 py-3 rounded-2xl text-base font-medium transition cursor-pointer ${
-                    isActive
-                      ? 'bg-[#0f871e] text-white shadow-md'
-                      : 'text-gray-200 hover:text-white hover:bg-white/[0.06]'
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
+      {/* Mobile Drawer Menu: Absolute overlay, does NOT move content below, no dark grey bg */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            key="mobile-nav-menu"
+            initial="closed"
+            animate="open"
+            exit="closed"
+            variants={{
+              open: {
+                opacity: 1,
+                height: 'auto',
+                transition: {
+                  duration: 0.35,
+                  ease: [0.16, 1, 0.3, 1] as const,
+                  staggerChildren: 0.045,
+                  delayChildren: 0.03,
+                },
+              },
+              closed: {
+                opacity: 0,
+                height: 0,
+                transition: {
+                  duration: 0.25,
+                  ease: [0.16, 1, 0.3, 1] as const,
+                  staggerChildren: 0.02,
+                  staggerDirection: -1,
+                  when: 'afterChildren' as const,
+                },
+              },
+            }}
+            className="md:hidden absolute top-full left-0 right-0 z-50 pointer-events-auto overflow-hidden bg-transparent border-0 px-4 sm:px-6 pt-2 pb-6"
+          >
+            <div className="flex flex-col gap-2">
+              {NAV_ITEMS.map((item) => {
+                const isActive = currentTab === item.id
+                return (
+                  <motion.button
+                    key={item.id}
+                    onClick={() => handleSelect(item.id)}
+                    variants={{
+                      open: {
+                        opacity: 1,
+                        y: 0,
+                        height: 50,
+                        transition: {
+                          duration: 0.28,
+                          ease: [0.16, 1, 0.3, 1] as const,
+                        },
+                      },
+                      closed: {
+                        opacity: 0,
+                        y: -8,
+                        height: 0,
+                        transition: {
+                          duration: 0.2,
+                          ease: [0.16, 1, 0.3, 1] as const,
+                        },
+                      },
+                    }}
+                    className={`group relative overflow-hidden flex items-center gap-3.5 px-5 rounded-full text-base font-medium transition-all duration-200 cursor-pointer select-none ${
+                      isActive
+                        ? 'bg-[#0f871e] text-white border border-white/40 shadow-[0_0_20px_rgba(15,135,30,0.35),inset_0_1px_1px_rgba(255,255,255,0.4)]'
+                        : 'bg-white/[0.07] hover:bg-white/[0.12] active:bg-white/[0.15] text-gray-200 hover:text-white border border-white/[0.12] backdrop-blur-md shadow-sm'
+                    }`}
+                  >
                     <MaterialIcon
                       name={item.icon}
                       filled={isActive}
-                      size={22}
-                      className={isActive ? 'text-white' : 'text-gray-400 group-hover:text-white'}
+                      size={20}
+                      className={isActive ? 'text-white' : 'text-gray-300 group-hover:text-white'}
                     />
-                    <span className="font-medium">{item.label}</span>
-                  </div>
-                  {isActive && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                  )}
-                </button>
-              )
-            })}
-          </div>
-        </div>
-      )}
+                    <span className="font-medium tracking-tight text-[15px] sm:text-base">
+                      {item.label}
+                    </span>
+                  </motion.button>
+                )
+              })}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   )
 }

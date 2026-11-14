@@ -59,7 +59,7 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
     <aside 
       id="floating-actions"
       data-testid="floating-actions"
-      className={`fixed right-8 sm:right-10 lg:right-12 z-50 flex items-center gap-3.5 transition-[bottom] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+      className={`fixed left-1/2 -translate-x-1/2 sm:left-auto sm:right-10 sm:translate-x-0 lg:right-12 z-50 flex items-center gap-3.5 transition-[bottom] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
         bottomSpacing === null ? 'bottom-8 sm:bottom-10 lg:bottom-12' : ''
       }`}
       style={{
@@ -102,7 +102,7 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
 
         {/* Hover tooltip */}
         {showTooltip && (
-          <span className="absolute bottom-full mb-2.5 right-0 px-2.5 py-1 rounded-lg bg-black/85 backdrop-blur-md text-xs text-white whitespace-nowrap border border-white/10 shadow-lg pointer-events-none transition-opacity font-medium">
+          <span className="absolute bottom-full mb-2.5 left-1/2 -translate-x-1/2 sm:left-auto sm:right-0 sm:translate-x-0 px-2.5 py-1 rounded-lg bg-black/85 backdrop-blur-md text-xs text-white whitespace-nowrap border border-white/10 shadow-lg pointer-events-none transition-opacity font-medium">
             Contact &amp; Support
           </span>
         )}

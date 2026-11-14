@@ -147,7 +147,7 @@ export const CustomScrollbar: React.FC = () => {
       onClick={handleTrackClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="fixed right-1 sm:right-1.5 top-3.5 bottom-3.5 z-[9999] flex items-center justify-center cursor-pointer select-none"
+      className="hidden md:flex fixed right-1 sm:right-1.5 top-3.5 bottom-3.5 z-[9999] items-center justify-center cursor-pointer select-none"
       style={{
         width: isActive ? '14px' : '8px',
         transition: 'width 0.15s cubic-bezier(0.34, 1.56, 0.64, 1)',

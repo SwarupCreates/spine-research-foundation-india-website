@@ -61,7 +61,7 @@ export const HomePage: React.FC<HomePageProps> = ({
       currentY += (targetY - currentY) * 0.08
 
       const isMobile = typeof window !== 'undefined' && window.innerWidth < 640
-      const scaleStr = isMobile ? 'scale(1.15)' : 'scale(1.08)'
+      const scaleStr = isMobile ? 'scale(1.18)' : 'scale(1.08)'
 
       if (bannerImgRef.current) {
         bannerImgRef.current.style.transform = `translate3d(0, ${currentY.toFixed(2)}px, 0) ${scaleStr}`
@@ -90,9 +90,9 @@ export const HomePage: React.FC<HomePageProps> = ({
   return (
     <>
       {/* Landing Scroll Level Hero Background Banner with Delayed Parallax & Magnetic Snap */}
-      {/* On mobile: Render with increased height (~58vh) and zoom to cover more background elegantly */}
+      {/* On mobile: Render with increased height (~76vh) and zoom to cover even more background elegantly */}
       <div 
-        className="absolute -top-[100px] sm:-top-[110px] left-0 right-0 h-[calc(58vh+100px)] sm:h-[calc(100vh+110px)] max-h-[calc(62vh+100px)] sm:max-h-none pointer-events-none z-0 overflow-hidden"
+        className="absolute -top-[100px] sm:-top-[110px] left-0 right-0 h-[calc(76vh+100px)] sm:h-[calc(100vh+110px)] max-h-[calc(80vh+100px)] sm:max-h-none pointer-events-none z-0 overflow-hidden"
         aria-hidden="true"
       >
         {/* Generous overscan wrapper ensuring no top edge or gap ever exposes */}
@@ -109,19 +109,19 @@ export const HomePage: React.FC<HomePageProps> = ({
               alt="Spine Research Foundation India patient banner"
               className="w-full h-full object-cover object-[50%_12%] sm:object-[50%_20%] select-none opacity-90 will-change-transform"
               style={{
-                transform: 'translate3d(0, 0px, 0) scale(1.15)',
+                transform: 'translate3d(0, 0px, 0) scale(1.18)',
                 transformOrigin: 'center center',
               }}
             />
           </picture>
         </div>
 
-        {/* Gradual blur softening as we move up to the overlay: increased back on mobile (~55%) since more of the image is visible */}
+        {/* Gradual blur softening as we move up to the overlay: adjusted for 76vh height on mobile */}
         <div className="block sm:hidden">
           <GradualBlur
             position="bottom"
             target="parent"
-            height="55%"
+            height="50%"
             strength={2.2}
             layers={8}
             curve="linear"
@@ -146,7 +146,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         <div 
           className="sm:hidden absolute inset-0 pointer-events-none"
           style={{
-            background: 'linear-gradient(to top, #0b0c0e 0%, rgba(11, 12, 14, 0.96) 24%, rgba(11, 12, 14, 0.5) 48%, rgba(11, 12, 14, 0) 80%)',
+            background: 'linear-gradient(to top, #0b0c0e 0%, rgba(11, 12, 14, 0.96) 20%, rgba(11, 12, 14, 0.45) 45%, rgba(11, 12, 14, 0) 75%)',
             zIndex: 3
           }}
         />

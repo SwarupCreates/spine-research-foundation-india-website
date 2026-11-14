@@ -5,22 +5,19 @@ export const Hero: React.FC = () => {
     <section className="relative pt-24 pb-8 sm:pt-36 sm:pb-10 lg:pt-48 lg:pb-12 overflow-hidden">
       <div className="max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 relative z-10">
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pt-4 sm:pt-6">
-          {/* Left Title & Tagline */}
-          <div className="space-y-1.5 sm:space-y-2">
-            <span className="text-white text-[24px] sm:text-[30px] md:text-[32px] lg:text-[var(--font-size-hero-title,36px)] font-normal tracking-tight block leading-tight">
-              Welcome to
-            </span>
-            
-            <h1 className="text-[24px] sm:text-[30px] md:text-[32px] lg:text-[var(--font-size-hero-title,36px)] leading-tight tracking-tight lg:whitespace-nowrap flex flex-wrap items-baseline gap-x-2.5">
-              <span className="font-semibold text-white">
-                Spine Research Foundation
+          {/* Left Title & Tagline: Welcome to and Spine Research Foundation India unified in one text box for consistent line-height */}
+          <div className="space-y-2 sm:space-y-2.5">
+            <h1 className="text-[24px] sm:text-[30px] md:text-[32px] lg:text-[var(--font-size-hero-title,36px)] tracking-tight leading-[1.2] sm:leading-[1.2]">
+              <span className="font-normal text-white block">
+                Welcome to
               </span>
-              <span className="font-semibold text-white/60">
-                India
+              <span className="font-semibold text-white flex flex-wrap items-baseline gap-x-2.5 lg:whitespace-nowrap">
+                <span>Spine Research Foundation</span>
+                <span className="text-white/60 font-semibold">India</span>
               </span>
             </h1>
 
-            <p className="text-gray-300 text-[18px] sm:text-[20px] lg:text-[var(--font-size-hero-subtext,22px)] font-normal pt-1">
+            <p className="text-gray-300 text-[18px] sm:text-[20px] lg:text-[var(--font-size-hero-subtext,22px)] font-normal pt-0.5 sm:pt-1">
               By your side always...
             </p>
           </div>

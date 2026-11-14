@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { SrfLogo, SrfLogoColored, MaterialIcon } from './icons'
 
@@ -31,6 +31,41 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [currentTab, setCurrentTab] = useState(activeTab)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [isLogoHovered, setIsLogoHovered] = useState(false)
+  const logoHoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Smooth hover transition timings:
+  // Deliberate exit delay and slower, flowy return animation so it never rushes back into acronym state
+  const handleLogoMouseEnter = () => {
+    if (logoHoverTimeoutRef.current) {
+      clearTimeout(logoHoverTimeoutRef.current)
+      logoHoverTimeoutRef.current = null
+    }
+    setIsLogoHovered(true)
+  }
+
+  const handleLogoMouseLeave = () => {
+    if (logoHoverTimeoutRef.current) {
+      clearTimeout(logoHoverTimeoutRef.current)
+    }
+    // 280ms pleasant delay before collapsing back to acronym
+    logoHoverTimeoutRef.current = setTimeout(() => {
+      setIsLogoHovered(false)
+    }, 280)
+  }
+
+  useEffect(() => {
+    return () => {
+      if (logoHoverTimeoutRef.current) {
+        clearTimeout(logoHoverTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  // Dynamics: Fast & responsive expansion (0.6s) vs calm, smooth, slower contraction (0.85s)
+  const activeDuration = isLogoHovered ? 0.6 : 0.85
+  const easeIn: [number, number, number, number] = [0.22, 1, 0.36, 1]
+  const easeOut: [number, number, number, number] = [0.16, 1, 0.3, 1]
+  const activeEase: [number, number, number, number] = isLogoHovered ? easeIn : easeOut
 
   const handleSelect = (id: string) => {
     setCurrentTab(id)
@@ -47,11 +82,13 @@ export const Navbar: React.FC<NavbarProps> = ({
         <a
           href="#home"
           onClick={() => handleSelect('home')}
-          onMouseEnter={() => setIsLogoHovered(true)}
-          onMouseLeave={() => setIsLogoHovered(false)}
+          onMouseEnter={handleLogoMouseEnter}
+          onMouseLeave={handleLogoMouseLeave}
           className={`relative flex items-center ${
             isLogoHovered ? 'gap-1 sm:gap-1.5' : 'gap-2 sm:gap-2.5'
-          } group focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 rounded-xl p-1.5 transition-all duration-300 cursor-pointer`}
+          } group focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 rounded-xl p-1.5 transition-all ${
+            isLogoHovered ? 'duration-300' : 'duration-700'
+          } cursor-pointer`}
           aria-label="SRF India Home"
         >
           {/* Logo Container with Enlarge-Scale Highlight Effect on Hover & Centered Glow */}
@@ -60,7 +97,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             animate={{
               scale: isLogoHovered ? 1.09 : 1,
             }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: isLogoHovered ? 0.35 : 0.75, ease: activeEase }}
           >
             {/* Brand Gradient Glow strictly around the circular Logomark on the left */}
             <motion.div
@@ -70,7 +107,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 opacity: isLogoHovered ? 0.82 : 0,
                 scale: isLogoHovered ? 1.22 : 0.85,
               }}
-              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: isLogoHovered ? 0.45 : 0.75, ease: activeEase }}
               style={{
                 background: 'radial-gradient(circle, rgba(27, 154, 247, 0.72) 0%, rgba(135, 205, 70, 0.58) 55%, transparent 100%)',
               }}
@@ -84,7 +121,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 opacity: isLogoHovered ? 0 : 1,
                 scale: isLogoHovered ? 0.94 : 1,
               }}
-              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: isLogoHovered ? 0.4 : 0.75, ease: activeEase }}
             >
               <SrfLogo className="w-full h-full text-white" />
             </motion.div>
@@ -97,7 +134,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 opacity: isLogoHovered ? 1 : 0,
                 scale: isLogoHovered ? 1.02 : 0.95,
               }}
-              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: isLogoHovered ? 0.4 : 0.75, ease: activeEase }}
             >
               <SrfLogoColored className="w-full h-full" />
             </motion.div>
@@ -105,8 +142,8 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Kinetic Morphing Brand Typography: Closer to logo and flowy expansion */}
           <div
-            className={`overflow-visible min-h-[44px] flex items-center py-1 transition-transform duration-300 ${
-              isLogoHovered ? '-translate-x-0.5 sm:-translate-x-1' : 'translate-x-0'
+            className={`overflow-visible min-h-[44px] flex items-center py-1 transition-transform ${
+              isLogoHovered ? '-translate-x-0.5 sm:-translate-x-1 duration-300' : 'translate-x-0 duration-700'
             }`}
           >
             <motion.div
@@ -119,12 +156,16 @@ export const Navbar: React.FC<NavbarProps> = ({
               }}
               style={{ transformOrigin: 'left center' }}
               transition={{
-                layout: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
-                scale: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+                layout: { duration: activeDuration, ease: activeEase },
+                scale: { duration: activeDuration, ease: activeEase },
               }}
             >
               {/* Line 1: S[PINE] + R[ESEARCH] */}
-              <motion.div layout className="flex items-baseline whitespace-nowrap leading-none py-0.5">
+              <motion.div 
+                layout 
+                className="flex items-baseline whitespace-nowrap leading-none py-0.5"
+                transition={{ duration: activeDuration, ease: activeEase }}
+              >
                 {/* Word 1: S + PINE */}
                 <span className="flex items-baseline leading-none">
                   <span className="font-semibold text-white tracking-[0.14em] text-lg sm:text-[21px] leading-none">
@@ -137,7 +178,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                       maxWidth: isLogoHovered ? 80 : 0,
                       opacity: isLogoHovered ? 1 : 0,
                     }}
-                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{
+                      maxWidth: { duration: activeDuration, ease: activeEase },
+                      opacity: { duration: isLogoHovered ? 0.45 : 0.65, ease: activeEase },
+                    }}
                   >
                     PINE
                   </motion.span>
@@ -149,7 +193,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   animate={{
                     marginLeft: isLogoHovered ? '0.36em' : '0.04em',
                   }}
-                  transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ duration: activeDuration, ease: activeEase }}
                 >
                   <span className="font-semibold text-white tracking-[0.14em] text-lg sm:text-[21px] leading-none">
                     R
@@ -161,7 +205,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                       maxWidth: isLogoHovered ? 130 : 0,
                       opacity: isLogoHovered ? 1 : 0,
                     }}
-                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{
+                      maxWidth: { duration: activeDuration, ease: activeEase },
+                      opacity: { duration: isLogoHovered ? 0.45 : 0.65, ease: activeEase },
+                    }}
                   >
                     ESEARCH
                   </motion.span>
@@ -175,7 +222,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 animate={{
                   marginLeft: isLogoHovered ? '0em' : '0.04em',
                 }}
-                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: activeDuration, ease: activeEase }}
               >
                 {/* Word 3: F + OUNDATION */}
                 <span className="flex items-baseline leading-none">
@@ -189,7 +236,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                       maxWidth: isLogoHovered ? 160 : 0,
                       opacity: isLogoHovered ? 1 : 0,
                     }}
-                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{
+                      maxWidth: { duration: activeDuration, ease: activeEase },
+                      opacity: { duration: isLogoHovered ? 0.45 : 0.65, ease: activeEase },
+                    }}
                   >
                     OUNDATION
                   </motion.span>
@@ -202,7 +252,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     marginLeft: isLogoHovered ? '0.34em' : '0.24em',
                     opacity: isLogoHovered ? 0.6 : 0.48,
                   }}
-                  transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ duration: activeDuration, ease: activeEase }}
                 >
                   INDIA
                 </motion.span>

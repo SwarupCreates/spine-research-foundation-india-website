@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import GlassCard from './components/GlassCard'
@@ -29,19 +29,71 @@ export const App: React.FC = () => {
   const [isPromiseOpen, setIsPromiseOpen] = useState(false)
   const [isEducationOpen, setIsEducationOpen] = useState(false)
   const [isMisconceptionsOpen, setIsMisconceptionsOpen] = useState(false)
+  const bannerImgRef = useRef<HTMLImageElement>(null)
+
+  // Fluid delayed parallax scroll effect for the background hero banner image
+  useEffect(() => {
+    let targetY = 0
+    let currentY = 0
+    let rafId: number
+    let isRunning = false
+
+    const handleScroll = () => {
+      const scrollY = window.scrollY || window.pageYOffset
+      // Parallax translation ratio: ~28% of page scroll speed
+      targetY = scrollY * 0.28
+
+      if (!isRunning) {
+        isRunning = true
+        rafId = requestAnimationFrame(animate)
+      }
+    }
+
+    const animate = () => {
+      // Lerp with 0.075 damping factor creates luxurious delayed inertia
+      currentY += (targetY - currentY) * 0.075
+
+      if (bannerImgRef.current) {
+        bannerImgRef.current.style.transform = `translate3d(0, ${currentY.toFixed(2)}px, 0) scale(1.12)`
+      }
+
+      if (Math.abs(targetY - currentY) > 0.08) {
+        rafId = requestAnimationFrame(animate)
+      } else {
+        currentY = targetY
+        if (bannerImgRef.current) {
+          bannerImgRef.current.style.transform = `translate3d(0, ${currentY.toFixed(2)}px, 0) scale(1.12)`
+        }
+        isRunning = false
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll()
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      cancelAnimationFrame(rafId)
+    }
+  }, [])
 
   return (
     <div className="min-h-screen bg-[#0b0c0e] text-slate-100 flex flex-col relative selection:bg-emerald-500 selection:text-white font-medium">
-      {/* Landing Scroll Level Hero Background Banner */}
+      {/* Landing Scroll Level Hero Background Banner with Delayed Parallax */}
       <div 
         className="absolute top-0 left-0 right-0 h-screen pointer-events-none z-0 overflow-hidden"
         aria-hidden="true"
       >
-        {/* Background Image */}
+        {/* Background Image with Delayed Parallax Scroll */}
         <img
+          ref={bannerImgRef}
           src={`${import.meta.env.BASE_URL}banners/Solitary Boy Amid the Moving Crowd 1.jpg`}
           alt="Spine Research Foundation India patient banner"
-          className="w-full h-full object-cover object-[50%_22%] select-none opacity-90"
+          className="w-full h-full object-cover object-[50%_22%] select-none opacity-90 will-change-transform"
+          style={{
+            transform: 'translate3d(0, 0px, 0) scale(1.12)',
+            transformOrigin: 'center 22%',
+          }}
         />
 
         {/* Gradual blur softening as we move up to the overlay */}

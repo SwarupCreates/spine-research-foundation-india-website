@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import { motion } from 'framer-motion'
 import { MaterialIcon } from './icons'
 
 export const EventSection: React.FC = () => {
   const [isPlayingInline, setIsPlayingInline] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const iframeRef = useRef<HTMLIFrameElement>(null)
 
   // Listen to Escape key to close full-screen modal
   useEffect(() => {
@@ -25,23 +27,85 @@ export const EventSection: React.FC = () => {
   }, [isModalOpen])
 
   const videoId = 'MXwTXBckIQM'
-  const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`
+  const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&enablejsapi=1&rel=0&modestbranding=1`
+
+  const handlePauseAndCollapse = () => {
+    try {
+      iframeRef.current?.contentWindow?.postMessage(
+        '{"event":"command","func":"pauseVideo","args":""}',
+        '*'
+      )
+    } catch {
+      // Ignore cross-origin limitations
+    }
+    setIsPlayingInline(false)
+  }
+
+  const layoutTransition = {
+    duration: 0.65,
+    ease: [0.16, 1, 0.3, 1] as const,
+  }
 
   return (
     <>
-      <div className="relative rounded-3xl sm:rounded-[32px] overflow-hidden glass-panel border border-white/[0.08] p-6 sm:p-8 md:p-10 shadow-xl transition duration-300 hover:border-white/[0.14]">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
-          {/* Media / Video Preview - Strictly 16:9 Canvas */}
-          <div className="lg:col-span-5 w-full">
-            <div className="group relative w-full aspect-video rounded-2xl bg-black overflow-hidden border border-white/[0.08] shadow-2xl transition hover:border-white/[0.18]">
+      <motion.div 
+        layout
+        transition={{ layout: layoutTransition }}
+        className="relative rounded-3xl sm:rounded-[32px] overflow-hidden glass-panel border border-white/[0.08] p-6 sm:p-8 md:p-10 shadow-xl transition-colors duration-300 hover:border-white/[0.14]"
+      >
+        <motion.div 
+          layout
+          transition={{ layout: layoutTransition }}
+          className={
+            isPlayingInline
+              ? 'flex flex-col gap-6 sm:gap-8'
+              : 'grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center'
+          }
+        >
+          {/* Media / Video Preview - Smoothly morphs from left 5-col to top 12-col full width */}
+          <motion.div 
+            layout
+            transition={{ layout: layoutTransition }}
+            className={isPlayingInline ? 'w-full' : 'lg:col-span-5 w-full'}
+          >
+            <div 
+              className={`group relative w-full aspect-video rounded-2xl ${
+                isPlayingInline ? 'sm:rounded-[28px] max-h-[580px]' : ''
+              } bg-black overflow-hidden border border-white/[0.08] shadow-2xl transition-all duration-300 hover:border-white/[0.18]`}
+            >
               {isPlayingInline ? (
-                <iframe
-                  src={embedUrl}
-                  title="Cervical Disc Replacement Surgery - Dr. Saumyajit Basu"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                  className="w-full h-full border-0 rounded-2xl"
-                />
+                <div className="relative w-full h-full">
+                  <iframe
+                    ref={iframeRef}
+                    src={embedUrl}
+                    title="Cervical Disc Replacement Surgery - Dr. Saumyajit Basu"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    className="w-full h-full border-0 rounded-2xl sm:rounded-[28px]"
+                  />
+
+                  {/* Floating Top-Right Controls: Pause & Collapse, Cinema Mode */}
+                  <div className="absolute top-3.5 right-3.5 z-20 flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={handlePauseAndCollapse}
+                      title="Pause and return video to compact left layout"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-black/75 hover:bg-black/90 backdrop-blur-md border border-white/20 hover:border-emerald-400 text-white font-medium text-xs shadow-xl transition-all hover:scale-105 cursor-pointer"
+                    >
+                      <MaterialIcon name="pause" size={16} className="text-emerald-400" />
+                      <span>Pause &amp; Collapse</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setIsModalOpen(true)}
+                      title="Watch in Cinema Mode"
+                      className="w-8 h-8 rounded-full bg-black/75 hover:bg-black/90 backdrop-blur-md border border-white/20 hover:border-white/40 text-white flex items-center justify-center transition-all hover:scale-105 cursor-pointer shadow-xl"
+                    >
+                      <MaterialIcon name="open_in_full" size={16} />
+                    </button>
+                  </div>
+                </div>
               ) : (
                 <div 
                   onClick={() => setIsPlayingInline(true)}
@@ -87,10 +151,14 @@ export const EventSection: React.FC = () => {
                 </div>
               )}
             </div>
-          </div>
+          </motion.div>
 
-          {/* Text Content */}
-          <div className="lg:col-span-7 space-y-3.5">
+          {/* Text Content - Smoothly slides down when video expands to top */}
+          <motion.div 
+            layout
+            transition={{ layout: layoutTransition }}
+            className={isPlayingInline ? 'w-full space-y-4' : 'lg:col-span-7 space-y-3.5'}
+          >
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs sm:text-sm font-medium backdrop-blur-md">
               <MaterialIcon name="medical_services" size={16} />
               <span>Clinical Excellence Series</span>
@@ -124,6 +192,26 @@ export const EventSection: React.FC = () => {
 
             {/* Action Buttons */}
             <div className="pt-2 flex flex-wrap items-center gap-3">
+              {isPlayingInline ? (
+                <button
+                  type="button"
+                  onClick={handlePauseAndCollapse}
+                  className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-medium text-xs sm:text-sm border border-white/15 transition-all duration-300 backdrop-blur-md shadow-md hover:scale-[1.02] cursor-pointer"
+                >
+                  <MaterialIcon name="pause" size={18} className="text-emerald-400" />
+                  <span>Pause &amp; Collapse View</span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setIsPlayingInline(true)}
+                  className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 font-medium text-xs sm:text-sm border border-emerald-500/30 transition-all duration-300 backdrop-blur-md shadow-md hover:scale-[1.02] cursor-pointer"
+                >
+                  <MaterialIcon name="play_arrow" size={18} className="text-emerald-400" />
+                  <span>Play Video</span>
+                </button>
+              )}
+
               {/* Watch in Cinema Mode */}
               <button
                 type="button"
@@ -131,7 +219,7 @@ export const EventSection: React.FC = () => {
                 className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-medium text-xs sm:text-sm border border-white/15 transition-all duration-300 backdrop-blur-md shadow-md hover:scale-[1.02] cursor-pointer"
               >
                 <MaterialIcon name="fullscreen" size={18} />
-                <span>Watch in Cinema Mode</span>
+                <span>Cinema Mode</span>
               </button>
 
               {/* View on YouTube with Official YouTube SVG Logo and Red Glow Hover */}
@@ -150,9 +238,9 @@ export const EventSection: React.FC = () => {
                 <span>View on YouTube</span>
               </a>
             </div>
-          </div>
-        </div>
-      </div>
+          </motion.div>
+        </motion.div>
+      </motion.div>
 
       {/* Full-Screen Glassmorphism Cinema Modal */}
       {isModalOpen && (

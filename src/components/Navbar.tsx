@@ -49,22 +49,30 @@ export const Navbar: React.FC<NavbarProps> = ({
           onClick={() => handleSelect('home')}
           onMouseEnter={() => setIsLogoHovered(true)}
           onMouseLeave={() => setIsLogoHovered(false)}
-          className="relative flex items-center gap-2 sm:gap-2.5 group focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 rounded-xl p-1.5 transition cursor-pointer"
+          className={`relative flex items-center ${
+            isLogoHovered ? 'gap-1 sm:gap-1.5' : 'gap-2 sm:gap-2.5'
+          } group focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 rounded-xl p-1.5 transition-all duration-300 cursor-pointer`}
           aria-label="SRF India Home"
         >
-          {/* Logo Container with Smooth White-to-Color Transformation & Centered Glow */}
-          <div className="relative w-10 h-10 sm:w-11 sm:h-11 flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
+          {/* Logo Container with Enlarge-Scale Highlight Effect on Hover & Centered Glow */}
+          <motion.div
+            className="relative w-10 h-10 sm:w-11 sm:h-11 flex-shrink-0"
+            animate={{
+              scale: isLogoHovered ? 1.09 : 1,
+            }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+          >
             {/* Brand Gradient Glow strictly around the circular Logomark on the left */}
             <motion.div
               className="absolute -inset-2.5 sm:-inset-3 pointer-events-none -z-10 rounded-full blur-xl"
               initial={{ opacity: 0, scale: 0.85 }}
               animate={{
-                opacity: isLogoHovered ? 0.75 : 0,
-                scale: isLogoHovered ? 1.18 : 0.85,
+                opacity: isLogoHovered ? 0.82 : 0,
+                scale: isLogoHovered ? 1.22 : 0.85,
               }}
               transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
               style={{
-                background: 'radial-gradient(circle, rgba(27, 154, 247, 0.7) 0%, rgba(135, 205, 70, 0.52) 55%, transparent 100%)',
+                background: 'radial-gradient(circle, rgba(27, 154, 247, 0.72) 0%, rgba(135, 205, 70, 0.58) 55%, transparent 100%)',
               }}
               aria-hidden="true"
             />
@@ -74,29 +82,33 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="absolute inset-0 flex items-center justify-center text-white"
               animate={{
                 opacity: isLogoHovered ? 0 : 1,
-                scale: isLogoHovered ? 0.95 : 1,
+                scale: isLogoHovered ? 0.94 : 1,
               }}
-              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
             >
               <SrfLogo className="w-full h-full text-white" />
             </motion.div>
 
-            {/* Colored Logo (crossfades in on hover) */}
+            {/* Colored Logo (crossfades in on hover with highlight scale) */}
             <motion.div
               className="absolute inset-0 flex items-center justify-center"
-              initial={{ opacity: 0, scale: 1.05 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{
                 opacity: isLogoHovered ? 1 : 0,
-                scale: isLogoHovered ? 1 : 1.05,
+                scale: isLogoHovered ? 1.02 : 0.95,
               }}
-              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
             >
               <SrfLogoColored className="w-full h-full" />
             </motion.div>
-          </div>
+          </motion.div>
 
-          {/* Kinetic Morphing Brand Typography: Flowy, graceful letter-by-letter expansion */}
-          <div className="overflow-visible min-h-[44px] flex items-center py-1">
+          {/* Kinetic Morphing Brand Typography: Closer to logo and flowy expansion */}
+          <div
+            className={`overflow-visible min-h-[44px] flex items-center py-1 transition-transform duration-300 ${
+              isLogoHovered ? '-translate-x-0.5 sm:-translate-x-1' : 'translate-x-0'
+            }`}
+          >
             <motion.div
               layout
               className={`font-jost select-none flex ${

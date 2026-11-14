@@ -95,17 +95,23 @@ export const HomePage: React.FC<HomePageProps> = ({
       >
         {/* Generous overscan wrapper ensuring no top edge or gap ever exposes */}
         <div className="absolute inset-x-0 -top-16 sm:-top-36 -bottom-16 sm:-bottom-36 overflow-hidden">
-          {/* Background Image with Delayed Parallax Scroll */}
-          <img
-            ref={bannerImgRef}
-            src={`${import.meta.env.BASE_URL}banners/Solitary Boy Amid the Moving Crowd 1.jpg`}
-            alt="Spine Research Foundation India patient banner"
-            className="w-full h-full object-cover object-[50%_10%] sm:object-[50%_20%] select-none opacity-90 will-change-transform"
-            style={{
-              transform: 'translate3d(0, 0px, 0) scale(1.02)',
-              transformOrigin: 'center center',
-            }}
-          />
+          {/* Background Image with Delayed Parallax Scroll: 3:5 portrait on mobile, 16:9 on desktop */}
+          <picture className="w-full h-full block">
+            <source
+              media="(max-width: 639px)"
+              srcSet={`${import.meta.env.BASE_URL}banners/Solitary%20Boy%20Amid%20the%20Moving%20Crowd%201%20-%20phone.png`}
+            />
+            <img
+              ref={bannerImgRef}
+              src={`${import.meta.env.BASE_URL}banners/Solitary%20Boy%20Amid%20the%20Moving%20Crowd%201.jpg`}
+              alt="Spine Research Foundation India patient banner"
+              className="w-full h-full object-cover object-[50%_15%] sm:object-[50%_20%] select-none opacity-90 will-change-transform"
+              style={{
+                transform: 'translate3d(0, 0px, 0) scale(1.02)',
+                transformOrigin: 'center center',
+              }}
+            />
+          </picture>
         </div>
 
         {/* Gradual blur softening as we move up to the overlay: reduced height (~35%) on mobile so more background image is visible */}

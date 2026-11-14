@@ -1,5 +1,5 @@
 import React from 'react'
-import { SrfLogo, MaterialIcon } from './icons'
+import { MaterialIcon } from './icons'
 
 interface PromiseCardProps {
   onCheckOutMore?: () => void
@@ -8,18 +8,26 @@ interface PromiseCardProps {
 export const PromiseCard: React.FC<PromiseCardProps> = ({ onCheckOutMore }) => {
   return (
     <div className="relative rounded-3xl sm:rounded-[32px] overflow-hidden glass-panel border border-white/[0.08] px-6 py-9 sm:px-10 sm:py-12 lg:px-14 lg:py-14 text-left shadow-xl transition duration-300 hover:border-white/[0.14]">
-      {/* Background Watermark Graphic on the right side, softly fading out at the bottom */}
+      {/* Background Image: Hands Donning Teal Medical Gloves with gradually fading right end behind text and buttons */}
       <div 
-        className="absolute right-4 sm:right-8 lg:right-16 top-4 sm:top-6 bottom-0 flex items-start pointer-events-none select-none overflow-hidden"
+        className="absolute inset-0 pointer-events-none select-none overflow-hidden"
         aria-hidden="true"
-        style={{
-          maskImage: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.06) 55%, rgba(255, 255, 255, 0) 100%)',
-          WebkitMaskImage: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.06) 55%, rgba(255, 255, 255, 0) 100%)',
-        }}
       >
-        <div className="w-48 h-48 sm:w-60 sm:h-60 lg:w-72 lg:h-72 text-white shrink-0">
-          <SrfLogo className="w-full h-full text-white" />
-        </div>
+        <img
+          src={`${import.meta.env.BASE_URL}banners/Hands%20Donning%20Teal%20Medical%20Gloves.png`}
+          alt="Hands Donning Teal Medical Gloves"
+          className="h-full w-auto max-w-none object-contain object-left filter brightness-[0.78] contrast-[1.06] opacity-75"
+          style={{
+            maskImage: 'linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 38%, rgba(0, 0, 0, 0.55) 68%, rgba(0, 0, 0, 0.12) 88%, rgba(0, 0, 0, 0) 100%)',
+            WebkitMaskImage: 'linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 38%, rgba(0, 0, 0, 0.55) 68%, rgba(0, 0, 0, 0.12) 88%, rgba(0, 0, 0, 0) 100%)',
+          }}
+        />
+
+        {/* Ambient subtle teal/emerald radial glow highlighting the medical glove theme */}
+        <div 
+          className="absolute -left-12 top-1/2 -translate-y-1/2 w-[420px] h-[420px] bg-teal-500/[0.07] rounded-full blur-3xl pointer-events-none"
+          aria-hidden="true"
+        />
       </div>
 
       {/* Foreground Content - Left Aligned */}

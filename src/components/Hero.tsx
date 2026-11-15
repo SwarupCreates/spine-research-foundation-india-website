@@ -93,9 +93,9 @@ export const Hero: React.FC<HeroProps> = ({
             : 'h-[calc(100dvh-86px)] min-h-[calc(100dvh-86px)] justify-between pt-0 pb-0'
         }`}
       >
-        {/* Extended Frame Top Spacer: Centers the upper hero text block on the screen */}
+        {/* Extended Frame Top Spacer: Centers the upper hero text block slightly lower on the screen */}
         {!isMobileCollapsed && (
-          <div className="flex-1 min-h-[16vh] max-h-[25vh] pointer-events-none" aria-hidden="true" />
+          <div className="flex-[1.3] min-h-[22vh] max-h-[32vh] pointer-events-none" aria-hidden="true" />
         )}
 
         {/* Upper Portion: Welcome to Spine Research Foundation India / By your side always... */}
@@ -123,7 +123,7 @@ export const Hero: React.FC<HeroProps> = ({
         {!isMobileCollapsed ? (
           <div className="flex-1 w-full flex flex-col items-center justify-between pointer-events-auto">
             {/* Down arrow indicator positioned at a lower position between first part and 2nd part */}
-            <div className="flex-1 flex flex-col items-center justify-end pb-3 sm:pb-5">
+            <div className="flex-1 flex flex-col items-center justify-center py-2">
               <motion.button
                 type="button"
                 onClick={onCollapseMobile}

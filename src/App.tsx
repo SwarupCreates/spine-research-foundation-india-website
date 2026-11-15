@@ -432,7 +432,7 @@ export const App: React.FC = () => {
       <CustomScrollbar />
 
       {/* Floating Action Buttons (z-[70]) */}
-      {!isJourneyActive && (
+      {(!isJourneyActive || isEnteringFromJourney) && (
         <FloatingActions
           isParticipateOpen={isParticipateOpen}
           isFeedbackOpen={isFeedbackOpen}
@@ -451,7 +451,7 @@ export const App: React.FC = () => {
       )}
 
       {/* Homepage Journey Replay Button (Bottom-Left z-[70]) */}
-      {!isJourneyActive && (activeTab === 'home' || location.pathname === '/') && (
+      {(!isJourneyActive || isEnteringFromJourney) && (activeTab === 'home' || location.pathname === '/') && (
         <JourneyReplayButton
           isEnteringFromJourney={isEnteringFromJourney}
           onReplay={() => {

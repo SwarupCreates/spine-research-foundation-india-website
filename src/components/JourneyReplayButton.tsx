@@ -71,11 +71,11 @@ export const JourneyReplayButton: React.FC<JourneyReplayButtonProps> = ({
     <motion.aside
       id="journey-replay-action"
       data-testid="journey-replay-action"
-      initial={isEnteringFromJourney ? { opacity: 0, scale: 0.3 } : false}
-      animate={{ opacity: 1, scale: 1 }}
+      initial={isEnteringFromJourney ? { opacity: 0, y: 24, scale: 0.88 } : false}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={
         isEnteringFromJourney
-          ? { type: 'spring', stiffness: 260, damping: 18, delay: 0.4 }
+          ? { duration: 0.45, ease: [0.16, 1, 0.3, 1], delay: 0.35 }
           : undefined
       }
       className={`hidden md:block fixed left-4 sm:left-6 lg:left-7 z-[70] transition-[bottom] duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] ${

@@ -694,6 +694,53 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
       </AnimatePresence>
 
       {/* -------------------------------------------------------- */}
+      {/* DURGA OUTLINE LAYER (Frame 1): Superimposed over boy layer */}
+      {/* Desktop only (>= md): z-[25], 0 fill with red border      */}
+      {/* Outlines the text so 'R' is visible across boy's body     */}
+      {/* -------------------------------------------------------- */}
+      <AnimatePresence>
+        {frame === 1 && showDurga && (
+          <motion.div
+            key="durga-outline-layer"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, transition: { duration: 0.6 } }}
+            className="absolute inset-0 w-full h-full pointer-events-none z-[25] hidden md:block"
+          >
+            <div className="w-[92%] mx-auto h-full relative">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.96, filter: 'blur(16px)' }}
+                animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                transition={{ duration: 0.85, ease: 'easeOut' }}
+                className="absolute top-[16%] left-0 w-full select-none pointer-events-none"
+              >
+                <svg
+                  viewBox="0 0 720 152"
+                  className="w-full h-auto overflow-hidden select-none pointer-events-none"
+                  aria-hidden="true"
+                >
+                  <text
+                    x="360"
+                    y="146"
+                    textAnchor="middle"
+                    fill="none"
+                    stroke="#ff0000"
+                    strokeWidth="2"
+                    strokeMiterlimit="3"
+                    fontFamily="'Galano Grotesque Black', 'Galano Grotesque', sans-serif"
+                    fontWeight="900"
+                    fontSize="200"
+                  >
+                    DURGA
+                  </text>
+                </svg>
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* -------------------------------------------------------- */}
       {/* FRAME 2: COMBINED 5-LINE STORYTELLING STANZA             */}
       {/* Desktop (>= md): Left-aligned at lower left              */}
       {/* Mobile (< md): Centered at bottom above controls         */}

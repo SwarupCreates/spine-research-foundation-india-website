@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { SrfLogo, MaterialIcon } from './icons'
-import { BlurText } from './BlurText'
+import { ScrollReveal } from './ScrollReveal'
 import GradualBlur from './GradualBlur'
+
+const clamp01 = (v: number) => Math.min(Math.max(v, 0), 1)
 
 interface WelcomeJourneyProps {
   onComplete: () => void
@@ -19,29 +21,32 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
   const [frame, setFrame] = useState<number>(1)
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false)
 
+  // Continuous scroll reveal progress (0..1) within current frame
+  const [frameProgress, setFrameProgress] = useState<number>(0)
+  const targetProgressRef = useRef<number>(0)
+
   // Auto-play state: false = manual scrolling by default; true = auto-advances
   const [isPlaying, setIsPlaying] = useState<boolean>(false)
 
-  // Frame 1 slow sequential reveal states
-  const [showBoy, setShowBoy] = useState<boolean>(false)
-  const [showMeet, setShowMeet] = useState<boolean>(false)
-  const [showDurga, setShowDurga] = useState<boolean>(false)
-  const [showControls, setShowControls] = useState<boolean>(false)
+  // Frame progress mapping across frames
+  // Frame 1 progress
+  const f1_meet = clamp01(frameProgress / 0.5)
+  const f1_durga = clamp01((frameProgress - 0.35) / 0.65)
 
-  // Frame 2 progressive reveals (5 combined storytelling lines)
-  const [showLine1, setShowLine1] = useState<boolean>(false)
-  const [showLine2, setShowLine2] = useState<boolean>(false)
-  const [showLine3, setShowLine3] = useState<boolean>(false)
-  const [showWitness, setShowWitness] = useState<boolean>(false)
-  const [showBlesses, setShowBlesses] = useState<boolean>(false)
+  // Frame 2 progress (5 combined storytelling lines)
+  const f2_p1 = clamp01((frameProgress - 0.0) / 0.22)
+  const f2_p2 = clamp01((frameProgress - 0.18) / 0.22)
+  const f2_p3 = clamp01((frameProgress - 0.36) / 0.22)
+  const f2_p4 = clamp01((frameProgress - 0.54) / 0.24)
+  const f2_p5 = clamp01((frameProgress - 0.74) / 0.26)
 
-  // Frame 4 sequenced reveals
-  const [showCard1, setShowCard1] = useState<boolean>(false)
-  const [showCard2, setShowCard2] = useState<boolean>(false)
-  const [showCard3, setShowCard3] = useState<boolean>(false)
-  const [showCard4, setShowCard4] = useState<boolean>(false)
-  const [showCard5, setShowCard5] = useState<boolean>(false)
-  const [showLogo, setShowLogo] = useState<boolean>(false)
+  // Frame 3 progress (4 narrative cards + logo + red title)
+  const f3_p1 = clamp01((frameProgress - 0.0) / 0.20)
+  const f3_p2 = clamp01((frameProgress - 0.16) / 0.20)
+  const f3_p3 = clamp01((frameProgress - 0.32) / 0.20)
+  const f3_p4 = clamp01((frameProgress - 0.48) / 0.20)
+  const f3_logo = clamp01((frameProgress - 0.64) / 0.18)
+  const f3_p5 = clamp01((frameProgress - 0.78) / 0.22)
 
   // Frame 5 flight to navbar & seamless dissolve
   const [isFlyingToNavbar, setIsFlyingToNavbar] = useState<boolean>(false)
@@ -246,190 +251,186 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
     }
 
     setFrame(next)
+    setFrameProgress(0.0)
+    targetProgressRef.current = 0.0
 
     setTimeout(() => {
       setIsTransitioning(false)
       isTransitioningRef.current = false
-    }, 600)
-  }, [])
+    }, 500)
+  }, [navbarTarget])
 
-  const advanceFrameRef = React.useRef(advanceFrame)
+  const advanceFrameRef = useRef(advanceFrame)
   advanceFrameRef.current = advanceFrame
 
-  // Mouse wheel and touch swipe magnetic snap assist
+  // Reverse frame navigation
+  const previousFrame = useCallback(() => {
+    if (isTransitioningRef.current) return
+    if (frame <= 1) return
+
+    isTransitioningRef.current = true
+    setIsTransitioning(true)
+
+    const prev = frame - 1
+    setFrame(prev)
+    setFrameProgress(1.0)
+    targetProgressRef.current = 1.0
+
+    setTimeout(() => {
+      setIsTransitioning(false)
+      isTransitioningRef.current = false
+    }, 500)
+  }, [frame])
+
+  const previousFrameRef = useRef(previousFrame)
+  previousFrameRef.current = previousFrame
+
+  // Initial gentle entrance reveal for Frame 1
+  useEffect(() => {
+    const t = setTimeout(() => {
+      if (targetProgressRef.current === 0) {
+        targetProgressRef.current = 1.0
+      }
+    }, 1200)
+    return () => clearTimeout(t)
+  }, [])
+
+  // Smooth RAF ticker for frameProgress lerp (60fps continuous interpolation)
+  useEffect(() => {
+    let animId: number
+    const tick = () => {
+      setFrameProgress((curr) => {
+        const target = Math.min(Math.max(targetProgressRef.current, 0), 1)
+        const diff = target - curr
+        if (Math.abs(diff) < 0.002) return target
+        return curr + diff * 0.18
+      })
+      animId = requestAnimationFrame(tick)
+    }
+    animId = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(animId)
+  }, [])
+
+  // Auto-play progression when isPlaying is true
+  useEffect(() => {
+    if (!isPlaying) return
+    let animId: number
+    let holdTimer: ReturnType<typeof setTimeout> | null = null
+
+    const autoTick = () => {
+      if (targetProgressRef.current < 1.0) {
+        targetProgressRef.current = Math.min(targetProgressRef.current + 0.0055, 1.0)
+        animId = requestAnimationFrame(autoTick)
+      } else {
+        holdTimer = setTimeout(() => {
+          advanceFrameRef.current()
+        }, 1500)
+      }
+    }
+
+    animId = requestAnimationFrame(autoTick)
+    return () => {
+      cancelAnimationFrame(animId)
+      if (holdTimer) clearTimeout(holdTimer)
+    }
+  }, [isPlaying, frame])
+
+  // Mouse wheel, touch gestures, and keyboard navigation with reverse scroll support
   useEffect(() => {
     let lastWheelTime = 0
-    let touchStartY = 0
+    let touchLastY = 0
 
     const handleWheel = (e: WheelEvent) => {
+      setIsPlaying(false)
+      const delta = e.deltaY
+      if (Math.abs(delta) < 3) return
+
+      const progressDelta = delta / 420
+      const currentTarget = targetProgressRef.current
+      const nextTarget = currentTarget + progressDelta
+
+      targetProgressRef.current = Math.min(Math.max(nextTarget, -0.2), 1.25)
+
       const now = Date.now()
-      if (now - lastWheelTime < 750) return
-      if (Math.abs(e.deltaY) > 25) {
-        lastWheelTime = now
-        if (e.deltaY > 0) {
-          advanceFrame()
+      if (nextTarget >= 1.08) {
+        if (now - lastWheelTime > 500) {
+          lastWheelTime = now
+          advanceFrameRef.current()
+        }
+      } else if (nextTarget <= -0.08) {
+        if (now - lastWheelTime > 500) {
+          lastWheelTime = now
+          previousFrameRef.current()
         }
       }
     }
 
     const handleTouchStart = (e: TouchEvent) => {
       if (e.touches.length > 0) {
-        touchStartY = e.touches[0].clientY
+        touchLastY = e.touches[0].clientY
       }
     }
 
-    const handleTouchEnd = (e: TouchEvent) => {
-      if (e.changedTouches.length > 0) {
-        const delta = touchStartY - e.changedTouches[0].clientY
-        if (delta > 40) {
-          advanceFrame()
-        }
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        setIsPlaying(false)
+        const currentY = e.touches[0].clientY
+        const delta = touchLastY - currentY
+        touchLastY = currentY
+
+        if (Math.abs(delta) < 2) return
+
+        const progressDelta = delta / 260
+        targetProgressRef.current = Math.min(
+          Math.max(targetProgressRef.current + progressDelta, -0.2),
+          1.25
+        )
+      }
+    }
+
+    const handleTouchEnd = () => {
+      const p = targetProgressRef.current
+      if (p >= 1.05) {
+        advanceFrameRef.current()
+      } else if (p <= -0.05) {
+        previousFrameRef.current()
       }
     }
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (['ArrowDown', 'PageDown', 'Space'].includes(e.code)) {
         e.preventDefault()
-        advanceFrame()
+        setIsPlaying(false)
+        if (targetProgressRef.current < 0.9) {
+          targetProgressRef.current = Math.min(targetProgressRef.current + 0.35, 1.0)
+        } else {
+          advanceFrameRef.current()
+        }
+      } else if (['ArrowUp', 'PageUp'].includes(e.code)) {
+        e.preventDefault()
+        setIsPlaying(false)
+        if (targetProgressRef.current > 0.1) {
+          targetProgressRef.current = Math.max(targetProgressRef.current - 0.35, 0.0)
+        } else {
+          previousFrameRef.current()
+        }
       }
     }
 
     window.addEventListener('wheel', handleWheel, { passive: true })
     window.addEventListener('touchstart', handleTouchStart, { passive: true })
+    window.addEventListener('touchmove', handleTouchMove, { passive: true })
     window.addEventListener('touchend', handleTouchEnd, { passive: true })
     window.addEventListener('keydown', handleKeyDown)
 
     return () => {
       window.removeEventListener('wheel', handleWheel)
       window.removeEventListener('touchstart', handleTouchStart)
+      window.removeEventListener('touchmove', handleTouchMove)
       window.removeEventListener('touchend', handleTouchEnd)
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [advanceFrame])
-
-  // -------------------------------------------------------------
-  // Frame 1 Visual Reveal: Sequential reveals
-  // 1. Background image begins dissolve with slight bottom-to-top motion (t = 0..1000ms)
-  // 2. Boy cutout layer dissolves in place after background finishes rendering (t = 1000ms..1800ms)
-  // 3. MEET text brings in after boy layer completely rendered (t = 1900ms)
-  // 4. DURGA text brings in behind the boy layer (t = 2500ms)
-  // -------------------------------------------------------------
-  useEffect(() => {
-    if (frame !== 1) {
-      setShowBoy(true)
-      setShowControls(true)
-      return
-    }
-
-    const t1 = setTimeout(() => setShowBoy(true), 600)
-    const t2 = setTimeout(() => setShowControls(true), 300)
-    const t3 = setTimeout(() => setShowMeet(true), 1000)
-    const t4 = setTimeout(() => setShowDurga(true), 1500)
-
-    return () => {
-      clearTimeout(t1)
-      clearTimeout(t2)
-      clearTimeout(t3)
-      clearTimeout(t4)
-    }
-  }, [frame])
-
-  // Frame 1 Auto-advance timer (active only when user clicks play)
-  useEffect(() => {
-    if (frame === 1 && isPlaying) {
-      const t5 = setTimeout(() => {
-        advanceFrame(2)
-      }, 4600)
-      return () => clearTimeout(t5)
-    }
-  }, [frame, isPlaying, advanceFrame])
-
-  // -------------------------------------------------------------
-  // Frame 2 Reveal: Stagger 5 BlurText lines chronologically in one combined story frame
-  // -------------------------------------------------------------
-  useEffect(() => {
-    if (frame !== 2) {
-      setShowLine1(false)
-      setShowLine2(false)
-      setShowLine3(false)
-      setShowWitness(false)
-      setShowBlesses(false)
-      return
-    }
-
-    const t1 = setTimeout(() => setShowLine1(true), 200)
-    const t2 = setTimeout(() => setShowLine2(true), 800)
-    const t3 = setTimeout(() => setShowLine3(true), 1400)
-    const t4 = setTimeout(() => setShowWitness(true), 2050)
-    const t5 = setTimeout(() => setShowBlesses(true), 2650)
-
-    let tAuto: ReturnType<typeof setTimeout>
-    if (isPlayingRef.current) {
-      tAuto = setTimeout(() => {
-        advanceFrameRef.current(3)
-      }, 4600)
-    }
-
-    return () => {
-      clearTimeout(t1)
-      clearTimeout(t2)
-      clearTimeout(t3)
-      clearTimeout(t4)
-      clearTimeout(t5)
-      if (tAuto) clearTimeout(tAuto)
-    }
-  }, [frame])
-
-  // Resume auto-advance if user toggles play while already on Frame 2 after text has rendered
-  useEffect(() => {
-    if (frame === 2 && showBlesses && isPlaying) {
-      const t = setTimeout(() => {
-        advanceFrameRef.current(3)
-      }, 1400)
-      return () => clearTimeout(t)
-    }
-  }, [frame, showBlesses, isPlaying])
-
-  // -------------------------------------------------------------
-  // Frame 3 Visual Reveal: 5 Text blocks -> Large Logo (formerly Frame 4)
-  // -------------------------------------------------------------
-  useEffect(() => {
-    if (frame !== 3) {
-      setShowCard1(false)
-      setShowCard2(false)
-      setShowCard3(false)
-      setShowCard4(false)
-      setShowCard5(false)
-      setShowLogo(false)
-      return
-    }
-
-    const t1 = setTimeout(() => setShowCard1(true), 150)
-    const t2 = setTimeout(() => setShowCard2(true), 550)
-    const t3 = setTimeout(() => setShowCard3(true), 950)
-    const t4 = setTimeout(() => setShowCard4(true), 1350)
-    const t5 = setTimeout(() => setShowLogo(true), 1750)
-    const t6 = setTimeout(() => setShowCard5(true), 2150)
-
-    return () => {
-      clearTimeout(t1)
-      clearTimeout(t2)
-      clearTimeout(t3)
-      clearTimeout(t4)
-      clearTimeout(t5)
-      clearTimeout(t6)
-    }
-  }, [frame])
-
-  // Frame 3 Auto-advance timer (active only when user clicks play)
-  useEffect(() => {
-    if (frame === 3 && isPlaying) {
-      const t7 = setTimeout(() => {
-        advanceFrame(4)
-      }, 3800)
-      return () => clearTimeout(t7)
-    }
-  }, [frame, isPlaying, advanceFrame])
+  }, [])
 
   // Shared font size class for all text across the first 3 frames (except DURGA)
   const sharedTextClass =
@@ -578,99 +579,95 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
           >
             {/* Desktop View (>= md): Full-width 92% container */}
             <div className="hidden md:block w-[92%] mx-auto h-full relative">
-              {showMeet && (
-                <div className={`absolute top-[7.5%] left-0 text-white select-none ${sharedTextClass}`}>
-                  <BlurText
-                    text="MEET"
-                    effect="blur"
-                    animateBy="letters"
-                    direction="bottom"
-                    trigger="load"
-                    delay={90}
-                    stepDuration={0.32}
-                    blur={12}
-                    distance={20}
-                  />
-                </div>
-              )}
-
-              {showDurga && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.96, filter: 'blur(16px)' }}
-                  animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-                  transition={{ duration: 0.85, ease: 'easeOut' }}
-                  className="absolute top-[16%] left-0 w-full select-none pointer-events-none"
+              <div className={`absolute top-[7.5%] left-0 text-white select-none ${sharedTextClass}`}>
+                <ScrollReveal
+                  mode="scrub"
+                  progress={f1_meet}
+                  splitBy="words"
+                  effect="fade"
+                  stagger={0.05}
+                  duration={0.8}
+                  smoothing={0}
+                  baseOpacity={0.1}
+                  baseRotation={0}
+                  baseOffset={0}
+                  enableBlur={true}
+                  blurStrength={4}
+                  containerClassName="text-white font-galano font-black uppercase tracking-wide leading-none text-4xl sm:text-5xl md:text-[56px] lg:text-[68px] xl:text-[76px]"
                 >
-                  <svg
-                    viewBox="0 0 720 152"
-                    className="w-full h-auto overflow-hidden select-none pointer-events-none"
-                    aria-label="DURGA"
+                  MEET
+                </ScrollReveal>
+              </div>
+
+              <motion.div
+                style={{
+                  opacity: f1_durga,
+                  transform: `scale(${0.96 + 0.04 * f1_durga})`,
+                  filter: `blur(${(8 * (1 - f1_durga)).toFixed(1)}px)`,
+                }}
+                className="absolute top-[16%] left-0 w-full select-none pointer-events-none"
+              >
+                <svg
+                  viewBox="0 0 720 152"
+                  className="w-full h-auto overflow-hidden select-none pointer-events-none"
+                  aria-label="DURGA"
+                >
+                  <text
+                    x="360"
+                    y="146"
+                    textAnchor="middle"
+                    fill="#ff0000"
+                    fontFamily="'Galano Grotesque Black', 'Galano Grotesque', sans-serif"
+                    fontWeight="900"
+                    fontSize="200"
                   >
-                    <text
-                      x="360"
-                      y="146"
-                      textAnchor="middle"
-                      fill="#ff0000"
-                      fontFamily="'Galano Grotesque Black', 'Galano Grotesque', sans-serif"
-                      fontWeight="900"
-                      fontSize="200"
-                    >
-                      DURGA
-                    </text>
-                  </svg>
-                </motion.div>
-              )}
+                    DURGA
+                  </text>
+                </svg>
+              </motion.div>
             </div>
 
             {/* Mobile View (< md): Centered at bottom above controls - fixed final positions */}
             <div className="md:hidden absolute bottom-[108px] sm:bottom-[116px] inset-x-0 flex flex-col items-center justify-center text-center px-4 z-20">
               <div className="flex items-center justify-center">
-                {showMeet ? (
-                  <BlurText
-                    text="MEET"
-                    effect="blur"
-                    animateBy="letters"
-                    direction="bottom"
-                    trigger="load"
-                    delay={60}
-                    stepDuration={0.25}
-                    blur={12}
-                    distance={16}
-                    className="text-white font-galano font-black uppercase tracking-wide leading-none text-[clamp(34px,10.95vw,44px)] justify-center"
-                  />
-                ) : (
-                  <div
-                    className="invisible select-none pointer-events-none text-white font-galano font-black uppercase tracking-wide leading-none text-[clamp(34px,10.95vw,44px)] justify-center"
-                    aria-hidden="true"
-                  >
-                    MEET
-                  </div>
-                )}
+                <ScrollReveal
+                  mode="scrub"
+                  progress={f1_meet}
+                  splitBy="words"
+                  effect="fade"
+                  stagger={0.05}
+                  duration={0.8}
+                  smoothing={0}
+                  baseOpacity={0.1}
+                  baseRotation={0}
+                  baseOffset={0}
+                  enableBlur={true}
+                  blurStrength={4}
+                  containerClassName="text-white font-galano font-black uppercase tracking-wide leading-none text-[clamp(34px,10.95vw,44px)] justify-center text-center"
+                >
+                  MEET
+                </ScrollReveal>
               </div>
 
               <div className="flex items-center justify-center -mt-2 sm:-mt-2.5">
-                {showDurga ? (
-                  <BlurText
-                    text="DURGA"
-                    effect="blur"
-                    animateBy="letters"
-                    direction="bottom"
-                    trigger="load"
-                    delay={60}
-                    stepDuration={0.28}
-                    blur={16}
-                    distance={20}
-                    color="#ff0000"
-                    className="font-galano font-black uppercase tracking-tight leading-none text-[clamp(66px,21.4vw,86px)] drop-shadow-[0_2px_16px_rgba(0,0,0,0.9)] justify-center"
-                  />
-                ) : (
-                  <div
-                    className="invisible select-none pointer-events-none font-galano font-black uppercase tracking-tight leading-none text-[clamp(66px,21.4vw,86px)] drop-shadow-[0_2px_16px_rgba(0,0,0,0.9)] justify-center"
-                    aria-hidden="true"
-                  >
-                    DURGA
-                  </div>
-                )}
+                <ScrollReveal
+                  mode="scrub"
+                  progress={f1_durga}
+                  splitBy="words"
+                  effect="fade"
+                  stagger={0.05}
+                  duration={0.8}
+                  smoothing={0}
+                  baseOpacity={0.1}
+                  baseRotation={0}
+                  baseOffset={0}
+                  enableBlur={true}
+                  blurStrength={4}
+                  highlightColor="#ff0000"
+                  containerClassName="text-[#ff0000] font-galano font-black uppercase tracking-tight leading-none text-[clamp(66px,21.4vw,86px)] drop-shadow-[0_2px_16px_rgba(255,0,0,0.4)] justify-center text-center"
+                >
+                  DURGA
+                </ScrollReveal>
               </div>
             </div>
           </motion.div>
@@ -684,7 +681,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
       {/* with zero ghosting or superimposition glitch             */}
       {/* -------------------------------------------------------- */}
       <AnimatePresence>
-        {frame === 1 && showBoy && (
+        {frame === 1 && (
           <motion.div
             key="boy-cutout-layer"
             initial={{ opacity: 0 }}
@@ -712,7 +709,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
       {/* Outlines the text so 'R' is visible across boy's body     */}
       {/* -------------------------------------------------------- */}
       <AnimatePresence>
-        {frame === 1 && showDurga && (
+        {frame === 1 && (
           <motion.div
             key="durga-outline-layer"
             initial={{ opacity: 0 }}
@@ -722,9 +719,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
           >
             <div className="w-[92%] mx-auto h-full relative">
               <motion.div
-                initial={{ opacity: 0, scale: 0.96, filter: 'blur(16px)' }}
-                animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-                transition={{ duration: 0.85, ease: 'easeOut' }}
+                style={{
+                  opacity: f1_durga,
+                  transform: `scale(${0.96 + 0.04 * f1_durga})`,
+                  filter: `blur(${(8 * (1 - f1_durga)).toFixed(1)}px)`,
+                }}
                 className="absolute top-[16%] left-0 w-full select-none pointer-events-none"
               >
                 <svg
@@ -771,430 +770,356 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
             <div className="hidden md:block w-[92%] mx-auto h-full relative">
               <div className="absolute bottom-[116px] md:bottom-[124px] lg:bottom-[132px] left-0 select-none">
                 {/* Line 1: As a son, he tends the mother, */}
-                {showLine1 ? (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3, ease: 'easeOut' }}
-                    className="flex items-baseline gap-x-2.5 sm:gap-x-3 text-[clamp(22px,2.5vw,38.5px)] leading-tight"
+                <div className="flex items-baseline gap-x-2.5 sm:gap-x-3 text-[clamp(22px,2.5vw,38.5px)] leading-tight">
+                  <ScrollReveal
+                    mode="scrub"
+                    progress={f2_p1}
+                    splitBy="words"
+                    effect="fade"
+                    stagger={0.05}
+                    duration={0.8}
+                    smoothing={0}
+                    baseOpacity={0.1}
+                    baseRotation={0}
+                    baseOffset={0}
+                    enableBlur={true}
+                    blurStrength={4}
+                    containerClassName="text-white/55 font-normal font-galano-alt"
                   >
-                    <BlurText
-                      text={line1Prefix}
-                      effect="blur"
-                      animateBy="words"
-                      direction="bottom"
-                      trigger="load"
-                      delay={45}
-                      stepDuration={0.25}
-                      blur={10}
-                      distance={10}
-                      color="rgba(255, 255, 255, 0.55)"
-                      className="font-normal font-galano-alt"
-                    />
-                    <BlurText
-                      text={line1Suffix}
-                      effect="blur"
-                      animateBy="words"
-                      direction="bottom"
-                      trigger="load"
-                      delay={45}
-                      stepDuration={0.25}
-                      blur={10}
-                      distance={10}
-                      color="#ffffff"
-                      className="font-bold font-galano-alt drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
-                    />
-                  </motion.div>
-                ) : (
-                  <div
-                    className="invisible select-none pointer-events-none flex items-baseline gap-x-2.5 sm:gap-x-3 text-[clamp(22px,2.5vw,38.5px)] leading-tight font-galano-alt"
-                    aria-hidden="true"
+                    {line1Prefix}
+                  </ScrollReveal>
+                  <ScrollReveal
+                    mode="scrub"
+                    progress={f2_p1}
+                    splitBy="words"
+                    effect="fade"
+                    stagger={0.05}
+                    duration={0.8}
+                    smoothing={0}
+                    baseOpacity={0.1}
+                    baseRotation={0}
+                    baseOffset={0}
+                    enableBlur={true}
+                    blurStrength={4}
+                    containerClassName="text-white font-bold font-galano-alt drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
                   >
-                    <span className="font-normal">{line1Prefix}</span>
-                    <span className="font-bold">{line1Suffix}</span>
-                  </div>
-                )}
+                    {line1Suffix}
+                  </ScrollReveal>
+                </div>
 
                 {/* Line 2: As a father, he lulls the child, */}
-                {showLine2 ? (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3, ease: 'easeOut' }}
-                    className="flex items-baseline gap-x-2.5 sm:gap-x-3 text-[clamp(22px,2.5vw,38.5px)] leading-tight pt-2 sm:pt-2.5 md:pt-3"
+                <div className="flex items-baseline gap-x-2.5 sm:gap-x-3 text-[clamp(22px,2.5vw,38.5px)] leading-tight pt-2 sm:pt-2.5 md:pt-3">
+                  <ScrollReveal
+                    mode="scrub"
+                    progress={f2_p2}
+                    splitBy="words"
+                    effect="fade"
+                    stagger={0.05}
+                    duration={0.8}
+                    smoothing={0}
+                    baseOpacity={0.1}
+                    baseRotation={0}
+                    baseOffset={0}
+                    enableBlur={true}
+                    blurStrength={4}
+                    containerClassName="text-white/55 font-normal font-galano-alt"
                   >
-                    <BlurText
-                      text={line2Prefix}
-                      effect="blur"
-                      animateBy="words"
-                      direction="bottom"
-                      trigger="load"
-                      delay={45}
-                      stepDuration={0.25}
-                      blur={10}
-                      distance={10}
-                      color="rgba(255, 255, 255, 0.55)"
-                      className="font-normal font-galano-alt"
-                    />
-                    <BlurText
-                      text={line2Suffix}
-                      effect="blur"
-                      animateBy="words"
-                      direction="bottom"
-                      trigger="load"
-                      delay={45}
-                      stepDuration={0.25}
-                      blur={10}
-                      distance={10}
-                      color="#ffffff"
-                      className="font-bold font-galano-alt drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
-                    />
-                  </motion.div>
-                ) : (
-                  <div
-                    className="invisible select-none pointer-events-none flex items-baseline gap-x-2.5 sm:gap-x-3 text-[clamp(22px,2.5vw,38.5px)] leading-tight pt-2 sm:pt-2.5 md:pt-3 font-galano-alt"
-                    aria-hidden="true"
+                    {line2Prefix}
+                  </ScrollReveal>
+                  <ScrollReveal
+                    mode="scrub"
+                    progress={f2_p2}
+                    splitBy="words"
+                    effect="fade"
+                    stagger={0.05}
+                    duration={0.8}
+                    smoothing={0}
+                    baseOpacity={0.1}
+                    baseRotation={0}
+                    baseOffset={0}
+                    enableBlur={true}
+                    blurStrength={4}
+                    containerClassName="text-white font-bold font-galano-alt drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
                   >
-                    <span className="font-normal">{line2Prefix}</span>
-                    <span className="font-bold">{line2Suffix}</span>
-                  </div>
-                )}
+                    {line2Suffix}
+                  </ScrollReveal>
+                </div>
 
                 {/* Line 3: As a brother, he shares the fret ... */}
-                {showLine3 ? (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3, ease: 'easeOut' }}
-                    className="flex items-baseline gap-x-2.5 sm:gap-x-3 text-[clamp(22px,2.5vw,38.5px)] leading-tight pt-2 sm:pt-2.5 md:pt-3"
+                <div className="flex items-baseline gap-x-2.5 sm:gap-x-3 text-[clamp(22px,2.5vw,38.5px)] leading-tight pt-2 sm:pt-2.5 md:pt-3">
+                  <ScrollReveal
+                    mode="scrub"
+                    progress={f2_p3}
+                    splitBy="words"
+                    effect="fade"
+                    stagger={0.05}
+                    duration={0.8}
+                    smoothing={0}
+                    baseOpacity={0.1}
+                    baseRotation={0}
+                    baseOffset={0}
+                    enableBlur={true}
+                    blurStrength={4}
+                    containerClassName="text-white/55 font-normal font-galano-alt"
                   >
-                    <BlurText
-                      text={line3Prefix}
-                      effect="blur"
-                      animateBy="words"
-                      direction="bottom"
-                      trigger="load"
-                      delay={45}
-                      stepDuration={0.25}
-                      blur={10}
-                      distance={10}
-                      color="rgba(255, 255, 255, 0.55)"
-                      className="font-normal font-galano-alt"
-                    />
-                    <BlurText
-                      text={line3Suffix}
-                      effect="blur"
-                      animateBy="words"
-                      direction="bottom"
-                      trigger="load"
-                      delay={45}
-                      stepDuration={0.25}
-                      blur={10}
-                      distance={10}
-                      color="#ffffff"
-                      className="font-bold font-galano-alt drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
-                    />
-                  </motion.div>
-                ) : (
-                  <div
-                    className="invisible select-none pointer-events-none flex items-baseline gap-x-2.5 sm:gap-x-3 text-[clamp(22px,2.5vw,38.5px)] leading-tight pt-2 sm:pt-2.5 md:pt-3 font-galano-alt"
-                    aria-hidden="true"
+                    {line3Prefix}
+                  </ScrollReveal>
+                  <ScrollReveal
+                    mode="scrub"
+                    progress={f2_p3}
+                    splitBy="words"
+                    effect="fade"
+                    stagger={0.05}
+                    duration={0.8}
+                    smoothing={0}
+                    baseOpacity={0.1}
+                    baseRotation={0}
+                    baseOffset={0}
+                    enableBlur={true}
+                    blurStrength={4}
+                    containerClassName="text-white font-bold font-galano-alt drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
                   >
-                    <span className="font-normal">{line3Prefix}</span>
-                    <span className="font-bold">{line3Suffix}</span>
-                  </div>
-                )}
+                    {line3Suffix}
+                  </ScrollReveal>
+                </div>
 
                 {/* Line 4: BUT... AS A WITNESS, */}
-                {showWitness ? (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.35, ease: 'easeOut' }}
-                    className="flex items-baseline gap-x-3 sm:gap-x-4 pt-1 sm:pt-1.5 md:pt-2"
+                <div className="flex items-baseline gap-x-3 sm:gap-x-4 pt-1 sm:pt-1.5 md:pt-2">
+                  <ScrollReveal
+                    mode="scrub"
+                    progress={f2_p4}
+                    splitBy="words"
+                    effect="fade"
+                    stagger={0.05}
+                    duration={0.8}
+                    smoothing={0}
+                    baseOpacity={0.1}
+                    baseRotation={0}
+                    baseOffset={0}
+                    enableBlur={true}
+                    blurStrength={4}
+                    containerClassName="text-white font-galano font-black uppercase text-[clamp(38px,4.6vw,70.6px)] leading-none tracking-tight drop-shadow-[0_2px_16px_rgba(0,0,0,0.9)]"
                   >
-                    <BlurText
-                      text={line4Prefix}
-                      effect="blur"
-                      animateBy="letters"
-                      direction="bottom"
-                      trigger="load"
-                      delay={50}
-                      stepDuration={0.25}
-                      blur={12}
-                      distance={12}
-                      color="#ffffff"
-                      className="font-galano font-black uppercase text-[clamp(38px,4.6vw,70.6px)] leading-none tracking-tight drop-shadow-[0_2px_16px_rgba(0,0,0,0.9)]"
-                    />
-                    <BlurText
-                      text={line4Suffix}
-                      effect="blur"
-                      animateBy="words"
-                      direction="bottom"
-                      trigger="load"
-                      delay={50}
-                      stepDuration={0.28}
-                      blur={14}
-                      distance={14}
-                      color="#ff0000"
-                      className="font-galano font-black uppercase text-[clamp(38px,4.6vw,70.6px)] leading-none tracking-tight drop-shadow-[0_2px_16px_rgba(255,0,0,0.4)]"
-                    />
-                  </motion.div>
-                ) : (
-                  <div
-                    className="invisible select-none pointer-events-none flex items-baseline gap-x-3 sm:gap-x-4 pt-1 sm:pt-1.5 md:pt-2 font-galano font-black uppercase text-[clamp(38px,4.6vw,70.6px)] leading-none tracking-tight"
-                    aria-hidden="true"
+                    {line4Prefix}
+                  </ScrollReveal>
+                  <ScrollReveal
+                    mode="scrub"
+                    progress={f2_p4}
+                    splitBy="words"
+                    effect="fade"
+                    stagger={0.05}
+                    duration={0.8}
+                    smoothing={0}
+                    baseOpacity={0.1}
+                    baseRotation={0}
+                    baseOffset={0}
+                    enableBlur={true}
+                    blurStrength={4}
+                    highlightColor="#ff0000"
+                    containerClassName="text-[#ff0000] font-galano font-black uppercase text-[clamp(38px,4.6vw,70.6px)] leading-none tracking-tight drop-shadow-[0_2px_16px_rgba(255,0,0,0.4)]"
                   >
-                    <span>{line4Prefix}</span>
-                    <span>{line4Suffix}</span>
-                  </div>
-                )}
+                    {line4Suffix}
+                  </ScrollReveal>
+                </div>
 
                 {/* Line 5: he blesses the world! */}
-                {showBlesses ? (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3, ease: 'easeOut' }}
-                    className="pt-2 sm:pt-2.5 md:pt-3"
+                <div className="pt-2 sm:pt-2.5 md:pt-3">
+                  <ScrollReveal
+                    mode="scrub"
+                    progress={f2_p5}
+                    splitBy="words"
+                    effect="fade"
+                    stagger={0.05}
+                    duration={0.8}
+                    smoothing={0}
+                    baseOpacity={0.1}
+                    baseRotation={0}
+                    baseOffset={0}
+                    enableBlur={true}
+                    blurStrength={4}
+                    containerClassName="font-galano-alt font-bold text-white text-[clamp(22px,2.5vw,38.5px)] leading-tight tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
                   >
-                    <BlurText
-                      text={line5Text}
-                      effect="blur"
-                      animateBy="words"
-                      direction="bottom"
-                      trigger="load"
-                      delay={45}
-                      stepDuration={0.25}
-                      blur={10}
-                      distance={10}
-                      color="#ffffff"
-                      className="font-galano-alt font-bold text-white text-[clamp(22px,2.5vw,38.5px)] leading-tight tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
-                    />
-                  </motion.div>
-                ) : (
-                  <div
-                    className="invisible select-none pointer-events-none pt-2 sm:pt-2.5 md:pt-3 font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight tracking-tight"
-                    aria-hidden="true"
-                  >
-                    <span>{line5Text}</span>
-                  </div>
-                )}
+                    {line5Text}
+                  </ScrollReveal>
+                </div>
               </div>
             </div>
 
             {/* Mobile View (< md): Centered at bottom above controls - all 5 lines in final positions from start */}
             <div className="md:hidden absolute bottom-[108px] sm:bottom-[116px] inset-x-0 px-4 flex flex-col items-center text-center z-20">
               {/* Line 1: As a son, he tends the mother, */}
-              {showLine1 ? (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3, ease: 'easeOut' }}
-                  className="flex flex-row items-center justify-center gap-x-1.5 text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap"
+              <div className="flex flex-row items-center justify-center gap-x-1.5 text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap">
+                <ScrollReveal
+                  mode="scrub"
+                  progress={f2_p1}
+                  splitBy="words"
+                  effect="fade"
+                  stagger={0.05}
+                  duration={0.8}
+                  smoothing={0}
+                  baseOpacity={0.1}
+                  baseRotation={0}
+                  baseOffset={0}
+                  enableBlur={true}
+                  blurStrength={4}
+                  containerClassName="text-white/55 font-normal font-galano-alt justify-center"
                 >
-                  <BlurText
-                    text={line1Prefix}
-                    effect="blur"
-                    animateBy="words"
-                    direction="bottom"
-                    trigger="load"
-                    delay={45}
-                    stepDuration={0.24}
-                    blur={8}
-                    distance={8}
-                    color="rgba(255, 255, 255, 0.55)"
-                    className="font-normal font-galano-alt justify-center"
-                  />
-                  <BlurText
-                    text={line1Suffix}
-                    effect="blur"
-                    animateBy="words"
-                    direction="bottom"
-                    trigger="load"
-                    delay={45}
-                    stepDuration={0.24}
-                    blur={8}
-                    distance={8}
-                    color="#ffffff"
-                    className="font-bold font-galano-alt justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
-                  />
-                </motion.div>
-              ) : (
-                <div
-                  className="invisible select-none pointer-events-none flex flex-row items-center justify-center gap-x-1.5 text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap font-galano-alt"
-                  aria-hidden="true"
+                  {line1Prefix}
+                </ScrollReveal>
+                <ScrollReveal
+                  mode="scrub"
+                  progress={f2_p1}
+                  splitBy="words"
+                  effect="fade"
+                  stagger={0.05}
+                  duration={0.8}
+                  smoothing={0}
+                  baseOpacity={0.1}
+                  baseRotation={0}
+                  baseOffset={0}
+                  enableBlur={true}
+                  blurStrength={4}
+                  containerClassName="text-white font-bold font-galano-alt justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
                 >
-                  <span className="font-normal">{line1Prefix}</span>
-                  <span className="font-bold">{line1Suffix}</span>
-                </div>
-              )}
+                  {line1Suffix}
+                </ScrollReveal>
+              </div>
 
               {/* Line 2: As a father, he lulls the child, */}
-              {showLine2 ? (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3, ease: 'easeOut' }}
-                  className="flex flex-row items-center justify-center gap-x-1.5 text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap pt-1.5 sm:pt-2"
+              <div className="flex flex-row items-center justify-center gap-x-1.5 text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap pt-1.5 sm:pt-2">
+                <ScrollReveal
+                  mode="scrub"
+                  progress={f2_p2}
+                  splitBy="words"
+                  effect="fade"
+                  stagger={0.05}
+                  duration={0.8}
+                  smoothing={0}
+                  baseOpacity={0.1}
+                  baseRotation={0}
+                  baseOffset={0}
+                  enableBlur={true}
+                  blurStrength={4}
+                  containerClassName="text-white/55 font-normal font-galano-alt justify-center"
                 >
-                  <BlurText
-                    text={line2Prefix}
-                    effect="blur"
-                    animateBy="words"
-                    direction="bottom"
-                    trigger="load"
-                    delay={45}
-                    stepDuration={0.24}
-                    blur={8}
-                    distance={8}
-                    color="rgba(255, 255, 255, 0.55)"
-                    className="font-normal font-galano-alt justify-center"
-                  />
-                  <BlurText
-                    text={line2Suffix}
-                    effect="blur"
-                    animateBy="words"
-                    direction="bottom"
-                    trigger="load"
-                    delay={45}
-                    stepDuration={0.24}
-                    blur={8}
-                    distance={8}
-                    color="#ffffff"
-                    className="font-bold font-galano-alt justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
-                  />
-                </motion.div>
-              ) : (
-                <div
-                  className="invisible select-none pointer-events-none flex flex-row items-center justify-center gap-x-1.5 text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap pt-1.5 sm:pt-2 font-galano-alt"
-                  aria-hidden="true"
+                  {line2Prefix}
+                </ScrollReveal>
+                <ScrollReveal
+                  mode="scrub"
+                  progress={f2_p2}
+                  splitBy="words"
+                  effect="fade"
+                  stagger={0.05}
+                  duration={0.8}
+                  smoothing={0}
+                  baseOpacity={0.1}
+                  baseRotation={0}
+                  baseOffset={0}
+                  enableBlur={true}
+                  blurStrength={4}
+                  containerClassName="text-white font-bold font-galano-alt justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
                 >
-                  <span className="font-normal">{line2Prefix}</span>
-                  <span className="font-bold">{line2Suffix}</span>
-                </div>
-              )}
+                  {line2Suffix}
+                </ScrollReveal>
+              </div>
 
               {/* Line 3: As a brother, he shares the fret ... */}
-              {showLine3 ? (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3, ease: 'easeOut' }}
-                  className="flex flex-row items-center justify-center gap-x-1.5 text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap pt-1.5 sm:pt-2"
+              <div className="flex flex-row items-center justify-center gap-x-1.5 text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap pt-1.5 sm:pt-2">
+                <ScrollReveal
+                  mode="scrub"
+                  progress={f2_p3}
+                  splitBy="words"
+                  effect="fade"
+                  stagger={0.05}
+                  duration={0.8}
+                  smoothing={0}
+                  baseOpacity={0.1}
+                  baseRotation={0}
+                  baseOffset={0}
+                  enableBlur={true}
+                  blurStrength={4}
+                  containerClassName="text-white/55 font-normal font-galano-alt justify-center"
                 >
-                  <BlurText
-                    text={line3Prefix}
-                    effect="blur"
-                    animateBy="words"
-                    direction="bottom"
-                    trigger="load"
-                    delay={45}
-                    stepDuration={0.24}
-                    blur={8}
-                    distance={8}
-                    color="rgba(255, 255, 255, 0.55)"
-                    className="font-normal font-galano-alt justify-center"
-                  />
-                  <BlurText
-                    text={line3Suffix}
-                    effect="blur"
-                    animateBy="words"
-                    direction="bottom"
-                    trigger="load"
-                    delay={45}
-                    stepDuration={0.24}
-                    blur={8}
-                    distance={8}
-                    color="#ffffff"
-                    className="font-bold font-galano-alt justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
-                  />
-                </motion.div>
-              ) : (
-                <div
-                  className="invisible select-none pointer-events-none flex flex-row items-center justify-center gap-x-1.5 text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap pt-1.5 sm:pt-2 font-galano-alt"
-                  aria-hidden="true"
+                  {line3Prefix}
+                </ScrollReveal>
+                <ScrollReveal
+                  mode="scrub"
+                  progress={f2_p3}
+                  splitBy="words"
+                  effect="fade"
+                  stagger={0.05}
+                  duration={0.8}
+                  smoothing={0}
+                  baseOpacity={0.1}
+                  baseRotation={0}
+                  baseOffset={0}
+                  enableBlur={true}
+                  blurStrength={4}
+                  containerClassName="text-white font-bold font-galano-alt justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
                 >
-                  <span className="font-normal">{line3Prefix}</span>
-                  <span className="font-bold">{line3Suffix}</span>
-                </div>
-              )}
+                  {line3Suffix}
+                </ScrollReveal>
+              </div>
 
               {/* Line 4: BUT... AS A WITNESS, */}
-              {showWitness ? (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3, ease: 'easeOut' }}
-                  className="flex flex-row items-center justify-center gap-x-2 text-[clamp(24px,7.4vw,32px)] leading-none whitespace-nowrap pt-1 sm:pt-1.5"
+              <div className="flex flex-row items-center justify-center gap-x-2 text-[clamp(24px,7.4vw,32px)] leading-none whitespace-nowrap pt-1 sm:pt-1.5">
+                <ScrollReveal
+                  mode="scrub"
+                  progress={f2_p4}
+                  splitBy="words"
+                  effect="fade"
+                  stagger={0.05}
+                  duration={0.8}
+                  smoothing={0}
+                  baseOpacity={0.1}
+                  baseRotation={0}
+                  baseOffset={0}
+                  enableBlur={true}
+                  blurStrength={4}
+                  containerClassName="text-white font-galano font-black uppercase justify-center drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]"
                 >
-                  <BlurText
-                    text={line4Prefix}
-                    effect="blur"
-                    animateBy="letters"
-                    direction="bottom"
-                    trigger="load"
-                    delay={50}
-                    stepDuration={0.25}
-                    blur={10}
-                    distance={10}
-                    color="#ffffff"
-                    className="font-galano font-black uppercase justify-center drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]"
-                  />
-                  <BlurText
-                    text={line4Suffix}
-                    effect="blur"
-                    animateBy="words"
-                    direction="bottom"
-                    trigger="load"
-                    delay={50}
-                    stepDuration={0.25}
-                    blur={10}
-                    distance={10}
-                    color="#ff0000"
-                    className="font-galano font-black uppercase justify-center drop-shadow-[0_2px_12px_rgba(255,0,0,0.4)]"
-                  />
-                </motion.div>
-              ) : (
-                <div
-                  className="invisible select-none pointer-events-none flex flex-row items-center justify-center gap-x-2 text-[clamp(24px,7.4vw,32px)] leading-none whitespace-nowrap pt-1 sm:pt-1.5 font-galano font-black uppercase"
-                  aria-hidden="true"
+                  {line4Prefix}
+                </ScrollReveal>
+                <ScrollReveal
+                  mode="scrub"
+                  progress={f2_p4}
+                  splitBy="words"
+                  effect="fade"
+                  stagger={0.05}
+                  duration={0.8}
+                  smoothing={0}
+                  baseOpacity={0.1}
+                  baseRotation={0}
+                  baseOffset={0}
+                  enableBlur={true}
+                  blurStrength={4}
+                  highlightColor="#ff0000"
+                  containerClassName="text-[#ff0000] font-galano font-black uppercase justify-center drop-shadow-[0_2px_12px_rgba(255,0,0,0.4)]"
                 >
-                  <span>{line4Prefix}</span>
-                  <span>{line4Suffix}</span>
-                </div>
-              )}
+                  {line4Suffix}
+                </ScrollReveal>
+              </div>
 
               {/* Line 5: he blesses the world! */}
-              {showBlesses ? (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3, ease: 'easeOut' }}
-                  className="pt-1.5 sm:pt-2"
+              <div className="pt-1.5 sm:pt-2">
+                <ScrollReveal
+                  mode="scrub"
+                  progress={f2_p5}
+                  splitBy="words"
+                  effect="fade"
+                  stagger={0.05}
+                  duration={0.8}
+                  smoothing={0}
+                  baseOpacity={0.1}
+                  baseRotation={0}
+                  baseOffset={0}
+                  enableBlur={true}
+                  blurStrength={4}
+                  containerClassName="font-galano-alt font-bold text-white text-[clamp(16px,4.9vw,21.5px)] leading-tight justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] whitespace-nowrap"
                 >
-                  <BlurText
-                    text={line5Text}
-                    effect="blur"
-                    animateBy="words"
-                    direction="bottom"
-                    trigger="load"
-                    delay={45}
-                    stepDuration={0.24}
-                    blur={8}
-                    distance={8}
-                    color="#ffffff"
-                    className="font-galano-alt font-bold text-[clamp(16px,4.9vw,21.5px)] leading-tight justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] whitespace-nowrap"
-                  />
-                </motion.div>
-              ) : (
-                <div
-                  className="invisible select-none pointer-events-none pt-1.5 sm:pt-2 font-galano-alt font-bold text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap"
-                  aria-hidden="true"
-                >
-                  <span>{line5Text}</span>
-                </div>
-              )}
+                  {line5Text}
+                </ScrollReveal>
+              </div>
             </div>
           </motion.div>
         )}
@@ -1230,145 +1155,123 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
             <div className="hidden md:flex absolute top-[7.5%] lg:top-[8%] bottom-[124px] lg:bottom-[132px] left-[4%] xl:left-[5%] w-[44%] max-w-xl flex-col justify-between items-start pointer-events-none z-20">
               {/* Item 1: Two decades of commitment & counting ... */}
               <div className="w-full flex items-start">
-                {showCard1 ? (
-                  <BlurText
-                    text="Two decades of commitment & counting ..."
-                    effect="blur"
-                    animateBy="words"
-                    direction="bottom"
-                    trigger="load"
-                    delay={50}
-                    stepDuration={0.3}
-                    blur={10}
-                    distance={14}
-                    className="text-white font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
-                  />
-                ) : (
-                  <div
-                    className="invisible select-none pointer-events-none font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight"
-                    aria-hidden="true"
-                  >
-                    Two decades of commitment &amp; counting ...
-                  </div>
-                )}
+                <ScrollReveal
+                  mode="scrub"
+                  progress={f3_p1}
+                  splitBy="words"
+                  effect="fade"
+                  stagger={0.05}
+                  duration={0.8}
+                  smoothing={0}
+                  baseOpacity={0.1}
+                  baseRotation={0}
+                  baseOffset={0}
+                  enableBlur={true}
+                  blurStrength={4}
+                  containerClassName="font-galano-alt font-bold text-white text-[clamp(22px,2.5vw,38.5px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
+                >
+                  Two decades of commitment &amp; counting ...
+                </ScrollReveal>
               </div>
 
               {/* Item 2: A family to work with – A family to work for */}
               <div className="w-full flex items-start">
-                {showCard2 ? (
-                  <BlurText
-                    text="A family to work with – A family to work for"
-                    effect="blur"
-                    animateBy="words"
-                    direction="bottom"
-                    trigger="load"
-                    delay={50}
-                    stepDuration={0.3}
-                    blur={10}
-                    distance={14}
-                    className="text-white font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
-                  />
-                ) : (
-                  <div
-                    className="invisible select-none pointer-events-none font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight"
-                    aria-hidden="true"
-                  >
-                    A family to work with – A family to work for
-                  </div>
-                )}
+                <ScrollReveal
+                  mode="scrub"
+                  progress={f3_p2}
+                  splitBy="words"
+                  effect="fade"
+                  stagger={0.05}
+                  duration={0.8}
+                  smoothing={0}
+                  baseOpacity={0.1}
+                  baseRotation={0}
+                  baseOffset={0}
+                  enableBlur={true}
+                  blurStrength={4}
+                  containerClassName="font-galano-alt font-bold text-white text-[clamp(22px,2.5vw,38.5px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
+                >
+                  A family to work with – A family to work for
+                </ScrollReveal>
               </div>
 
               {/* Item 3: A bounty of love, A legacy to uphold */}
               <div className="w-full flex items-start">
-                {showCard3 ? (
-                  <BlurText
-                    text="A bounty of love, A legacy to uphold"
-                    effect="blur"
-                    animateBy="words"
-                    direction="bottom"
-                    trigger="load"
-                    delay={50}
-                    stepDuration={0.3}
-                    blur={10}
-                    distance={14}
-                    className="text-white font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
-                  />
-                ) : (
-                  <div
-                    className="invisible select-none pointer-events-none font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight"
-                    aria-hidden="true"
-                  >
-                    A bounty of love, A legacy to uphold
-                  </div>
-                )}
+                <ScrollReveal
+                  mode="scrub"
+                  progress={f3_p3}
+                  splitBy="words"
+                  effect="fade"
+                  stagger={0.05}
+                  duration={0.8}
+                  smoothing={0}
+                  baseOpacity={0.1}
+                  baseRotation={0}
+                  baseOffset={0}
+                  enableBlur={true}
+                  blurStrength={4}
+                  containerClassName="font-galano-alt font-bold text-white text-[clamp(22px,2.5vw,38.5px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
+                >
+                  A bounty of love, A legacy to uphold
+                </ScrollReveal>
               </div>
 
               {/* Item 4: A promise spoken in silence – fulfilled with glory */}
               <div className="w-full flex items-start">
-                {showCard4 ? (
-                  <BlurText
-                    text="A promise spoken in silence – fulfilled with glory"
-                    effect="blur"
-                    animateBy="words"
-                    direction="bottom"
-                    trigger="load"
-                    delay={50}
-                    stepDuration={0.3}
-                    blur={10}
-                    distance={14}
-                    className="text-white font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
-                  />
-                ) : (
-                  <div
-                    className="invisible select-none pointer-events-none font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight"
-                    aria-hidden="true"
-                  >
-                    A promise spoken in silence – fulfilled with glory
-                  </div>
-                )}
+                <ScrollReveal
+                  mode="scrub"
+                  progress={f3_p4}
+                  splitBy="words"
+                  effect="fade"
+                  stagger={0.05}
+                  duration={0.8}
+                  smoothing={0}
+                  baseOpacity={0.1}
+                  baseRotation={0}
+                  baseOffset={0}
+                  enableBlur={true}
+                  blurStrength={4}
+                  containerClassName="font-galano-alt font-bold text-white text-[clamp(22px,2.5vw,38.5px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
+                >
+                  A promise spoken in silence – fulfilled with glory
+                </ScrollReveal>
               </div>
 
               {/* Item 5: Prominent SRF Logo */}
               <div className="w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 lg:w-22 lg:h-22 flex items-center">
-                {showLogo ? (
-                  <motion.div
-                    id="journey-frame4-logo"
-                    initial={{ opacity: 0, scale: 0.7 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                    className="w-full h-full text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.35)]"
-                  >
-                    <SrfLogo className="w-full h-full text-white" />
-                  </motion.div>
-                ) : (
-                  <div className="w-full h-full invisible select-none pointer-events-none" aria-hidden="true" />
-                )}
+                <div
+                  id="journey-frame4-logo"
+                  style={{
+                    opacity: Math.max(0.08, f3_logo),
+                    transform: `scale(${(0.75 + 0.25 * f3_logo).toFixed(3)})`,
+                    filter: f3_logo < 1 ? `blur(${((1 - f3_logo) * 4).toFixed(1)}px)` : 'none',
+                  }}
+                  className="w-full h-full text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.35)] transition-all duration-75"
+                >
+                  <SrfLogo className="w-full h-full text-white" />
+                </div>
               </div>
 
               {/* Item 6: One spine at a time */}
               <div className="w-full flex items-start">
-                {showCard5 ? (
-                  <BlurText
-                    text="One spine at a time"
-                    effect="blur"
-                    animateBy="words"
-                    direction="bottom"
-                    trigger="load"
-                    delay={60}
-                    stepDuration={0.32}
-                    blur={12}
-                    distance={16}
-                    color="#ff0000"
-                    className="font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight drop-shadow-[0_2px_16px_rgba(255,0,0,0.35)]"
-                  />
-                ) : (
-                  <div
-                    className="invisible select-none pointer-events-none font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight"
-                    aria-hidden="true"
-                  >
-                    One spine at a time
-                  </div>
-                )}
+                <ScrollReveal
+                  mode="scrub"
+                  progress={f3_p5}
+                  splitBy="words"
+                  effect="fade"
+                  stagger={0.05}
+                  duration={0.8}
+                  smoothing={0}
+                  baseOpacity={0.1}
+                  baseRotation={0}
+                  baseOffset={0}
+                  enableBlur={true}
+                  blurStrength={4}
+                  highlightColor="#ff0000"
+                  containerClassName="font-galano-alt font-bold text-[#ff0000] text-[clamp(22px,2.5vw,38.5px)] leading-tight drop-shadow-[0_2px_16px_rgba(255,0,0,0.35)]"
+                >
+                  One spine at a time
+                </ScrollReveal>
               </div>
             </div>
 
@@ -1378,146 +1281,124 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
               <div className="absolute top-[14%] sm:top-[15%] bottom-[160px] sm:bottom-[172px] inset-x-0 flex flex-col items-center justify-between text-center px-4">
                 {/* Slot 1: Two decades of commitment & counting ... */}
                 <div className="min-h-[50px] sm:min-h-[56px] flex items-center justify-center text-center">
-                  {showCard1 ? (
-                    <BlurText
-                      text="Two decades of commitment & counting ..."
-                      effect="blur"
-                      animateBy="words"
-                      direction="bottom"
-                      trigger="load"
-                      delay={50}
-                      stepDuration={0.3}
-                      blur={10}
-                      distance={14}
-                      className="text-white font-galano-alt font-bold text-[clamp(17px,5.2vw,23px)] leading-[1.2] text-center drop-shadow-md max-w-[280px] sm:max-w-xs mx-auto justify-center"
-                    />
-                  ) : (
-                    <div
-                      className="invisible select-none pointer-events-none font-galano-alt font-bold text-[clamp(17px,5.2vw,23px)] leading-[1.2] text-center max-w-[280px] sm:max-w-xs mx-auto"
-                      aria-hidden="true"
-                    >
-                      Two decades of commitment &amp; counting ...
-                    </div>
-                  )}
+                  <ScrollReveal
+                    mode="scrub"
+                    progress={f3_p1}
+                    splitBy="words"
+                    effect="fade"
+                    stagger={0.05}
+                    duration={0.8}
+                    smoothing={0}
+                    baseOpacity={0.1}
+                    baseRotation={0}
+                    baseOffset={0}
+                    enableBlur={true}
+                    blurStrength={4}
+                    containerClassName="font-galano-alt font-bold text-white text-[clamp(17px,5.2vw,23px)] leading-[1.2] text-center drop-shadow-md max-w-[280px] sm:max-w-xs mx-auto justify-center"
+                  >
+                    Two decades of commitment &amp; counting ...
+                  </ScrollReveal>
                 </div>
 
                 {/* Slot 2: A family to work with – A family to work for */}
                 <div className="min-h-[50px] sm:min-h-[56px] flex items-center justify-center text-center">
-                  {showCard2 ? (
-                    <BlurText
-                      text="A family to work with – A family to work for"
-                      effect="blur"
-                      animateBy="words"
-                      direction="bottom"
-                      trigger="load"
-                      delay={50}
-                      stepDuration={0.3}
-                      blur={10}
-                      distance={14}
-                      className="text-white font-galano-alt font-bold text-[clamp(17px,5.2vw,23px)] leading-[1.2] text-center drop-shadow-md max-w-[280px] sm:max-w-xs mx-auto justify-center"
-                    />
-                  ) : (
-                    <div
-                      className="invisible select-none pointer-events-none font-galano-alt font-bold text-[clamp(17px,5.2vw,23px)] leading-[1.2] text-center max-w-[280px] sm:max-w-xs mx-auto"
-                      aria-hidden="true"
-                    >
-                      A family to work with – A family to work for
-                    </div>
-                  )}
+                  <ScrollReveal
+                    mode="scrub"
+                    progress={f3_p2}
+                    splitBy="words"
+                    effect="fade"
+                    stagger={0.05}
+                    duration={0.8}
+                    smoothing={0}
+                    baseOpacity={0.1}
+                    baseRotation={0}
+                    baseOffset={0}
+                    enableBlur={true}
+                    blurStrength={4}
+                    containerClassName="font-galano-alt font-bold text-white text-[clamp(17px,5.2vw,23px)] leading-[1.2] text-center drop-shadow-md max-w-[280px] sm:max-w-xs mx-auto justify-center"
+                  >
+                    A family to work with – A family to work for
+                  </ScrollReveal>
                 </div>
 
                 {/* Slot 3: A bounty of love, A legacy to uphold */}
                 <div className="min-h-[50px] sm:min-h-[56px] flex items-center justify-center text-center">
-                  {showCard3 ? (
-                    <BlurText
-                      text="A bounty of love, A legacy to uphold"
-                      effect="blur"
-                      animateBy="words"
-                      direction="bottom"
-                      trigger="load"
-                      delay={50}
-                      stepDuration={0.3}
-                      blur={10}
-                      distance={14}
-                      className="text-white font-galano-alt font-bold text-[clamp(17px,5.2vw,23px)] leading-[1.2] text-center drop-shadow-md max-w-[280px] sm:max-w-xs mx-auto justify-center"
-                    />
-                  ) : (
-                    <div
-                      className="invisible select-none pointer-events-none font-galano-alt font-bold text-[clamp(17px,5.2vw,23px)] leading-[1.2] text-center max-w-[280px] sm:max-w-xs mx-auto"
-                      aria-hidden="true"
-                    >
-                      A bounty of love, A legacy to uphold
-                    </div>
-                  )}
+                  <ScrollReveal
+                    mode="scrub"
+                    progress={f3_p3}
+                    splitBy="words"
+                    effect="fade"
+                    stagger={0.05}
+                    duration={0.8}
+                    smoothing={0}
+                    baseOpacity={0.1}
+                    baseRotation={0}
+                    baseOffset={0}
+                    enableBlur={true}
+                    blurStrength={4}
+                    containerClassName="font-galano-alt font-bold text-white text-[clamp(17px,5.2vw,23px)] leading-[1.2] text-center drop-shadow-md max-w-[280px] sm:max-w-xs mx-auto justify-center"
+                  >
+                    A bounty of love, A legacy to uphold
+                  </ScrollReveal>
                 </div>
 
                 {/* Slot 4: A promise spoken in silence – fulfilled with glory */}
                 <div className="min-h-[50px] sm:min-h-[56px] flex items-center justify-center text-center">
-                  {showCard4 ? (
-                    <BlurText
-                      text="A promise spoken in silence – fulfilled with glory"
-                      effect="blur"
-                      animateBy="words"
-                      direction="bottom"
-                      trigger="load"
-                      delay={50}
-                      stepDuration={0.3}
-                      blur={10}
-                      distance={14}
-                      className="text-white font-galano-alt font-bold text-[clamp(17px,5.2vw,23px)] leading-[1.2] text-center drop-shadow-md max-w-[280px] sm:max-w-xs mx-auto justify-center"
-                    />
-                  ) : (
-                    <div
-                      className="invisible select-none pointer-events-none font-galano-alt font-bold text-[clamp(17px,5.2vw,23px)] leading-[1.2] text-center max-w-[280px] sm:max-w-xs mx-auto"
-                      aria-hidden="true"
-                    >
-                      A promise spoken in silence – fulfilled with glory
-                    </div>
-                  )}
+                  <ScrollReveal
+                    mode="scrub"
+                    progress={f3_p4}
+                    splitBy="words"
+                    effect="fade"
+                    stagger={0.05}
+                    duration={0.8}
+                    smoothing={0}
+                    baseOpacity={0.1}
+                    baseRotation={0}
+                    baseOffset={0}
+                    enableBlur={true}
+                    blurStrength={4}
+                    containerClassName="font-galano-alt font-bold text-white text-[clamp(17px,5.2vw,23px)] leading-[1.2] text-center drop-shadow-md max-w-[280px] sm:max-w-xs mx-auto justify-center"
+                  >
+                    A promise spoken in silence – fulfilled with glory
+                  </ScrollReveal>
                 </div>
 
                 {/* Slot 5: Prominent SRF Logo */}
                 <div className="w-20 h-20 sm:w-22 sm:h-22 min-h-[76px] sm:min-h-[84px] flex items-center justify-center">
-                  {showLogo ? (
-                    <motion.div
-                      id="journey-frame4-logo-mobile"
-                      initial={{ opacity: 0, scale: 0.7 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                      className="w-20 h-20 sm:w-22 sm:h-22 mx-auto text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.4)]"
-                    >
-                      <SrfLogo className="w-full h-full text-white" />
-                    </motion.div>
-                  ) : (
-                    <div className="w-20 h-20 sm:w-22 sm:h-22 invisible select-none pointer-events-none" aria-hidden="true" />
-                  )}
+                  <div
+                    id="journey-frame4-logo-mobile"
+                    style={{
+                      opacity: Math.max(0.08, f3_logo),
+                      transform: `scale(${(0.75 + 0.25 * f3_logo).toFixed(3)})`,
+                      filter: f3_logo < 1 ? `blur(${((1 - f3_logo) * 4).toFixed(1)}px)` : 'none',
+                    }}
+                    className="w-20 h-20 sm:w-22 sm:h-22 mx-auto text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.4)] transition-all duration-75"
+                  >
+                    <SrfLogo className="w-full h-full text-white" />
+                  </div>
                 </div>
               </div>
 
               {/* Lower position: One spine at a time directly above floating buttons with safe gutter */}
               <div className="absolute bottom-[108px] sm:bottom-[116px] inset-x-0 min-h-[28px] sm:min-h-[32px] flex items-center justify-center px-4">
-                {showCard5 ? (
-                  <BlurText
-                    text="One spine at a time"
-                    effect="blur"
-                    animateBy="words"
-                    direction="bottom"
-                    trigger="load"
-                    delay={70}
-                    stepDuration={0.32}
-                    blur={12}
-                    distance={16}
-                    color="#ff0000"
-                    className="font-galano-alt font-bold tracking-wide text-[clamp(20px,6.2vw,26px)] leading-tight text-center drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] justify-center"
-                  />
-                ) : (
-                  <div
-                    className="invisible select-none pointer-events-none font-galano-alt font-bold tracking-wide text-[clamp(20px,6.2vw,26px)] leading-tight text-center"
-                    aria-hidden="true"
-                  >
-                    One spine at a time
-                  </div>
-                )}
+                <ScrollReveal
+                  mode="scrub"
+                  progress={f3_p5}
+                  splitBy="words"
+                  effect="fade"
+                  stagger={0.05}
+                  duration={0.8}
+                  smoothing={0}
+                  baseOpacity={0.1}
+                  baseRotation={0}
+                  baseOffset={0}
+                  enableBlur={true}
+                  blurStrength={4}
+                  highlightColor="#ff0000"
+                  containerClassName="font-galano-alt font-bold tracking-wide text-[#ff0000] text-[clamp(20px,6.2vw,26px)] leading-tight text-center drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] justify-center"
+                >
+                  One spine at a time
+                </ScrollReveal>
               </div>
             </div>
           </motion.div>
@@ -1528,9 +1409,9 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
       {/* BOTTOM INTRO CONTROLS: DOWN ARROW & SKIP (LEFT/CENTER) + PLAY/PAUSE (TOP-RIGHT MOBILE / BOTTOM-RIGHT DESKTOP) */}
       {/* -------------------------------------------------------- */}
       <AnimatePresence>
-        {frame < 4 && showControls && (
+        {frame < 4 && (
           <>
-            {/* Left/Center Controls: Next Frame Down Arrow + Skip Pill Button */}
+            {/* Left/Center Controls: Previous/Next Frame Buttons + Skip Pill Button */}
             <motion.div
               key="left-journey-controls"
               initial={{ opacity: 0, y: 30 }}
@@ -1543,14 +1424,41 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
               className="absolute bottom-6 sm:bottom-7 inset-x-0 md:inset-x-auto md:left-7 z-50 flex items-center justify-center md:justify-start pointer-events-none"
             >
-              <div className="flex items-center gap-3.5 pointer-events-auto">
+              <div className="flex items-center gap-3 pointer-events-auto">
+                {/* Previous Frame Up Button (visible when frame > 1) */}
+                {frame > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsPlaying(false)
+                      if (targetProgressRef.current > 0.15) {
+                        targetProgressRef.current = 0.0
+                      } else {
+                        previousFrame()
+                      }
+                    }}
+                    className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/50 backdrop-blur-md border border-white/15 text-white/90 hover:text-white hover:bg-black/70 hover:scale-105 active:scale-95 transition-all flex items-center justify-center cursor-pointer shadow-xl rotate-180"
+                    aria-label="Previous frame"
+                    title="Previous frame / Reverse reveal"
+                  >
+                    <MaterialIcon name="arrow_cool_down" size={22} className="sm:text-[24px]" />
+                  </button>
+                )}
+
                 {/* Next Frame Down Button with arrow_cool_down icon */}
                 <button
                   type="button"
-                  onClick={() => advanceFrame()}
+                  onClick={() => {
+                    setIsPlaying(false)
+                    if (targetProgressRef.current < 0.85) {
+                      targetProgressRef.current = 1.0
+                    } else {
+                      advanceFrame()
+                    }
+                  }}
                   className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/50 backdrop-blur-md border border-white/15 text-white/90 hover:text-white hover:bg-black/70 hover:scale-105 active:scale-95 transition-all flex items-center justify-center cursor-pointer shadow-xl"
                   aria-label="Next frame"
-                  title="Next frame"
+                  title="Next frame / Reveal text"
                 >
                   <MaterialIcon name="arrow_cool_down" size={22} className="sm:text-[24px]" />
                 </button>

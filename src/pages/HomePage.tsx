@@ -103,7 +103,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           {/* Background Image with Delayed Parallax Scroll: 3:5 portrait on mobile, 16:9 on desktop */}
           <picture className="w-full h-full block">
             <source
-              media="(max-width: 639px)"
+              media="(max-width: 768px)"
               srcSet={`${import.meta.env.BASE_URL}banners/Solitary%20Boy%20Amid%20the%20Moving%20Crowd%201%20-%20phone.png`}
             />
             <img

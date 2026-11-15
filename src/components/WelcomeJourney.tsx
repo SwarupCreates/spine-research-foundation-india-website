@@ -312,7 +312,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
             >
               <picture className="w-full h-full block">
                 <source
-                  media="(max-width: 639px)"
+                  media="(max-width: 768px)"
                   srcSet={`${import.meta.env.BASE_URL}banners/Silent%20Amidst%20the%20Passing%20Crowd%201%20-%20phone.png`}
                 />
                 <img
@@ -333,7 +333,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
             >
               <picture className="w-full h-full block">
                 <source
-                  media="(max-width: 639px)"
+                  media="(max-width: 768px)"
                   srcSet={`${import.meta.env.BASE_URL}banners/Solitary%20Boy%20Amid%20the%20Moving%20Crowd%201%20-%20phone.png`}
                 />
                 <img
@@ -427,7 +427,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
           >
             <picture className="w-full h-full block">
               <source
-                media="(max-width: 639px)"
+                media="(max-width: 768px)"
                 srcSet={`${import.meta.env.BASE_URL}banners/boy-phone.png`}
               />
               <img

@@ -686,9 +686,9 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
             exit={{ opacity: 0, transition: { duration: 0.5 } }}
             className="absolute inset-0 z-30 pointer-events-none"
           >
-            {/* Desktop View (>= md): Unified Container matching image frame, top-[58%] */}
+            {/* Desktop View (>= md): Unified Container matching image frame, lower position above controls */}
             <div className="hidden md:block w-full max-w-[calc(100vh*1.54)] mx-auto h-full relative px-6 md:px-8">
-              <div className="absolute top-[58%] left-6 md:left-8 right-6 md:right-8 space-y-2.5">
+              <div className="absolute bottom-20 md:bottom-24 lg:bottom-28 left-6 md:left-8 right-6 md:right-8 space-y-2 sm:space-y-2.5 md:space-y-3">
                 {/* Line 1 */}
                 <div className={`${sharedTextClass} min-h-[1.25em]`}>
                   <span

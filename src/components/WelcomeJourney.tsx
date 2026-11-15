@@ -548,29 +548,31 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
           >
             {/* Same Unified Container: 92% width */}
             <div className="w-[92%] mx-auto h-full flex flex-col justify-between">
-              {/* Top-Left: BUT... AS A WITNESS, */}
+              {/* Top-Left: BUT... AS A WITNESS, (Practically a single continuous statement) */}
               <div className="pt-10 sm:pt-14 md:pt-16">
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={`text-white leading-none ${sharedTextClass}`}
-                >
-                  BUT
-                  <span>{dotsCount >= 1 ? '.' : ''}</span>
-                  <span>{dotsCount >= 2 ? '.' : ''}</span>
-                  <span>{dotsCount >= 3 ? '.' : ''}</span>
-                </motion.div>
-
-                {showWitness && (
+                <div className="space-y-0.5 sm:space-y-1 md:space-y-1.5">
                   <motion.div
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5, ease: 'easeOut' }}
-                    className={`text-[#ff0000] mt-3 sm:mt-4 ${sharedTextClass}`}
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={`text-white leading-[1.08] ${sharedTextClass}`}
                   >
-                    AS A WITNESS,
+                    BUT
+                    <span>{dotsCount >= 1 ? '.' : ''}</span>
+                    <span>{dotsCount >= 2 ? '.' : ''}</span>
+                    <span>{dotsCount >= 3 ? '.' : ''}</span>
                   </motion.div>
-                )}
+
+                  {showWitness && (
+                    <motion.div
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.5, ease: 'easeOut' }}
+                      className={`text-[#ff0000] leading-[1.08] ${sharedTextClass}`}
+                    >
+                      AS A WITNESS,
+                    </motion.div>
+                  )}
+                </div>
               </div>
 
               {/* Bottom-Left: HE BLESSES THE WORLD! */}

@@ -5,9 +5,14 @@ import { SrfLogo, MaterialIcon } from './icons'
 interface WelcomeJourneyProps {
   onComplete: () => void
   onSkip: () => void
+  onLandedAtNavbar?: () => void
 }
 
-export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSkip }) => {
+export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
+  onComplete,
+  onSkip,
+  onLandedAtNavbar,
+}) => {
   // Current journey frame: 1 through 4, then 5 for landing transition
   const [frame, setFrame] = useState<number>(1)
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false)
@@ -40,8 +45,74 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
   const [showCard5, setShowCard5] = useState<boolean>(false)
   const [showLogo, setShowLogo] = useState<boolean>(false)
 
-  // Frame 5 flight to navbar
+  // Frame 5 flight to navbar & seamless dissolve
   const [isFlyingToNavbar, setIsFlyingToNavbar] = useState<boolean>(false)
+  const [isDissolvingFlyingLogo, setIsDissolvingFlyingLogo] = useState<boolean>(false)
+
+  // Precalculated & dynamically synchronized navbar logo target coordinates
+  const [navbarTarget, setNavbarTarget] = useState<{
+    left: number
+    top: number
+    width: number
+    height: number
+  }>(() => {
+    if (typeof window === 'undefined') return { left: 64, top: 24, width: 44, height: 44 }
+    const w = window.innerWidth
+    const isMobile = w < 640
+    const isSm = w >= 640 && w < 1024
+    const isLg = w >= 1024 && w < 1280
+    const padding = isMobile ? 24 : isSm ? 40 : isLg ? 56 : 64
+    const gutter = Math.max(0, (w - 1536) / 2)
+    const left = gutter + padding + 6
+    const top = (isMobile ? 6 : 10) + 18 + 6
+    const size = isMobile ? 40 : 44
+    return { left, top, width: size, height: size }
+  })
+
+  // Start coordinates for Frame 4 logo flight
+  const [logoStartCoords, setLogoStartCoords] = useState<{
+    left: number
+    top: number
+    width: number
+    height: number
+  }>({ left: 60, top: 700, width: 112, height: 112 })
+
+  // Synchronize target coordinates dynamically from the navbar element in the DOM
+  useEffect(() => {
+    const updateTarget = () => {
+      const el = document.getElementById('navbar-srf-logo-container')
+      if (el) {
+        const r = el.getBoundingClientRect()
+        if (r.width > 0 && r.height > 0) {
+          setNavbarTarget({
+            left: r.left,
+            top: r.top,
+            width: r.width,
+            height: r.height,
+          })
+          return
+        }
+      }
+      const w = window.innerWidth
+      const isMobile = w < 640
+      const isSm = w >= 640 && w < 1024
+      const isLg = w >= 1024 && w < 1280
+      const padding = isMobile ? 24 : isSm ? 40 : isLg ? 56 : 64
+      const gutter = Math.max(0, (w - 1536) / 2)
+      const left = gutter + padding + 6
+      const top = (isMobile ? 6 : 10) + 18 + 6
+      const size = isMobile ? 40 : 44
+      setNavbarTarget({ left, top, width: size, height: size })
+    }
+
+    updateTarget()
+    const timer = setTimeout(updateTarget, 100)
+    window.addEventListener('resize', updateTarget)
+    return () => {
+      clearTimeout(timer)
+      window.removeEventListener('resize', updateTarget)
+    }
+  }, [])
 
   // Full texts for Frame 2
   const line1Prefix = 'AS A SON, '
@@ -65,6 +136,9 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
   const onCompleteRef = React.useRef(onComplete)
   onCompleteRef.current = onComplete
 
+  const onLandedAtNavbarRef = React.useRef(onLandedAtNavbar)
+  onLandedAtNavbarRef.current = onLandedAtNavbar
+
   // Advance Frame with magnetic transition (completely stable callback that never re-creates)
   const advanceFrame = useCallback((targetFrame?: number) => {
     if (isTransitioningRef.current) return
@@ -74,10 +148,49 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
     setFrame((prev) => {
       const next = targetFrame !== undefined ? targetFrame : prev + 1
       if (next >= 5) {
+        // Measure starting coordinates of Frame 4 logo
+        const frame4Logo = document.getElementById('journey-frame4-logo')
+        if (frame4Logo) {
+          const r = frame4Logo.getBoundingClientRect()
+          setLogoStartCoords({
+            left: r.left,
+            top: r.top,
+            width: r.width,
+            height: r.height,
+          })
+        }
+
+        // Re-measure navbar target
+        const navLogo = document.getElementById('navbar-srf-logo-container')
+        if (navLogo) {
+          const r = navLogo.getBoundingClientRect()
+          if (r.width > 0 && r.height > 0) {
+            setNavbarTarget({
+              left: r.left,
+              top: r.top,
+              width: r.width,
+              height: r.height,
+            })
+          }
+        }
+
         setIsFlyingToNavbar(true)
+
+        // 1. Flight reaches the top navbar in 850ms
+        setTimeout(() => {
+          onLandedAtNavbarRef.current?.()
+        }, 850)
+
+        // 2. Navbar entry animation queue takes ~1250ms to finish all items
+        setTimeout(() => {
+          setIsDissolvingFlyingLogo(true)
+        }, 2100)
+
+        // 3. Complete journey and unmount
         setTimeout(() => {
           onCompleteRef.current()
-        }, 900)
+        }, 2600)
+
         return 5
       }
       return next
@@ -320,7 +433,13 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
     'text-[#ff0000] font-galano font-black text-2xl sm:text-3xl md:text-[34px] lg:text-[42px] xl:text-[48px] 2xl:text-[52px] uppercase leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]'
 
   return (
-    <div className="fixed inset-0 z-[100] w-full h-full bg-[#0b0c0e] overflow-hidden select-none font-galano">
+    <div className="fixed inset-0 z-[100] w-full h-full pointer-events-none overflow-hidden select-none font-galano">
+      {/* Background dark backdrop & story frames (smoothly dissolves to 0 on landing flight) */}
+      <div
+        className={`absolute inset-0 w-full h-full bg-[#0b0c0e] transition-opacity duration-700 ${
+          frame === 5 ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto'
+        }`}
+      >
       {/* -------------------------------------------------------- */}
       {/* BACKGROUND IMAGE LAYER 1 & BOTTOM GRADIENT               */}
       {/* Frames 1-2: Silent Amidst the Passing Crowd 1           */}
@@ -662,6 +781,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
               <div className="flex flex-col items-start gap-3 sm:gap-4">
                 {showLogo && (
                   <motion.div
+                    id="journey-frame4-logo"
                     initial={{ opacity: 0, scale: 0.7 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
@@ -685,40 +805,6 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* -------------------------------------------------------- */}
-      {/* FRAME 5: LOGO FLIGHT TO NAVBAR                           */}
-      {/* -------------------------------------------------------- */}
-      {isFlyingToNavbar && (
-        <motion.div
-          initial={{
-            position: 'fixed',
-            left: 64,
-            bottom: 120,
-            width: 80,
-            height: 80,
-            opacity: 1,
-            zIndex: 110,
-          }}
-          animate={{
-            left: 64,
-            top: 24,
-            bottom: 'auto',
-            width: 44,
-            height: 44,
-            opacity: 1,
-          }}
-          transition={{
-            type: 'spring',
-            stiffness: 85,
-            damping: 16,
-            mass: 1,
-          }}
-          className="pointer-events-none text-white drop-shadow-xl"
-        >
-          <SrfLogo className="w-full h-full text-white" />
-        </motion.div>
-      )}
 
       {/* -------------------------------------------------------- */}
       {/* BOTTOM INTRO CONTROLS: DOWN ARROW & SKIP (LEFT) + PLAY/PAUSE (RIGHT) */}
@@ -792,6 +878,39 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
           </>
         )}
       </AnimatePresence>
+      </div>
+
+      {/* -------------------------------------------------------- */}
+      {/* FRAME 5: LOGO FLIGHT TO NAVBAR & SEAMLESS DISSOLVE       */}
+      {/* -------------------------------------------------------- */}
+      {isFlyingToNavbar && (
+        <motion.div
+          initial={{
+            position: 'fixed',
+            left: logoStartCoords.left,
+            top: logoStartCoords.top,
+            width: logoStartCoords.width,
+            height: logoStartCoords.height,
+            opacity: 1,
+            zIndex: 110,
+          }}
+          animate={{
+            left: navbarTarget.left,
+            top: navbarTarget.top,
+            width: navbarTarget.width,
+            height: navbarTarget.height,
+            opacity: isDissolvingFlyingLogo ? 0 : 1,
+          }}
+          transition={
+            isDissolvingFlyingLogo
+              ? { duration: 0.45, ease: 'easeOut' }
+              : { duration: 0.85, ease: [0.16, 1, 0.3, 1] }
+          }
+          className="pointer-events-none text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.35)]"
+        >
+          <SrfLogo className="w-full h-full text-white" />
+        </motion.div>
+      )}
     </div>
   )
 }

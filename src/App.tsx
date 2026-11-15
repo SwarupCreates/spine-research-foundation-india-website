@@ -88,12 +88,15 @@ export const App: React.FC = () => {
   })
   const [isEnteringFromJourney, setIsEnteringFromJourney] = useState(false)
 
+  const handleLandedAtNavbar = React.useCallback(() => {
+    setIsEnteringFromJourney(true)
+  }, [])
+
   const handleJourneyComplete = React.useCallback(() => {
     setIsJourneyActive(false)
-    setIsEnteringFromJourney(true)
     setTimeout(() => {
       setIsEnteringFromJourney(false)
-    }, 2500)
+    }, 2000)
   }, [])
 
   const handleJourneySkip = () => {
@@ -103,7 +106,7 @@ export const App: React.FC = () => {
 
   // Lock manual scrolling while the cinematic journey is playing
   useEffect(() => {
-    if (isJourneyActive) {
+    if (isJourneyActive && !isEnteringFromJourney) {
       document.body.style.overflow = 'hidden'
       window.scrollTo(0, 0)
     } else {
@@ -112,7 +115,7 @@ export const App: React.FC = () => {
     return () => {
       document.body.style.overflow = ''
     }
-  }, [isJourneyActive])
+  }, [isJourneyActive, isEnteringFromJourney])
 
   return (
     <div className="min-h-screen bg-[#0b0c0e] text-slate-100 flex flex-col relative selection:bg-emerald-500 selection:text-white font-medium">
@@ -121,6 +124,7 @@ export const App: React.FC = () => {
         <WelcomeJourney
           onComplete={handleJourneyComplete}
           onSkip={handleJourneySkip}
+          onLandedAtNavbar={handleLandedAtNavbar}
         />
       )}
 

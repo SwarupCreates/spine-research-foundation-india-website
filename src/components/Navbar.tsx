@@ -155,8 +155,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   }
 
   return (
-    <header className={`sticky top-0 w-full transition-all duration-300 bg-transparent border-0 backdrop-blur-none pt-1.5 sm:pt-2.5 ${isMenuOpen ? 'z-[90]' : 'z-[70]'} ${isJourneyActive ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-      <div className={`relative max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 h-20 flex items-center justify-between gap-4 ${isMenuOpen ? 'z-[90]' : 'z-[70]'}`}>
+    <header className={`sticky top-0 w-full transition-all duration-300 bg-transparent border-0 backdrop-blur-none pt-1.5 sm:pt-2.5 ${isMenuOpen ? 'z-[90]' : 'z-[70]'} ${isJourneyActive && !isEnteringFromJourney ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+      <div
+        key={isEnteringFromJourney ? 'from-journey' : 'standard-entry'}
+        className={`relative max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 h-20 flex items-center justify-between gap-4 ${isMenuOpen ? 'z-[90]' : 'z-[70]'}`}
+      >
         {/* Brand Logo & Interactive Morphing Brand Name in Jost font */}
         <a
           href="#home"
@@ -175,11 +178,18 @@ export const Navbar: React.FC<NavbarProps> = ({
         >
           {/* Logo Container with Enlarge-Scale Highlight Effect on Hover & Centered Glow */}
           <motion.div
-            className="relative w-10 h-10 sm:w-11 sm:h-11 flex-shrink-0"
+            id="navbar-srf-logo-container"
+            data-testid="navbar-srf-logo"
+            initial={{ opacity: 0 }}
             animate={{
+              opacity: 1,
               scale: isLogoHovered ? 1.09 : 1,
             }}
-            transition={{ duration: isLogoHovered ? 0.35 : 0.75, ease: activeEase }}
+            transition={{
+              opacity: { duration: 0.5, ease: 'easeOut' },
+              scale: { duration: isLogoHovered ? 0.35 : 0.75, ease: activeEase },
+            }}
+            className="relative w-10 h-10 sm:w-11 sm:h-11 flex-shrink-0"
           >
             {/* Brand Gradient Glow strictly around the circular Logomark on the left */}
             <motion.div
@@ -230,17 +240,20 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             <motion.div
               layout
-              initial={isEnteringFromJourney ? { clipPath: 'inset(0 100% 0 0)', opacity: 0 } : false}
+              initial={{ clipPath: 'inset(0 100% 0 0)', opacity: 0, x: -18 }}
               animate={{
                 clipPath: 'inset(0 0% 0 0)',
                 opacity: 1,
+                x: 0,
                 scale: isLogoHovered ? 0.82 : 1,
               }}
               style={{ transformOrigin: 'left center' }}
               transition={{
                 layout: { duration: 0.4, ease: activeEase },
                 scale: { duration: activeDuration, ease: activeEase },
-                ...(isEnteringFromJourney ? { duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.1 } : {}),
+                opacity: { duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.15 },
+                clipPath: { duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.15 },
+                x: { duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.15 },
               }}
               className={`font-jost select-none flex ${
                 isLogoStacked ? 'flex-col items-start gap-y-0 leading-none' : 'flex-row items-baseline'
@@ -357,13 +370,13 @@ export const Navbar: React.FC<NavbarProps> = ({
             return (
               <motion.button
                 key={item.id}
-                initial={isEnteringFromJourney ? { opacity: 0, y: -16 } : false}
+                initial={{ opacity: 0, y: -16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={
-                  isEnteringFromJourney
-                    ? { duration: 0.45, delay: 0.15 + index * 0.08, ease: [0.16, 1, 0.3, 1] }
-                    : undefined
-                }
+                transition={{
+                  duration: 0.45,
+                  delay: 0.35 + index * 0.08,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
                 onClick={() => handleSelect(item.id)}
                 className={`group relative flex items-center gap-2 px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer select-none ${
                   isActive
@@ -388,7 +401,12 @@ export const Navbar: React.FC<NavbarProps> = ({
         </nav>
 
         {/* Mobile Animated Hamburger Button */}
-        <div className="flex md:hidden items-center">
+        <motion.div
+          initial={{ opacity: 0, y: -16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          className="flex md:hidden items-center"
+        >
           <button
             ref={hamburgerButtonRef}
             type="button"
@@ -423,7 +441,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               />
             </div>
           </button>
-        </div>
+        </motion.div>
       </div>
 
       {/* Tap interceptor backdrop: sits at z-[85] behind the z-[90] header bar and drawer */}

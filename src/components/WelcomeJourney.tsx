@@ -974,83 +974,84 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
               </div>
             </div>
 
-            {/* Mobile View (< md): Stacked vertically in fixed sequential slots, compact & positioned lower matching Figma */}
-            <div className="md:hidden absolute top-[15%] sm:top-[16%] inset-x-0 flex flex-col items-center justify-start text-center px-6 z-20 space-y-3.5 sm:space-y-4">
-              {/* Slot 1: TWO DECADES OF COMMITMENT & COUNTING ... */}
-              <div className="min-h-[64px] sm:min-h-[72px] flex items-center justify-center text-center">
-                {showCard1 && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5, ease: 'easeOut' }}
-                    className="text-white font-galano font-black uppercase text-[clamp(18px,6vw,25px)] leading-[1.14] text-center drop-shadow-md max-w-[270px] sm:max-w-xs mx-auto"
-                  >
-                    TWO DECADES OF
-                    <br />
-                    COMMITMENT &amp;
-                    <br />
-                    COUNTING ...
-                  </motion.div>
-                )}
-              </div>
+            {/* Mobile View (< md): Stacked vertically in fixed sequential slots, equidistant and positioned matching Figma */}
+            <div className="md:hidden absolute inset-0 z-20 pointer-events-none">
+              {/* Upper cluster: 4 text blocks + prominent SRF logo distributed equidistantly */}
+              <div className="absolute top-[16%] bottom-[19%] sm:bottom-[19.5%] inset-x-0 flex flex-col items-center justify-between text-center px-4">
+                {/* Slot 1: TWO DECADES OF COMMITMENT & COUNTING ... */}
+                <div className="min-h-[56px] sm:min-h-[64px] flex items-center justify-center text-center">
+                  {showCard1 && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.5, ease: 'easeOut' }}
+                      className="text-white font-galano font-black uppercase text-[clamp(18px,6vw,25px)] leading-[1.14] text-center drop-shadow-md max-w-[270px] sm:max-w-xs mx-auto"
+                    >
+                      TWO DECADES OF
+                      <br />
+                      COMMITMENT &amp;
+                      <br />
+                      COUNTING ...
+                    </motion.div>
+                  )}
+                </div>
 
-              {/* Slot 2: A FAMILY TO WORK WITH – A FAMILY TO WORK FOR */}
-              <div className="min-h-[64px] sm:min-h-[72px] flex items-center justify-center text-center">
-                {showCard2 && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5, ease: 'easeOut' }}
-                    className="text-white font-galano font-black uppercase text-[clamp(18px,6vw,25px)] leading-[1.14] text-center drop-shadow-md max-w-[270px] sm:max-w-xs mx-auto"
-                  >
-                    A FAMILY TO WORK
-                    <br />
-                    WITH – A FAMILY
-                    <br />
-                    TO WORK FOR
-                  </motion.div>
-                )}
-              </div>
+                {/* Slot 2: A FAMILY TO WORK WITH – A FAMILY TO WORK FOR */}
+                <div className="min-h-[56px] sm:min-h-[64px] flex items-center justify-center text-center">
+                  {showCard2 && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.5, ease: 'easeOut' }}
+                      className="text-white font-galano font-black uppercase text-[clamp(18px,6vw,25px)] leading-[1.14] text-center drop-shadow-md max-w-[270px] sm:max-w-xs mx-auto"
+                    >
+                      A FAMILY TO WORK
+                      <br />
+                      WITH – A FAMILY
+                      <br />
+                      TO WORK FOR
+                    </motion.div>
+                  )}
+                </div>
 
-              {/* Slot 3: A BOUNTY OF LOVE, A LEGACY TO UPHOLD */}
-              <div className="min-h-[64px] sm:min-h-[72px] flex items-center justify-center text-center">
-                {showCard3 && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5, ease: 'easeOut' }}
-                    className="text-white font-galano font-black uppercase text-[clamp(18px,6vw,25px)] leading-[1.14] text-center drop-shadow-md max-w-[260px] sm:max-w-xs mx-auto"
-                  >
-                    A BOUNTY OF
-                    <br />
-                    LOVE, A LEGACY
-                    <br />
-                    TO UPHOLD
-                  </motion.div>
-                )}
-              </div>
+                {/* Slot 3: A BOUNTY OF LOVE, A LEGACY TO UPHOLD */}
+                <div className="min-h-[56px] sm:min-h-[64px] flex items-center justify-center text-center">
+                  {showCard3 && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.5, ease: 'easeOut' }}
+                      className="text-white font-galano font-black uppercase text-[clamp(18px,6vw,25px)] leading-[1.14] text-center drop-shadow-md max-w-[260px] sm:max-w-xs mx-auto"
+                    >
+                      A BOUNTY OF
+                      <br />
+                      LOVE, A LEGACY
+                      <br />
+                      TO UPHOLD
+                    </motion.div>
+                  )}
+                </div>
 
-              {/* Slot 4: A PROMISE SPOKEN IN SILENCE – FULFILLED WITH GLORY */}
-              <div className="min-h-[64px] sm:min-h-[72px] flex items-center justify-center text-center">
-                {showCard4 && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5, ease: 'easeOut' }}
-                    className="text-white font-galano font-black uppercase text-[clamp(18px,6vw,25px)] leading-[1.14] text-center drop-shadow-md max-w-[270px] sm:max-w-xs mx-auto"
-                  >
-                    A PROMISE SPOKEN IN
-                    <br />
-                    SILENCE – FULFILLED
-                    <br />
-                    WITH GLORY
-                  </motion.div>
-                )}
-              </div>
+                {/* Slot 4: A PROMISE SPOKEN IN SILENCE – FULFILLED WITH GLORY */}
+                <div className="min-h-[56px] sm:min-h-[64px] flex items-center justify-center text-center">
+                  {showCard4 && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.5, ease: 'easeOut' }}
+                      className="text-white font-galano font-black uppercase text-[clamp(18px,6vw,25px)] leading-[1.14] text-center drop-shadow-md max-w-[270px] sm:max-w-xs mx-auto"
+                    >
+                      A PROMISE SPOKEN IN
+                      <br />
+                      SILENCE – FULFILLED
+                      <br />
+                      WITH GLORY
+                    </motion.div>
+                  )}
+                </div>
 
-              {/* Slot 5: Prominent SRF Logo & ONE SPINE AT A TIME */}
-              <div className="flex flex-col items-center justify-center pt-2 sm:pt-3">
-                <div className="w-20 h-20 sm:w-22 sm:h-22 min-h-[80px] sm:min-h-[88px] flex items-center justify-center">
+                {/* Slot 5: Prominent SRF Logo */}
+                <div className="w-20 h-20 sm:w-22 sm:h-22 min-h-[76px] sm:min-h-[84px] flex items-center justify-center">
                   {showLogo && (
                     <motion.div
                       id="journey-frame4-logo-mobile"
@@ -1063,19 +1064,20 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     </motion.div>
                   )}
                 </div>
+              </div>
 
-                <div className="min-h-[32px] flex items-center justify-center pt-2">
-                  {showCard5 && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.5, ease: 'easeOut' }}
-                      className="text-[#ff0000] font-galano font-black uppercase tracking-wide text-[clamp(21px,6.72vw,27px)] leading-tight text-center drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]"
-                    >
-                      ONE SPINE AT A TIME
-                    </motion.div>
-                  )}
-                </div>
+              {/* Lower position: ONE SPINE AT A TIME directly above floating buttons */}
+              <div className="absolute bottom-[11.5%] sm:bottom-[12%] inset-x-0 min-h-[28px] sm:min-h-[32px] flex items-center justify-center px-4">
+                {showCard5 && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5, ease: 'easeOut' }}
+                    className="text-[#ff0000] font-galano font-black uppercase tracking-wide text-[clamp(21px,6.72vw,27px)] leading-tight text-center drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]"
+                  >
+                    ONE SPINE AT A TIME
+                  </motion.div>
+                )}
               </div>
             </div>
           </motion.div>

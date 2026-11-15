@@ -580,6 +580,9 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
 
       {/* -------------------------------------------------------- */}
       {/* BOY CUTOUT LAYER (Frames 1 & 2): Sits over "DURGA" text   */}
+      {/* Only rendered on desktop (>= md) for 3D depth effect      */}
+      {/* On mobile, depth is omitted so background displays 1:1    */}
+      {/* with zero ghosting or superimposition glitch             */}
       {/* -------------------------------------------------------- */}
       <AnimatePresence>
         {frame <= 2 && showBoy && (
@@ -589,19 +592,13 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, transition: { duration: 0.8 } }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
-            className="absolute inset-0 w-full h-full pointer-events-none z-20"
+            className="absolute inset-0 w-full h-full pointer-events-none z-20 hidden md:block"
           >
-            <picture className="w-full h-full block">
-              <source
-                media="(max-width: 768px)"
-                srcSet={`${import.meta.env.BASE_URL}banners/boy-phone.png`}
-              />
-              <img
-                src={`${import.meta.env.BASE_URL}banners/boy.png`}
-                alt="Boy with spinal deformity"
-                className="w-full h-full object-cover object-[50%_40%] sm:object-center select-none"
-              />
-            </picture>
+            <img
+              src={`${import.meta.env.BASE_URL}banners/boy.png`}
+              alt="Boy with spinal deformity"
+              className="w-full h-full object-cover object-center select-none"
+            />
           </motion.div>
         )}
       </AnimatePresence>

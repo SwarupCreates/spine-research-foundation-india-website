@@ -1,19 +1,23 @@
 import React from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import AnimatedContent from './AnimatedContent'
 import { MaterialIcon } from './icons'
 
 interface HeroProps {
   onReplayJourney?: () => void
   isEnteringFromJourney?: boolean
+  isMobileCollapsed?: boolean
+  onCollapseMobile?: () => void
 }
 
 export const Hero: React.FC<HeroProps> = ({
   onReplayJourney,
   isEnteringFromJourney = false,
+  isMobileCollapsed = false,
+  onCollapseMobile,
 }) => {
   return (
-    <section className="relative pt-[270px] pb-8 sm:pt-36 sm:pb-10 lg:pt-48 lg:pb-12 overflow-hidden">
+    <section className="relative md:pt-36 md:pb-10 lg:pt-48 lg:pb-12 overflow-hidden">
       {/* Mobile-only Silent Journey Replay Button: Pinned to top-right of the hero banner image, scrolls away naturally with page scroll */}
       {onReplayJourney && (
         <motion.div
@@ -46,9 +50,12 @@ export const Hero: React.FC<HeroProps> = ({
         </motion.div>
       )}
 
-      <div className="max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 relative z-10">
+      {/* ------------------------------------------------------------- */}
+      {/* DESKTOP VIEW (>= md): Horizontal Layout preserved identically */}
+      {/* ------------------------------------------------------------- */}
+      <div className="hidden md:block max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 relative z-10">
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-1 sm:gap-6 lg:gap-8 pt-4 sm:pt-6">
-          {/* Left Title & Tagline: Center aligned on mobile, left aligned on tablet/desktop */}
+          {/* Left Title & Tagline */}
           <AnimatedContent
             trigger="mount"
             distance={30}
@@ -72,7 +79,7 @@ export const Hero: React.FC<HeroProps> = ({
             </p>
           </AnimatedContent>
 
-          {/* Right Impact Stat: Seamlessly continuous with tagline on mobile like same paragraph with line break */}
+          {/* Right Impact Stat */}
           <AnimatedContent
             trigger="mount"
             distance={30}
@@ -90,6 +97,96 @@ export const Hero: React.FC<HeroProps> = ({
           </AnimatedContent>
         </div>
       </div>
+
+      {/* ------------------------------------------------------------- */}
+      {/* MOBILE VIEW (< md): Intermediate Extended Frame (100dvh) vs Collapsed Hero */}
+      {/* ------------------------------------------------------------- */}
+      <motion.div
+        layout
+        transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+        className={`md:hidden relative z-10 flex flex-col items-center text-center px-6 transition-all duration-500 ease-out ${
+          isMobileCollapsed
+            ? 'pt-4 pb-4'
+            : 'h-[calc(100dvh-62px)] min-h-[calc(100dvh-62px)] pt-4 pb-24 justify-between'
+        }`}
+      >
+        {/* Upper Portion: Welcome to Spine Research Foundation India / By your side always... */}
+        <div
+          className={`flex flex-col items-center text-center transition-all duration-500 ${
+            isMobileCollapsed ? 'pt-2 space-y-1' : 'pt-16 sm:pt-20 space-y-1.5'
+          }`}
+        >
+          <span className="text-white/70 text-[clamp(17px,5vw,20px)] font-normal tracking-normal leading-snug">
+            Welcome to
+          </span>
+          <h1 className="text-white text-[clamp(26px,8.2vw,34px)] font-bold tracking-tight leading-[1.18] flex flex-col items-center">
+            <span>Spine Research</span>
+            <span>
+              Foundation{' '}
+              <span className="text-white/60 font-normal">India</span>
+            </span>
+          </h1>
+          <p className="text-gray-300 text-[clamp(15px,4.4vw,18px)] font-normal pt-0.5">
+            By your side always...
+          </p>
+        </div>
+
+        {/* Middle Portion (Extended Only): Down arrow button indicating scroll down to reveal */}
+        <AnimatePresence>
+          {!isMobileCollapsed && (
+            <motion.div
+              key="hero-mobile-down-arrow"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.6, transition: { duration: 0.25 } }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+              className="my-auto py-2 flex flex-col items-center justify-center"
+            >
+              <motion.button
+                type="button"
+                onClick={onCollapseMobile}
+                animate={{ y: [0, 8, 0] }}
+                transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
+                className="text-white/60 hover:text-white active:scale-90 transition-all p-3 cursor-pointer"
+                aria-label="Scroll down to reveal cards"
+                title="Scroll down to reveal"
+              >
+                <MaterialIcon name="arrow_cool_down" size={30} />
+              </motion.button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Lower Portion: Blessed to serve nearly 300 underprivileged patients and counting */}
+        <motion.div
+          layout
+          transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+          className={`flex flex-col items-center text-center ${
+            isMobileCollapsed ? 'pt-3 pb-2' : 'pb-6'
+          }`}
+        >
+          <p className="text-white/95 text-[clamp(15px,4.5vw,19px)] font-normal leading-relaxed max-w-xs mx-auto">
+            {isMobileCollapsed ? (
+              <>
+                Blessed to serve nearly{' '}
+                <span className="font-semibold text-emerald-400">300</span>{' '}
+                underprivileged
+                <br />
+                patients and counting
+              </>
+            ) : (
+              <>
+                Blessed to serve nearly{' '}
+                <span className="font-semibold text-emerald-400">300</span>
+                <br />
+                underprivileged
+                <br />
+                patients and counting
+              </>
+            )}
+          </p>
+        </motion.div>
+      </motion.div>
     </section>
   )
 }

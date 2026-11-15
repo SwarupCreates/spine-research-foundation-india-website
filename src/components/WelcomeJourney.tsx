@@ -148,8 +148,10 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
     setFrame((prev) => {
       const next = targetFrame !== undefined ? targetFrame : prev + 1
       if (next >= 5) {
-        // Measure starting coordinates of Frame 4 logo
-        const frame4Logo = document.getElementById('journey-frame4-logo')
+        // Measure starting coordinates of Frame 4 logo (check both mobile and desktop elements)
+        const frame4Logo =
+          document.getElementById('journey-frame4-logo-mobile') ||
+          document.getElementById('journey-frame4-logo')
         if (frame4Logo) {
           const r = frame4Logo.getBoundingClientRect()
           setLogoStartCoords({
@@ -511,17 +513,27 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
           )}
         </AnimatePresence>
 
-        {/* Bottom-to-top linear gradient overlay: 100% #000000 at bottom to 0% #000000 at 50vh max */}
+        {/* Top-to-bottom subtle gradient overlay on mobile for soft header blending (#0b0c0e 100% to 0%) */}
         <div
-          className="absolute bottom-0 inset-x-0 h-1/2 max-h-[50vh] pointer-events-none z-[5]"
+          className="md:hidden absolute top-0 inset-x-0 h-36 sm:h-44 pointer-events-none z-[5]"
           style={{
-            background: 'linear-gradient(to top, #000000 0%, rgba(0, 0, 0, 0.82) 30%, rgba(0, 0, 0, 0) 100%)',
+            background: 'linear-gradient(to bottom, #0b0c0e 0%, rgba(11, 12, 14, 0.72) 40%, rgba(11, 12, 14, 0) 100%)',
+          }}
+        />
+
+        {/* Bottom-to-top linear gradient overlay: 100% #0b0c0e at bottom to 0% #0b0c0e at top */}
+        <div
+          className="absolute bottom-0 inset-x-0 h-[58%] sm:h-1/2 pointer-events-none z-[5]"
+          style={{
+            background: 'linear-gradient(to top, #0b0c0e 0%, rgba(11, 12, 14, 0.96) 28%, rgba(11, 12, 14, 0.6) 60%, rgba(11, 12, 14, 0) 100%)',
           }}
         />
       </div>
 
       {/* -------------------------------------------------------- */}
-      {/* FRAME 1: 3D DEPTH LAYER (Text Behind Boy)                */}
+      {/* FRAME 1: Text                                            */}
+      {/* Desktop (>= md): 3D Depth text behind boy cutout          */}
+      {/* Mobile (< md): Centered at bottom above controls         */}
       {/* -------------------------------------------------------- */}
       <AnimatePresence>
         {frame === 1 && (
@@ -532,9 +544,8 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
             exit={{ opacity: 0, transition: { duration: 0.6 } }}
             className="absolute inset-0 w-full h-full pointer-events-none z-10"
           >
-            {/* Unified Central Story Container: 92% width centered (bigger than 90%, centered) */}
-            <div className="w-[92%] mx-auto h-full relative">
-              {/* "MEET" top-left: Left-aligned to DURGA */}
+            {/* Desktop View (>= md): 92% width centered, "MEET" top-left, "DURGA" 92% SVG behind boy cutout */}
+            <div className="hidden md:block w-[92%] mx-auto h-full relative">
               {showMeet && (
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
@@ -546,7 +557,6 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                 </motion.div>
               )}
 
-              {/* Giant "DURGA" bold red text: Spans 92% viewport width, perfectly centered with natural spacing */}
               {showDurga && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.96 }}
@@ -571,6 +581,31 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                       DURGA
                     </text>
                   </svg>
+                </motion.div>
+              )}
+            </div>
+
+            {/* Mobile View (< md): Centered at bottom above controls (44px MEET, 86px DURGA on 402px base) */}
+            <div className="md:hidden absolute bottom-24 sm:bottom-28 inset-x-0 flex flex-col items-center justify-center text-center px-4 z-20">
+              {showMeet && (
+                <motion.div
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.65, ease: 'easeOut' }}
+                  className="text-white font-galano font-black uppercase tracking-wide leading-none text-[clamp(34px,10.95vw,44px)]"
+                >
+                  MEET
+                </motion.div>
+              )}
+
+              {showDurga && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.75, ease: 'easeOut' }}
+                  className="text-[#ff0000] font-galano font-black uppercase tracking-tight leading-none text-[clamp(66px,21.4vw,86px)] mt-1 drop-shadow-[0_2px_16px_rgba(0,0,0,0.9)]"
+                >
+                  DURGA
                 </motion.div>
               )}
             </div>
@@ -605,6 +640,8 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
 
       {/* -------------------------------------------------------- */}
       {/* FRAME 2: 3 TYPED LINES & ELEVATION CONTRAST               */}
+      {/* Desktop (>= md): Inline left-aligned with sharedTextClass  */}
+      {/* Mobile (< md): Centered at bottom (27px, 3 pairs of lines)*/}
       {/* -------------------------------------------------------- */}
       <AnimatePresence>
         {frame === 2 && (
@@ -615,10 +652,9 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
             exit={{ opacity: 0, transition: { duration: 0.5 } }}
             className="absolute inset-0 z-30 pointer-events-none"
           >
-            {/* Same Unified Container: 92% width matching Frame 1 */}
-            <div className="w-[92%] mx-auto h-full relative">
-              {/* Top-anchored container: zero upward layout shift when typing successive lines */}
-              <div className="absolute top-[56%] sm:top-[57%] md:top-[58%] left-0 right-0 space-y-1.5 sm:space-y-2 md:space-y-2.5">
+            {/* Desktop View (>= md): Unified Container, 92% width, top-[58%] */}
+            <div className="hidden md:block w-[92%] mx-auto h-full relative">
+              <div className="absolute top-[58%] left-0 right-0 space-y-2.5">
                 {/* Line 1 */}
                 <div className={`${sharedTextClass} min-h-[1.25em]`}>
                   <span
@@ -668,12 +704,68 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                 </div>
               </div>
             </div>
+
+            {/* Mobile View (< md): Centered at bottom above controls (27px on 402px base, stacked prefix/suffix) */}
+            <div className="md:hidden absolute bottom-24 sm:bottom-28 inset-x-0 flex flex-col items-center justify-center text-center px-6 z-20">
+              <div className="w-full text-center text-[clamp(19px,6.72vw,27px)] font-galano font-black uppercase leading-tight space-y-3 sm:space-y-3.5">
+                {/* Line 1 */}
+                <div className="text-center">
+                  <span
+                    className={`block transition-opacity duration-700 ${
+                      isElevated ? 'opacity-65 text-white/65' : 'text-white'
+                    }`}
+                  >
+                    {line1Prefix.slice(0, Math.min(charCount1, line1Prefix.length))}
+                  </span>
+                  {charCount1 > line1Prefix.length && (
+                    <span className="block text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
+                      {line1Suffix.slice(0, charCount1 - line1Prefix.length)}
+                    </span>
+                  )}
+                </div>
+
+                {/* Line 2 */}
+                <div className="text-center">
+                  <span
+                    className={`block transition-opacity duration-700 ${
+                      isElevated ? 'opacity-65 text-white/65' : 'text-white'
+                    }`}
+                  >
+                    {line2Prefix.slice(0, Math.min(charCount2, line2Prefix.length))}
+                  </span>
+                  {charCount2 > line2Prefix.length && (
+                    <span className="block text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
+                      {line2Suffix.slice(0, charCount2 - line2Prefix.length)}
+                    </span>
+                  )}
+                </div>
+
+                {/* Line 3 */}
+                <div className="text-center">
+                  <span
+                    className={`block transition-opacity duration-700 ${
+                      isElevated ? 'opacity-65 text-white/65' : 'text-white'
+                    }`}
+                  >
+                    {line3Prefix.slice(0, Math.min(charCount3, line3Prefix.length))}
+                  </span>
+                  {charCount3 > line3Prefix.length && (
+                    <span className="block text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
+                      {line3Suffix.slice(0, charCount3 - line3Prefix.length)}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* -------------------------------------------------------- */}
       {/* FRAME 3: BUT... AS A WITNESS -> HE BLESSES THE WORLD!     */}
+      {/* Desktop (>= md): Classic left-aligned statements           */}
+      {/* Mobile (< md): Centered at top (BUT... AS A WITNESS,) and  */}
+      {/*                centered at bottom (HE BLESSES THE WORLD!)  */}
       {/* -------------------------------------------------------- */}
       <AnimatePresence>
         {frame === 3 && (
@@ -682,11 +774,10 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, transition: { duration: 0.5 } }}
-            className="absolute inset-0 z-30 pointer-events-none flex flex-col justify-between pb-28 sm:pb-32 md:pb-36"
+            className="absolute inset-0 z-30 pointer-events-none"
           >
-            {/* Same Unified Container: 92% width */}
-            <div className="w-[92%] mx-auto h-full flex flex-col justify-between">
-              {/* Top-Left: BUT... AS A WITNESS, (Practically a single continuous statement) */}
+            {/* Desktop View (>= md): Classic left-aligned top statement and bottom statement */}
+            <div className="hidden md:flex flex-col justify-between h-full w-[92%] mx-auto pb-28 sm:pb-32 md:pb-36">
               <div className="pt-10 sm:pt-14 md:pt-16">
                 <div className="space-y-0.5 sm:space-y-1 md:space-y-1.5">
                   <motion.div
@@ -713,7 +804,6 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                 </div>
               </div>
 
-              {/* Bottom-Left: HE BLESSES THE WORLD! */}
               {showBlesses && (
                 <motion.div
                   initial={{ opacity: 0, y: 15 }}
@@ -725,12 +815,56 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                 </motion.div>
               )}
             </div>
+
+            {/* Mobile View (< md): Centered at top (BUT... AS A WITNESS,) and centered at bottom (HE BLESSES THE WORLD!) (44px on 402px base) */}
+            <div className="md:hidden flex flex-col justify-between h-full pt-14 pb-24 sm:pb-28 px-6 text-center">
+              {/* Top: BUT... AS A WITNESS, */}
+              <div className="flex flex-col items-center text-center space-y-0.5">
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-white font-galano font-black uppercase leading-tight text-[clamp(34px,10.95vw,44px)]"
+                >
+                  BUT
+                  <span>{dotsCount >= 1 ? '.' : ''}</span>
+                  <span>{dotsCount >= 2 ? '.' : ''}</span>
+                  <span>{dotsCount >= 3 ? '.' : ''}</span>
+                </motion.div>
+
+                {showWitness && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5, ease: 'easeOut' }}
+                    className="text-[#ff0000] font-galano font-black uppercase leading-tight text-[clamp(34px,10.95vw,44px)] mt-0.5"
+                  >
+                    AS A WITNESS,
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Bottom: HE BLESSES THE WORLD! */}
+              {showBlesses && (
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, ease: 'easeOut' }}
+                  className="text-white font-galano font-black uppercase leading-tight text-[clamp(34px,10.95vw,44px)] text-center drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]"
+                >
+                  HE BLESSES
+                  <br />
+                  THE WORLD!
+                </motion.div>
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* -------------------------------------------------------- */}
       {/* FRAME 4: 5 NARRATIVE BLOCKS & LARGE SRF LOGO              */}
+      {/* Desktop (>= md): Classic 2-column layout                   */}
+      {/* Mobile (< md): Centered vertical column (27px, all centered)*/}
       {/* -------------------------------------------------------- */}
       <AnimatePresence>
         {frame === 4 && (
@@ -739,12 +873,12 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, transition: { duration: 0.4 } }}
-            className="absolute inset-0 z-30 pointer-events-none flex flex-col justify-between pb-28 sm:pb-32 md:pb-36"
+            className="absolute inset-0 z-30 pointer-events-none"
           >
-            {/* Same Unified Container: 92% width */}
-            <div className="w-[92%] mx-auto h-full flex flex-col justify-between">
+            {/* Desktop View (>= md): Classic 2-column spread */}
+            <div className="hidden md:flex flex-col justify-between h-full w-[92%] mx-auto pb-28 sm:pb-32 md:pb-36">
               {/* Top Row: Two Decades & A Family */}
-              <div className="flex flex-col sm:flex-row justify-between items-start gap-4 pt-8 sm:pt-10 md:pt-14">
+              <div className="flex flex-row justify-between items-start gap-4 pt-8 sm:pt-10 md:pt-14">
                 {showCard1 && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
@@ -759,7 +893,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className={`max-w-md sm:max-w-lg lg:max-w-xl text-white text-left sm:text-right ${frame4TextClass}`}
+                    className={`max-w-md sm:max-w-lg lg:max-w-xl text-white text-right ${frame4TextClass}`}
                   >
                     A FAMILY TO WORK WITH – A FAMILY TO WORK FOR
                   </motion.div>
@@ -767,7 +901,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
               </div>
 
               {/* Mid Row: A Bounty of Love & A Promise Spoken */}
-              <div className="flex flex-col sm:flex-row justify-between items-start gap-4 my-auto">
+              <div className="flex flex-row justify-between items-start gap-4 my-auto">
                 {showCard3 && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
@@ -782,7 +916,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className={`max-w-md sm:max-w-lg lg:max-w-xl text-white text-left sm:text-right ${frame4TextClass}`}
+                    className={`max-w-md sm:max-w-lg lg:max-w-xl text-white text-right ${frame4TextClass}`}
                   >
                     A PROMISE SPOKEN IN SILENCE – FULFILLED WITH GLORY
                   </motion.div>
@@ -814,69 +948,143 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                 )}
               </div>
             </div>
+
+            {/* Mobile View (< md): Stacked vertically in a single centered column (27px on 402px base, all centered) */}
+            <div className="md:hidden flex flex-col justify-between h-full pt-12 pb-24 sm:pb-28 px-5 text-center">
+              {/* Block 1 */}
+              {showCard1 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-white font-galano font-black uppercase text-[clamp(19px,6.72vw,27px)] leading-tight text-center drop-shadow-md"
+                >
+                  TWO DECADES OF COMMITMENT &amp; COUNTING ...
+                </motion.div>
+              )}
+
+              {/* Block 2 */}
+              {showCard2 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-white font-galano font-black uppercase text-[clamp(19px,6.72vw,27px)] leading-tight text-center drop-shadow-md"
+                >
+                  A FAMILY TO WORK WITH – A FAMILY TO WORK FOR
+                </motion.div>
+              )}
+
+              {/* Block 3 */}
+              {showCard3 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-white font-galano font-black uppercase text-[clamp(19px,6.72vw,27px)] leading-tight text-center drop-shadow-md"
+                >
+                  A BOUNTY OF LOVE, A LEGACY TO UPHOLD
+                </motion.div>
+              )}
+
+              {/* Block 4 */}
+              {showCard4 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-white font-galano font-black uppercase text-[clamp(19px,6.72vw,27px)] leading-tight text-center drop-shadow-md"
+                >
+                  A PROMISE SPOKEN IN SILENCE – FULFILLED WITH GLORY
+                </motion.div>
+              )}
+
+              {/* Logo & ONE SPINE AT A TIME */}
+              <div className="flex flex-col items-center justify-center gap-2 pt-1">
+                {showLogo && (
+                  <motion.div
+                    id="journey-frame4-logo-mobile"
+                    initial={{ opacity: 0, scale: 0.7 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    className="w-16 h-16 sm:w-18 sm:h-18 mx-auto text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.35)]"
+                  >
+                    <SrfLogo className="w-full h-full text-white" />
+                  </motion.div>
+                )}
+
+                {showCard5 && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="text-[#ff0000] font-galano font-black uppercase tracking-wide text-[clamp(21px,6.72vw,27px)] leading-tight text-center drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]"
+                  >
+                    ONE SPINE AT A TIME
+                  </motion.div>
+                )}
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* -------------------------------------------------------- */}
-      {/* BOTTOM INTRO CONTROLS: DOWN ARROW & SKIP (LEFT) + PLAY/PAUSE (RIGHT) */}
+      {/* BOTTOM INTRO CONTROLS: DOWN ARROW & SKIP (LEFT/CENTER) + PLAY/PAUSE (TOP-RIGHT MOBILE / BOTTOM-RIGHT DESKTOP) */}
       {/* -------------------------------------------------------- */}
       <AnimatePresence>
         {frame < 5 && showControls && (
           <>
-            {/* Left Controls: Next Frame Down Arrow + Skip Pill Button */}
+            {/* Left/Center Controls: Next Frame Down Arrow + Skip Pill Button */}
             <motion.div
               key="left-journey-controls"
-              initial={{ opacity: 0, x: -90 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
               exit={{
                 opacity: 0,
                 scale: 0.3,
                 transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
               }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute bottom-6 sm:bottom-7 left-6 sm:left-7 z-50 flex items-center gap-3.5 pointer-events-auto"
+              className="absolute bottom-6 sm:bottom-7 inset-x-0 md:inset-x-auto md:left-7 z-50 flex items-center justify-center md:justify-start pointer-events-none"
             >
-              {/* Next Frame Down Button with arrow_cool_down icon */}
-              <button
-                type="button"
-                onClick={() => advanceFrame()}
-                className="w-12 h-12 rounded-full bg-black/50 backdrop-blur-md border border-white/15 text-white/90 hover:text-white hover:bg-black/70 hover:scale-105 active:scale-95 transition-all flex items-center justify-center cursor-pointer shadow-xl"
-                aria-label="Next frame"
-                title="Next frame"
-              >
-                <MaterialIcon name="arrow_cool_down" size={24} />
-              </button>
+              <div className="flex items-center gap-3.5 pointer-events-auto">
+                {/* Next Frame Down Button with arrow_cool_down icon */}
+                <button
+                  type="button"
+                  onClick={() => advanceFrame()}
+                  className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/50 backdrop-blur-md border border-white/15 text-white/90 hover:text-white hover:bg-black/70 hover:scale-105 active:scale-95 transition-all flex items-center justify-center cursor-pointer shadow-xl"
+                  aria-label="Next frame"
+                  title="Next frame"
+                >
+                  <MaterialIcon name="arrow_cool_down" size={22} className="sm:text-[24px]" />
+                </button>
 
-              {/* Skip Pill Button: In usual Google Sans font (font-sans) */}
-              <button
-                type="button"
-                onClick={onSkip}
-                className="h-12 px-6 rounded-full bg-black/50 backdrop-blur-md border border-white/15 text-white/90 hover:text-white hover:bg-black/70 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 font-sans text-sm font-semibold tracking-normal cursor-pointer shadow-xl uppercase"
-                aria-label="Skip welcome journey"
-              >
-                <MaterialIcon name="fast_forward" size={18} />
-                <span>Skip</span>
-              </button>
+                {/* Skip Pill Button: In usual Google Sans font (font-sans) */}
+                <button
+                  type="button"
+                  onClick={onSkip}
+                  className="h-11 sm:h-12 px-5 sm:px-6 rounded-full bg-black/50 backdrop-blur-md border border-white/15 text-white/90 hover:text-white hover:bg-black/70 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 font-sans text-xs sm:text-sm font-semibold tracking-normal cursor-pointer shadow-xl uppercase"
+                  aria-label="Skip welcome journey"
+                >
+                  <MaterialIcon name="fast_forward" size={17} />
+                  <span>Skip</span>
+                </button>
+              </div>
             </motion.div>
 
-            {/* Right Controls: Play / Pause Button */}
+            {/* Play / Pause Button: Top-Right on Mobile (< md), Bottom-Right on Desktop (>= md) */}
             <motion.div
               key="right-journey-controls"
-              initial={{ opacity: 0, x: 90 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
               exit={{
                 opacity: 0,
                 scale: 0.3,
                 transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
               }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute bottom-6 sm:bottom-7 right-6 sm:right-7 z-50 flex items-center gap-3 pointer-events-auto"
+              className="absolute top-5 right-5 sm:top-6 sm:right-6 md:top-auto md:bottom-7 md:right-7 z-50 flex items-center pointer-events-auto"
             >
               <button
                 type="button"
                 onClick={() => setIsPlaying((p) => !p)}
-                className={`w-12 h-12 rounded-full backdrop-blur-md border transition-all flex items-center justify-center cursor-pointer shadow-xl hover:scale-105 active:scale-95 ${
+                className={`w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full backdrop-blur-md border transition-all flex items-center justify-center cursor-pointer shadow-xl hover:scale-105 active:scale-95 ${
                   isPlaying
                     ? 'bg-black/50 border-white/15 text-white hover:bg-black/70'
                     : 'bg-emerald-600/80 border-emerald-400/40 text-white hover:bg-emerald-600'
@@ -884,7 +1092,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                 aria-label={isPlaying ? 'Pause auto-play' : 'Start auto-play'}
                 title={isPlaying ? 'Pause auto-play (switch to manual scroll)' : 'Start auto-play'}
               >
-                <MaterialIcon name={isPlaying ? 'pause' : 'play_arrow'} size={22} />
+                <MaterialIcon name={isPlaying ? 'pause' : 'play_arrow'} size={20} className="md:text-[22px]" />
               </button>
             </motion.div>
           </>

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Hero from '../components/Hero'
 import GlassCard from '../components/GlassCard'
@@ -30,6 +30,58 @@ export const HomePage: React.FC<HomePageProps> = ({
 }) => {
   const navigate = useNavigate()
   const bannerImgRef = useRef<HTMLImageElement>(null)
+  const [isMobileCollapsed, setIsMobileCollapsed] = useState(false)
+
+  // Reset to intermediate extended frame when entering from journey or replaying
+  useEffect(() => {
+    if (isEnteringFromJourney) {
+      setIsMobileCollapsed(false)
+    }
+  }, [isEnteringFromJourney])
+
+  // Touch and wheel collapse triggers for mobile viewport
+  useEffect(() => {
+    const isMobile = () => typeof window !== 'undefined' && window.innerWidth < 768
+
+    let touchStartY = 0
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY
+    }
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isMobile()) return
+      const currentY = e.touches[0].clientY
+      const diff = touchStartY - currentY
+
+      if (!isMobileCollapsed && diff > 15) {
+        // Swiping up to scroll down -> collapse hero
+        setIsMobileCollapsed(true)
+      } else if (isMobileCollapsed && window.scrollY <= 2 && diff < -35) {
+        // Pulling down while at the very top -> expand hero
+        setIsMobileCollapsed(false)
+      }
+    }
+
+    const handleWheel = (e: WheelEvent) => {
+      if (!isMobile()) return
+      if (!isMobileCollapsed && e.deltaY > 10) {
+        setIsMobileCollapsed(true)
+      } else if (isMobileCollapsed && window.scrollY <= 2 && e.deltaY < -15) {
+        setIsMobileCollapsed(false)
+      }
+    }
+
+    window.addEventListener('touchstart', handleTouchStart, { passive: true })
+    window.addEventListener('touchmove', handleTouchMove, { passive: true })
+    window.addEventListener('wheel', handleWheel, { passive: true })
+
+    return () => {
+      window.removeEventListener('touchstart', handleTouchStart)
+      window.removeEventListener('touchmove', handleTouchMove)
+      window.removeEventListener('wheel', handleWheel)
+    }
+  }, [isMobileCollapsed])
 
   // Fluid delayed parallax scroll effect with magnetic top snapping
   useEffect(() => {
@@ -45,8 +97,12 @@ export const HomePage: React.FC<HomePageProps> = ({
 
     const handleScroll = () => {
       const scrollY = window.scrollY || window.pageYOffset
-      const isMobile = typeof window !== 'undefined' && window.innerWidth < 640
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
       const parallaxFactor = isMobile ? 0.24 : 0.20
+
+      if (isMobile && scrollY > 20 && !isMobileCollapsed) {
+        setIsMobileCollapsed(true)
+      }
 
       if (scrollY <= MAGNETIC_SNAP_THRESHOLD) {
         // Magnetically snap to resting position at top of home page
@@ -92,14 +148,14 @@ export const HomePage: React.FC<HomePageProps> = ({
       window.removeEventListener('scroll', handleScroll)
       cancelAnimationFrame(rafId)
     }
-  }, [])
+  }, [isMobileCollapsed])
 
   return (
     <>
       {/* Landing Scroll Level Hero Background Banner with Delayed Parallax & Magnetic Snap */}
-      {/* On mobile: Render with increased height (~76vh) and zoom to cover even more background elegantly */}
+      {/* On mobile: Render with full 100dvh height in intermediate state */}
       <div 
-        className="absolute -top-[100px] sm:-top-[110px] left-0 right-0 h-[calc(76vh+100px)] sm:h-[calc(100vh+110px)] max-h-[calc(80vh+100px)] sm:max-h-none pointer-events-none z-0 overflow-hidden"
+        className="absolute -top-[100px] sm:-top-[110px] left-0 right-0 h-[calc(100dvh+100px)] sm:h-[calc(100vh+110px)] pointer-events-none z-0 overflow-hidden"
         aria-hidden="true"
       >
         {/* Overscan wrapper: top overscan accommodates the downward parallax travel so no gap appears */}
@@ -123,12 +179,12 @@ export const HomePage: React.FC<HomePageProps> = ({
           </picture>
         </div>
 
-        {/* Gradual blur softening as we move up to the overlay: adjusted for 76vh height on mobile */}
+        {/* Gradual blur softening as we move up to the overlay: adjusted for 100dvh height on mobile */}
         <div className="block sm:hidden">
           <GradualBlur
             position="bottom"
             target="parent"
-            height="50%"
+            height="55%"
             strength={2.2}
             layers={8}
             curve="linear"
@@ -149,19 +205,28 @@ export const HomePage: React.FC<HomePageProps> = ({
           />
         </div>
 
+        {/* Top-to-bottom subtle gradient overlay on mobile for soft header blending (#0b0c0e 100% to 0%) */}
+        <div
+          className="sm:hidden absolute top-0 inset-x-0 h-36 pointer-events-none"
+          style={{
+            background: 'linear-gradient(to bottom, #0b0c0e 0%, rgba(11, 12, 14, 0.72) 40%, rgba(11, 12, 14, 0) 100%)',
+            zIndex: 4,
+          }}
+        />
+
         {/* Vertical bottom-to-top linear gradient overlay: Smoothly merges into #0b0c0e with soft transition on mobile */}
         <div 
           className="sm:hidden absolute inset-0 pointer-events-none"
           style={{
-            background: 'linear-gradient(to top, #0b0c0e 0%, rgba(11, 12, 14, 0.96) 20%, rgba(11, 12, 14, 0.45) 45%, rgba(11, 12, 14, 0) 75%)',
-            zIndex: 3
+            background: 'linear-gradient(to top, #0b0c0e 0%, rgba(11, 12, 14, 0.98) 25%, rgba(11, 12, 14, 0.6) 55%, rgba(11, 12, 14, 0) 100%)',
+            zIndex: 3,
           }}
         />
         <div 
           className="hidden sm:block absolute inset-0 pointer-events-none"
           style={{
             background: 'linear-gradient(to top, #0b0c0e 0%, rgba(11, 12, 14, 0.96) 28%, rgba(11, 12, 14, 0.52) 58%, rgba(11, 12, 14, 0) 100%)',
-            zIndex: 3
+            zIndex: 3,
           }}
         />
       </div>
@@ -169,6 +234,8 @@ export const HomePage: React.FC<HomePageProps> = ({
       <Hero
         onReplayJourney={onReplayJourney}
         isEnteringFromJourney={isEnteringFromJourney}
+        isMobileCollapsed={isMobileCollapsed}
+        onCollapseMobile={() => setIsMobileCollapsed(true)}
       />
 
       {/* Floating Glass Cards with uniform 20px edge gutter and inter-card gap on mobile */}

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { SrfLogo, MaterialIcon } from './icons'
 import { BlurText } from './BlurText'
+import GradualBlur from './GradualBlur'
 
 interface WelcomeJourneyProps {
   onComplete: () => void
@@ -184,8 +185,8 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
         const w = typeof window !== 'undefined' ? window.innerWidth : 1024
         const h = typeof window !== 'undefined' ? window.innerHeight : 768
         if (isDesktop) {
-          const contentWidth = Math.min(w, h * 1.54)
-          const containerLeft = (w - contentWidth) / 2 + 32
+          const contentWidth = w * 0.92
+          const containerLeft = (w - contentWidth) / 2
           setLogoStartCoords({
             left: Math.max(32, containerLeft),
             top: h - 220,
@@ -488,20 +489,10 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
               }}
               className="absolute inset-0 w-full h-full"
             >
-              {/* Ambient blurred backdrop for desktop ultrawide / 16:9 displays */}
-              <div className="hidden md:block absolute inset-0 overflow-hidden pointer-events-none">
-                <img
-                  src={`${import.meta.env.BASE_URL}banners/Silent%20Amidst%20the%20Passing%20Crowd%201.png`}
-                  alt=""
-                  aria-hidden="true"
-                  className="w-full h-full object-cover blur-3xl opacity-35 scale-110 select-none"
-                />
-              </div>
-
-              {/* On mobile: Position background higher up in Frame 1 (-22vh) to avoid rug overlap with MEET, and climb +10vh further in Frame 2 (-32vh) */}
-              {/* On desktop: object-contain with ambient backdrop ensures boy and full scene are NOT zoomed in, matching Figma */}
+              {/* On mobile: h-[calc(100%+35vh)] ensures the image extends well below the bottom of the viewport even when shifted */}
+              {/* On desktop: full-bleed object-cover covers 100% of the display edge-to-edge with ZERO grey bars */}
               <div
-                className={`w-full h-full absolute top-0 inset-x-0 will-change-transform z-10 ${
+                className={`w-full h-[calc(100%+35vh)] md:h-full absolute top-0 inset-x-0 will-change-transform z-0 ${
                   frame === 2 ? 'journey-frame-2-shift' : 'journey-frame-1-shift'
                 }`}
                 style={{
@@ -516,7 +507,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   <img
                     src={`${import.meta.env.BASE_URL}banners/Silent%20Amidst%20the%20Passing%20Crowd%201.png`}
                     alt="Silent Amidst the Passing Crowd"
-                    className="w-full h-full object-cover md:object-contain object-[50%_40%] md:object-center select-none"
+                    className="w-full h-full object-cover object-[50%_35%] md:object-center select-none"
                   />
                 </picture>
               </div>
@@ -530,17 +521,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
               className="absolute inset-0 w-full h-full"
             >
-              {/* Ambient blurred backdrop for desktop ultrawide / 16:9 displays */}
-              <div className="hidden md:block absolute inset-0 overflow-hidden pointer-events-none">
-                <img
-                  src={`${import.meta.env.BASE_URL}banners/Solitary%20Boy%20Amid%20the%20Moving%20Crowd%201.jpg`}
-                  alt=""
-                  aria-hidden="true"
-                  className="w-full h-full object-cover blur-3xl opacity-35 scale-110 select-none"
-                />
-              </div>
-
-              <picture className="w-full h-full block relative z-10">
+              <picture className="w-full h-full block relative z-0">
                 <source
                   media="(max-width: 768px)"
                   srcSet={`${import.meta.env.BASE_URL}banners/Solitary%20Boy%20Amid%20the%20Moving%20Crowd%201%20-%20phone.png`}
@@ -548,26 +529,59 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                 <img
                   src={`${import.meta.env.BASE_URL}banners/Solitary%20Boy%20Amid%20the%20Moving%20Crowd%201.jpg`}
                   alt="Solitary Boy Amid the Moving Crowd"
-                  className="w-full h-full object-cover md:object-contain object-[50%_25%] md:object-center select-none"
+                  className="w-full h-full object-cover object-[50%_25%] md:object-center select-none"
                 />
               </picture>
             </motion.div>
           )}
         </AnimatePresence>
 
+        {/* Gradual blur softening as we move up from the bottom */}
+        <div className="block sm:hidden pointer-events-none z-[6]">
+          <GradualBlur
+            position="bottom"
+            target="parent"
+            height="55%"
+            strength={2.2}
+            layers={8}
+            curve="linear"
+            exponential
+            zIndex={6}
+          />
+        </div>
+        <div className="hidden sm:block pointer-events-none z-[6]">
+          <GradualBlur
+            position="bottom"
+            target="parent"
+            height="60%"
+            strength={2.4}
+            layers={8}
+            curve="linear"
+            exponential
+            zIndex={6}
+          />
+        </div>
+
         {/* Top-to-bottom subtle gradient overlay on mobile for soft header blending (#0b0c0e 100% to 0%) */}
         <div
-          className="md:hidden absolute top-0 inset-x-0 h-36 sm:h-44 pointer-events-none z-[5]"
+          className="sm:hidden absolute top-0 inset-x-0 h-36 sm:h-44 pointer-events-none z-[8]"
           style={{
             background: 'linear-gradient(to bottom, #0b0c0e 0%, rgba(11, 12, 14, 0.72) 40%, rgba(11, 12, 14, 0) 100%)',
           }}
         />
 
-        {/* Bottom-to-top linear gradient overlay: 100% #0b0c0e at bottom to 0% #0b0c0e at top */}
-        <div
-          className="absolute bottom-0 inset-x-0 h-[58%] sm:h-1/2 pointer-events-none z-[5]"
+        {/* Vertical bottom-to-top linear gradient overlay: Smoothly merges into #0b0c0e on mobile */}
+        <div 
+          className="sm:hidden absolute inset-0 pointer-events-none z-[7]"
           style={{
-            background: 'linear-gradient(to top, #0b0c0e 0%, rgba(11, 12, 14, 0.96) 28%, rgba(11, 12, 14, 0.6) 60%, rgba(11, 12, 14, 0) 100%)',
+            background: 'linear-gradient(to top, #0b0c0e 0%, rgba(11, 12, 14, 0.98) 25%, rgba(11, 12, 14, 0.6) 55%, rgba(11, 12, 14, 0) 100%)',
+          }}
+        />
+        {/* Vertical bottom-to-top linear gradient overlay: Smoothly merges into #0b0c0e on desktop */}
+        <div 
+          className="hidden sm:block absolute inset-0 pointer-events-none z-[7]"
+          style={{
+            background: 'linear-gradient(to top, #0b0c0e 0%, rgba(11, 12, 14, 0.96) 20%, rgba(11, 12, 14, 0.5) 45%, rgba(11, 12, 14, 0) 75%)',
           }}
         />
       </div>
@@ -586,10 +600,10 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
             exit={{ opacity: 0, transition: { duration: 0.6 } }}
             className="absolute inset-0 w-full h-full pointer-events-none z-10"
           >
-            {/* Desktop View (>= md): Match image frame on wide displays */}
-            <div className="hidden md:block w-full max-w-[calc(100vh*1.54)] mx-auto h-full relative px-6 md:px-8">
+            {/* Desktop View (>= md): Full-width 92% container */}
+            <div className="hidden md:block w-[92%] mx-auto h-full relative">
               {showMeet && (
-                <div className={`absolute top-[7.5%] left-6 md:left-8 text-white select-none ${sharedTextClass}`}>
+                <div className={`absolute top-[7.5%] left-0 text-white select-none ${sharedTextClass}`}>
                   <BlurText
                     text="MEET"
                     effect="blur"
@@ -609,7 +623,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   initial={{ opacity: 0, scale: 0.96, filter: 'blur(16px)' }}
                   animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
                   transition={{ duration: 0.85, ease: 'easeOut' }}
-                  className="absolute top-[16%] left-0 w-full select-none pointer-events-none px-6 md:px-8"
+                  className="absolute top-[16%] left-0 w-full select-none pointer-events-none"
                 >
                   <svg
                     viewBox="0 0 720 152"
@@ -688,7 +702,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
             <img
               src={`${import.meta.env.BASE_URL}banners/boy.png`}
               alt="Boy with spinal deformity"
-              className="w-full h-full object-cover md:object-contain object-center select-none"
+              className="w-full h-full object-cover object-center select-none"
+              style={{
+                maskImage: 'linear-gradient(to bottom, black 0%, black 70%, rgba(0,0,0,0.6) 84%, transparent 100%)',
+                WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 70%, rgba(0,0,0,0.6) 84%, transparent 100%)',
+              }}
             />
           </motion.div>
         )}
@@ -708,9 +726,9 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
             exit={{ opacity: 0, transition: { duration: 0.5 } }}
             className="absolute inset-0 z-30 pointer-events-none"
           >
-            {/* Desktop View (>= md): Unified Container matching image frame, lower position above controls */}
-            <div className="hidden md:block w-full max-w-[calc(100vh*1.54)] mx-auto h-full relative px-6 md:px-8">
-              <div className="absolute bottom-20 md:bottom-24 lg:bottom-28 left-6 md:left-8 right-6 md:right-8 space-y-2 sm:space-y-2.5 md:space-y-3">
+            {/* Desktop View (>= md): Full-width 92% container, lower position above controls */}
+            <div className="hidden md:block w-[92%] mx-auto h-full relative">
+              <div className="absolute bottom-20 md:bottom-24 lg:bottom-28 left-0 right-0 space-y-2 sm:space-y-2.5 md:space-y-3">
                 {/* Line 1 */}
                 <div className={`${sharedTextClass} min-h-[1.25em]`}>
                   {showLine1 && (
@@ -947,7 +965,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
             className="absolute inset-0 z-30 pointer-events-none"
           >
             {/* Desktop View (>= md): Classic left-aligned top statement and bottom statement */}
-            <div className="hidden md:flex flex-col justify-between h-full w-full max-w-[calc(100vh*1.54)] mx-auto px-6 md:px-8 pb-28 sm:pb-32 md:pb-36">
+            <div className="hidden md:flex flex-col justify-between h-full w-[92%] mx-auto pb-28 sm:pb-32 md:pb-36">
               <div className="pt-10 sm:pt-14 md:pt-16">
                 <div className="space-y-0.5 sm:space-y-1 md:space-y-1.5">
                   <BlurText
@@ -1084,7 +1102,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
             className="absolute inset-0 z-30 pointer-events-none"
           >
             {/* Desktop View (>= md): Fixed 2-column layout - all boxes in final positions from start */}
-            <div className="hidden md:block absolute inset-0 w-full max-w-[calc(100vh*1.54)] mx-auto px-6 md:px-8 pointer-events-none">
+            <div className="hidden md:block absolute inset-0 w-[92%] mx-auto pointer-events-none">
               {/* Top Row: Two Decades & A Family */}
               <div className="absolute top-[10%] lg:top-[12%] inset-x-0 flex flex-row justify-between items-start gap-4">
                 <div className="w-[45%] min-h-[3.5em]">
@@ -1160,7 +1178,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
               </div>
 
               {/* Bottom-Left: Large SRF Logo & ONE SPINE AT A TIME */}
-              <div className="absolute bottom-24 sm:bottom-28 md:bottom-32 left-6 md:left-8 flex flex-col items-start gap-3 sm:gap-4">
+              <div className="absolute bottom-24 sm:bottom-28 md:bottom-32 left-0 flex flex-col items-start gap-3 sm:gap-4">
                 <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28">
                   {showLogo && (
                     <motion.div

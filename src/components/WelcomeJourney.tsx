@@ -28,13 +28,10 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
   const [showDurga, setShowDurga] = useState<boolean>(false)
   const [showControls, setShowControls] = useState<boolean>(false)
 
-  // Frame 2 progressive reveals
+  // Frame 2 progressive reveals (5 combined storytelling lines)
   const [showLine1, setShowLine1] = useState<boolean>(false)
   const [showLine2, setShowLine2] = useState<boolean>(false)
   const [showLine3, setShowLine3] = useState<boolean>(false)
-  const [isElevated, setIsElevated] = useState<boolean>(false)
-
-  // Frame 3 reveals
   const [showWitness, setShowWitness] = useState<boolean>(false)
   const [showBlesses, setShowBlesses] = useState<boolean>(false)
 
@@ -121,14 +118,19 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
   }, [])
 
   // Full texts for Frame 2
-  const line1Prefix = 'AS A SON,'
-  const line1Suffix = 'HE TENDS THE MOTHER,'
+  const line1Prefix = 'As a son,'
+  const line1Suffix = 'he tends the mother,'
 
-  const line2Prefix = 'AS A FATHER,'
-  const line2Suffix = 'HE LULLS THE CHILD,'
+  const line2Prefix = 'As a father,'
+  const line2Suffix = 'he lulls the child,'
 
-  const line3Prefix = 'AS A BROTHER,'
-  const line3Suffix = 'HE SHARES THE FRET ...'
+  const line3Prefix = 'As a brother,'
+  const line3Suffix = 'he shares the fret ...'
+
+  const line4Prefix = 'BUT...'
+  const line4Suffix = 'AS A WITNESS,'
+
+  const line5Text = 'he blesses the world!'
 
   const isTransitioningRef = React.useRef(false)
   isTransitioningRef.current = isTransitioning
@@ -154,8 +156,8 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
     const currentFrame = frameRef.current
     const next = targetFrame !== undefined ? targetFrame : currentFrame + 1
 
-    if (next >= 5) {
-      // Find visible Frame 4 logo by checking which element is actively rendered with positive layout dimensions (> 0)
+    if (next >= 4) {
+      // Find visible logo from Frame 3 (formerly Frame 4)
       const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 768
       const primaryId = isDesktop ? 'journey-frame4-logo' : 'journey-frame4-logo-mobile'
       const fallbackId = isDesktop ? 'journey-frame4-logo-mobile' : 'journey-frame4-logo'
@@ -223,7 +225,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
       }
 
       setIsFlyingToNavbar(true)
-      setFrame(5)
+      setFrame(4)
 
       // 1. Flight reaches the top navbar in 850ms
       setTimeout(() => {
@@ -343,27 +345,29 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
   }, [frame, isPlaying, advanceFrame])
 
   // -------------------------------------------------------------
-  // Frame 2 Reveal: Stagger 3 BlurText lines in-place -> elevate -> advance
+  // Frame 2 Reveal: Stagger 5 BlurText lines chronologically in one combined story frame
   // -------------------------------------------------------------
   useEffect(() => {
     if (frame !== 2) {
       setShowLine1(false)
       setShowLine2(false)
       setShowLine3(false)
-      setIsElevated(false)
+      setShowWitness(false)
+      setShowBlesses(false)
       return
     }
 
-    const t1 = setTimeout(() => setShowLine1(true), 200)
-    const t2 = setTimeout(() => setShowLine2(true), 1300)
-    const t3 = setTimeout(() => setShowLine3(true), 2400)
-    const t4 = setTimeout(() => setIsElevated(true), 3600)
+    const t1 = setTimeout(() => setShowLine1(true), 300)
+    const t2 = setTimeout(() => setShowLine2(true), 1200)
+    const t3 = setTimeout(() => setShowLine3(true), 2100)
+    const t4 = setTimeout(() => setShowWitness(true), 3100)
+    const t5 = setTimeout(() => setShowBlesses(true), 3900)
 
-    let t5: ReturnType<typeof setTimeout>
+    let tAuto: ReturnType<typeof setTimeout>
     if (isPlayingRef.current) {
-      t5 = setTimeout(() => {
+      tAuto = setTimeout(() => {
         advanceFrameRef.current(3)
-      }, 5400)
+      }, 6500)
     }
 
     return () => {
@@ -371,54 +375,26 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
       clearTimeout(t2)
       clearTimeout(t3)
       clearTimeout(t4)
-      if (t5) clearTimeout(t5)
+      clearTimeout(t5)
+      if (tAuto) clearTimeout(tAuto)
     }
   }, [frame])
 
-  // Resume auto-advance if user toggles play while already elevated on Frame 2
+  // Resume auto-advance if user toggles play while already on Frame 2 after text has rendered
   useEffect(() => {
-    if (frame === 2 && isElevated && isPlaying) {
+    if (frame === 2 && showBlesses && isPlaying) {
       const t = setTimeout(() => {
         advanceFrameRef.current(3)
-      }, 1200)
+      }, 1800)
       return () => clearTimeout(t)
     }
-  }, [frame, isElevated, isPlaying])
+  }, [frame, showBlesses, isPlaying])
 
   // -------------------------------------------------------------
-  // Frame 3 Visual Reveal: BUT... -> AS A WITNESS -> HE BLESSES THE WORLD
+  // Frame 3 Visual Reveal: 5 Text blocks -> Large Logo (formerly Frame 4)
   // -------------------------------------------------------------
   useEffect(() => {
     if (frame !== 3) {
-      setShowWitness(false)
-      setShowBlesses(false)
-      return
-    }
-
-    const t1 = setTimeout(() => setShowWitness(true), 1000)
-    const t2 = setTimeout(() => setShowBlesses(true), 2000)
-
-    return () => {
-      clearTimeout(t1)
-      clearTimeout(t2)
-    }
-  }, [frame])
-
-  // Frame 3 Auto-advance timer (active only when user clicks play)
-  useEffect(() => {
-    if (frame === 3 && isPlaying) {
-      const t6 = setTimeout(() => {
-        advanceFrame(4)
-      }, 4500)
-      return () => clearTimeout(t6)
-    }
-  }, [frame, isPlaying, advanceFrame])
-
-  // -------------------------------------------------------------
-  // Frame 4 Visual Reveal: 5 Text blocks -> Large Logo
-  // -------------------------------------------------------------
-  useEffect(() => {
-    if (frame !== 4) {
       setShowCard1(false)
       setShowCard2(false)
       setShowCard3(false)
@@ -445,11 +421,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
     }
   }, [frame])
 
-  // Frame 4 Auto-advance timer (active only when user clicks play)
+  // Frame 3 Auto-advance timer (active only when user clicks play)
   useEffect(() => {
-    if (frame === 4 && isPlaying) {
+    if (frame === 3 && isPlaying) {
       const t7 = setTimeout(() => {
-        advanceFrame(5)
+        advanceFrame(4)
       }, 4900)
       return () => clearTimeout(t7)
     }
@@ -471,7 +447,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
       {/* Background dark backdrop & story frames (smoothly dissolves to 0 on landing flight) */}
       <div
         className={`absolute inset-0 w-full h-full bg-[#0b0c0e] transition-opacity duration-700 ${
-          frame === 5 ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto'
+          frame === 4 ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto'
         }`}
       >
       {/* -------------------------------------------------------- */}
@@ -695,7 +671,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
       {/* with zero ghosting or superimposition glitch             */}
       {/* -------------------------------------------------------- */}
       <AnimatePresence>
-        {frame <= 2 && showBoy && (
+        {frame === 1 && showBoy && (
           <motion.div
             key="boy-cutout-layer"
             initial={{ opacity: 0 }}
@@ -718,9 +694,9 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
       </AnimatePresence>
 
       {/* -------------------------------------------------------- */}
-      {/* FRAME 2: 3 TYPED LINES & ELEVATION CONTRAST               */}
-      {/* Desktop (>= md): Inline left-aligned with sharedTextClass  */}
-      {/* Mobile (< md): Centered at bottom (27px, 3 pairs of lines)*/}
+      {/* FRAME 2: COMBINED 5-LINE STORYTELLING STANZA             */}
+      {/* Desktop (>= md): Left-aligned at lower left              */}
+      {/* Mobile (< md): Centered at bottom above controls         */}
       {/* -------------------------------------------------------- */}
       <AnimatePresence>
         {frame === 2 && (
@@ -731,361 +707,355 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
             exit={{ opacity: 0, transition: { duration: 0.5 } }}
             className="absolute inset-0 z-30 pointer-events-none"
           >
-            {/* Desktop View (>= md): Full-width 92% container, lower position above controls */}
+            {/* Desktop View (>= md): Left-aligned inside standard 92% container */}
             <div className="hidden md:block w-[92%] mx-auto h-full relative">
-              <div className="absolute bottom-20 md:bottom-24 lg:bottom-28 left-0 right-0 space-y-2 sm:space-y-2.5 md:space-y-3">
-                {/* Line 1 */}
-                <div className={`${sharedTextClass} min-h-[1.25em]`}>
-                  {showLine1 && (
-                    <div className="flex flex-wrap items-center gap-x-3.5">
-                      <div className={`transition-opacity duration-700 ${isElevated ? 'opacity-65 text-white/65' : 'text-white'}`}>
-                        <BlurText
-                          text={line1Prefix}
-                          effect="blur"
-                          animateBy="words"
-                          direction="bottom"
-                          trigger="load"
-                          delay={70}
-                          stepDuration={0.32}
-                          blur={10}
-                          distance={16}
-                        />
-                      </div>
-                      <div className="text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
-                        <BlurText
-                          text={line1Suffix}
-                          effect="blur"
-                          animateBy="words"
-                          direction="bottom"
-                          trigger="load"
-                          delay={70}
-                          stepDuration={0.32}
-                          blur={10}
-                          distance={16}
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Line 2 */}
-                <div className={`${sharedTextClass} min-h-[1.25em]`}>
-                  {showLine2 && (
-                    <div className="flex flex-wrap items-center gap-x-3.5">
-                      <div className={`transition-opacity duration-700 ${isElevated ? 'opacity-65 text-white/65' : 'text-white'}`}>
-                        <BlurText
-                          text={line2Prefix}
-                          effect="blur"
-                          animateBy="words"
-                          direction="bottom"
-                          trigger="load"
-                          delay={70}
-                          stepDuration={0.32}
-                          blur={10}
-                          distance={16}
-                        />
-                      </div>
-                      <div className="text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
-                        <BlurText
-                          text={line2Suffix}
-                          effect="blur"
-                          animateBy="words"
-                          direction="bottom"
-                          trigger="load"
-                          delay={70}
-                          stepDuration={0.32}
-                          blur={10}
-                          distance={16}
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Line 3 */}
-                <div className={`${sharedTextClass} min-h-[1.25em]`}>
-                  {showLine3 && (
-                    <div className="flex flex-wrap items-center gap-x-3.5">
-                      <div className={`transition-opacity duration-700 ${isElevated ? 'opacity-65 text-white/65' : 'text-white'}`}>
-                        <BlurText
-                          text={line3Prefix}
-                          effect="blur"
-                          animateBy="words"
-                          direction="bottom"
-                          trigger="load"
-                          delay={70}
-                          stepDuration={0.32}
-                          blur={10}
-                          distance={16}
-                        />
-                      </div>
-                      <div className="text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
-                        <BlurText
-                          text={line3Suffix}
-                          effect="blur"
-                          animateBy="words"
-                          direction="bottom"
-                          trigger="load"
-                          delay={70}
-                          stepDuration={0.32}
-                          blur={10}
-                          distance={16}
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Mobile View (< md): Centered at bottom above controls (27px on 402px base, fixed in-place sequential slots) */}
-            <div className="md:hidden absolute bottom-[92px] sm:bottom-[104px] inset-x-0 h-[216px] sm:h-[228px] flex flex-col justify-between items-center text-center px-6 z-20">
-              <div className="w-full h-full flex flex-col justify-between text-center text-[clamp(19px,6.72vw,27px)] font-galano font-black uppercase leading-tight">
-                {/* Slot 1: AS A SON, HE TENDS THE MOTHER, */}
-                <div className="h-[60px] sm:h-[64px] flex flex-col items-center justify-center text-center">
-                  {showLine1 && (
-                    <>
-                      <div className={`transition-opacity duration-700 ${isElevated ? 'opacity-65 text-white/65' : 'text-white'}`}>
-                        <BlurText
-                          text={line1Prefix}
-                          effect="blur"
-                          animateBy="words"
-                          direction="bottom"
-                          trigger="load"
-                          delay={60}
-                          stepDuration={0.32}
-                          blur={10}
-                          distance={16}
-                          className="justify-center"
-                        />
-                      </div>
-                      <div className="text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
-                        <BlurText
-                          text={line1Suffix}
-                          effect="blur"
-                          animateBy="words"
-                          direction="bottom"
-                          trigger="load"
-                          delay={60}
-                          stepDuration={0.32}
-                          blur={10}
-                          distance={16}
-                          className="justify-center"
-                        />
-                      </div>
-                    </>
-                  )}
-                </div>
-
-                {/* Slot 2: AS A FATHER, HE LULLS THE CHILD, */}
-                <div className="h-[60px] sm:h-[64px] flex flex-col items-center justify-center text-center">
-                  {showLine2 && (
-                    <>
-                      <div className={`transition-opacity duration-700 ${isElevated ? 'opacity-65 text-white/65' : 'text-white'}`}>
-                        <BlurText
-                          text={line2Prefix}
-                          effect="blur"
-                          animateBy="words"
-                          direction="bottom"
-                          trigger="load"
-                          delay={60}
-                          stepDuration={0.32}
-                          blur={10}
-                          distance={16}
-                          className="justify-center"
-                        />
-                      </div>
-                      <div className="text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
-                        <BlurText
-                          text={line2Suffix}
-                          effect="blur"
-                          animateBy="words"
-                          direction="bottom"
-                          trigger="load"
-                          delay={60}
-                          stepDuration={0.32}
-                          blur={10}
-                          distance={16}
-                          className="justify-center"
-                        />
-                      </div>
-                    </>
-                  )}
-                </div>
-
-                {/* Slot 3: AS A BROTHER, HE SHARES THE FRET ... */}
-                <div className="h-[60px] sm:h-[64px] flex flex-col items-center justify-center text-center">
-                  {showLine3 && (
-                    <>
-                      <div className={`transition-opacity duration-700 ${isElevated ? 'opacity-65 text-white/65' : 'text-white'}`}>
-                        <BlurText
-                          text={line3Prefix}
-                          effect="blur"
-                          animateBy="words"
-                          direction="bottom"
-                          trigger="load"
-                          delay={60}
-                          stepDuration={0.32}
-                          blur={10}
-                          distance={16}
-                          className="justify-center"
-                        />
-                      </div>
-                      <div className="text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
-                        <BlurText
-                          text={line3Suffix}
-                          effect="blur"
-                          animateBy="words"
-                          direction="bottom"
-                          trigger="load"
-                          delay={60}
-                          stepDuration={0.32}
-                          blur={10}
-                          distance={16}
-                          className="justify-center"
-                        />
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* -------------------------------------------------------- */}
-      {/* FRAME 3: BUT... AS A WITNESS -> HE BLESSES THE WORLD!     */}
-      {/* Desktop (>= md): Classic left-aligned statements           */}
-      {/* Mobile (< md): Centered at top (BUT... AS A WITNESS,) and  */}
-      {/*                centered at bottom (HE BLESSES THE WORLD!)  */}
-      {/* -------------------------------------------------------- */}
-      <AnimatePresence>
-        {frame === 3 && (
-          <motion.div
-            key="frame-3-content"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: 0.5 } }}
-            className="absolute inset-0 z-30 pointer-events-none"
-          >
-            {/* Desktop View (>= md): Classic left-aligned top statement and bottom statement */}
-            <div className="hidden md:flex flex-col justify-between h-full w-[92%] mx-auto pb-28 sm:pb-32 md:pb-36">
-              <div className="pt-10 sm:pt-14 md:pt-16">
-                <div className="space-y-0.5 sm:space-y-1 md:space-y-1.5">
-                  <BlurText
-                    text="BUT..."
-                    effect="blur"
-                    animateBy="letters"
-                    direction="bottom"
-                    trigger="load"
-                    delay={110}
-                    stepDuration={0.32}
-                    blur={10}
-                    distance={18}
-                    className={`text-white leading-[1.08] ${sharedTextClass}`}
-                  />
-
-                  {showWitness && (
+              <div className="absolute bottom-20 md:bottom-24 lg:bottom-28 left-0 select-none">
+                {/* Line 1: As a son, he tends the mother, */}
+                {showLine1 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    className="flex items-baseline gap-x-2.5 sm:gap-x-3 text-xl sm:text-2xl md:text-[24px] lg:text-[28px] xl:text-[30px] leading-tight"
+                  >
                     <BlurText
-                      text="AS A WITNESS,"
+                      text={line1Prefix}
                       effect="blur"
                       animateBy="words"
                       direction="bottom"
                       trigger="load"
-                      delay={80}
-                      stepDuration={0.32}
+                      delay={60}
+                      stepDuration={0.3}
                       blur={10}
-                      distance={18}
-                      color="#ff0000"
-                      className={`leading-[1.08] ${sharedTextClass}`}
+                      distance={14}
+                      color="rgba(255, 255, 255, 0.55)"
+                      className="font-normal font-galano"
                     />
-                  )}
-                </div>
-              </div>
-
-              {showBlesses && (
-                <BlurText
-                  text="HE BLESSES THE WORLD!"
-                  effect="blur"
-                  animateBy="words"
-                  direction="bottom"
-                  trigger="load"
-                  delay={80}
-                  stepDuration={0.35}
-                  blur={12}
-                  distance={22}
-                  className={`text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)] max-w-4xl ${sharedTextClass}`}
-                />
-              )}
-            </div>
-
-            {/* Mobile View (< md): Centered at top (BUT... AS A WITNESS,) and centered at bottom (HE BLESSES THE WORLD!) (44px on 402px base) */}
-            <div className="md:hidden flex flex-col justify-between h-full pt-14 pb-24 sm:pb-28 px-6 text-center">
-              {/* Top: BUT... AS A WITNESS, */}
-              <div className="flex flex-col items-center text-center">
-                <BlurText
-                  text="BUT..."
-                  effect="blur"
-                  animateBy="letters"
-                  direction="bottom"
-                  trigger="load"
-                  delay={110}
-                  stepDuration={0.32}
-                  blur={10}
-                  distance={18}
-                  className="text-white font-galano font-black uppercase leading-[0.88] text-[clamp(34px,10.95vw,44px)] justify-center"
-                />
-
-                {showWitness && (
-                  <div className="mt-1 sm:mt-1.5 flex justify-center">
                     <BlurText
-                      text="AS A WITNESS,"
+                      text={line1Suffix}
                       effect="blur"
                       animateBy="words"
                       direction="bottom"
                       trigger="load"
-                      delay={80}
-                      stepDuration={0.32}
+                      delay={60}
+                      stepDuration={0.3}
                       blur={10}
-                      distance={18}
-                      color="#ff0000"
-                      className="font-galano font-black uppercase leading-[0.88] text-[clamp(34px,10.95vw,44px)] justify-center"
+                      distance={14}
+                      color="#ffffff"
+                      className="font-bold font-galano drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
                     />
-                  </div>
+                  </motion.div>
                 )}
-              </div>
 
-              {/* Bottom: HE BLESSES THE WORLD! */}
-              {showBlesses && (
-                <div className="text-white font-galano font-black uppercase leading-[0.88] sm:leading-[0.9] text-[clamp(34px,10.95vw,44px)] text-center drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)] flex flex-col items-center">
-                  <BlurText
-                    text="HE BLESSES"
-                    effect="blur"
-                    animateBy="words"
-                    direction="bottom"
-                    trigger="load"
-                    delay={80}
-                    stepDuration={0.35}
-                    blur={12}
-                    distance={20}
-                    className="justify-center"
-                  />
-                  <div className="mt-1 sm:mt-1.5 flex justify-center">
+                {/* Line 2: As a father, he lulls the child, */}
+                {showLine2 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    className="flex items-baseline gap-x-2.5 sm:gap-x-3 text-xl sm:text-2xl md:text-[24px] lg:text-[28px] xl:text-[30px] leading-tight pt-1.5 sm:pt-2 md:pt-2.5"
+                  >
                     <BlurText
-                      text="THE WORLD!"
+                      text={line2Prefix}
+                      effect="blur"
+                      animateBy="words"
+                      direction="bottom"
+                      trigger="load"
+                      delay={60}
+                      stepDuration={0.3}
+                      blur={10}
+                      distance={14}
+                      color="rgba(255, 255, 255, 0.55)"
+                      className="font-normal font-galano"
+                    />
+                    <BlurText
+                      text={line2Suffix}
+                      effect="blur"
+                      animateBy="words"
+                      direction="bottom"
+                      trigger="load"
+                      delay={60}
+                      stepDuration={0.3}
+                      blur={10}
+                      distance={14}
+                      color="#ffffff"
+                      className="font-bold font-galano drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
+                    />
+                  </motion.div>
+                )}
+
+                {/* Line 3: As a brother, he shares the fret ... */}
+                {showLine3 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    className="flex items-baseline gap-x-2.5 sm:gap-x-3 text-xl sm:text-2xl md:text-[24px] lg:text-[28px] xl:text-[30px] leading-tight pt-1.5 sm:pt-2 md:pt-2.5"
+                  >
+                    <BlurText
+                      text={line3Prefix}
+                      effect="blur"
+                      animateBy="words"
+                      direction="bottom"
+                      trigger="load"
+                      delay={60}
+                      stepDuration={0.3}
+                      blur={10}
+                      distance={14}
+                      color="rgba(255, 255, 255, 0.55)"
+                      className="font-normal font-galano"
+                    />
+                    <BlurText
+                      text={line3Suffix}
+                      effect="blur"
+                      animateBy="words"
+                      direction="bottom"
+                      trigger="load"
+                      delay={60}
+                      stepDuration={0.3}
+                      blur={10}
+                      distance={14}
+                      color="#ffffff"
+                      className="font-bold font-galano drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
+                    />
+                  </motion.div>
+                )}
+
+                {/* Line 4: BUT... AS A WITNESS, */}
+                {showWitness && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+                    className="flex items-baseline gap-x-3 sm:gap-x-4 pt-4 sm:pt-5 md:pt-6"
+                  >
+                    <BlurText
+                      text={line4Prefix}
+                      effect="blur"
+                      animateBy="letters"
+                      direction="bottom"
+                      trigger="load"
+                      delay={70}
+                      stepDuration={0.32}
+                      blur={12}
+                      distance={18}
+                      color="#ffffff"
+                      className="font-galano font-black uppercase text-3xl sm:text-4xl md:text-[40px] lg:text-[48px] xl:text-[52px] tracking-tight drop-shadow-[0_2px_16px_rgba(0,0,0,0.9)]"
+                    />
+                    <BlurText
+                      text={line4Suffix}
                       effect="blur"
                       animateBy="words"
                       direction="bottom"
                       trigger="load"
                       delay={80}
                       stepDuration={0.35}
-                      blur={12}
+                      blur={14}
                       distance={20}
-                      className="justify-center"
+                      color="#ff0000"
+                      className="font-galano font-black uppercase text-3xl sm:text-4xl md:text-[40px] lg:text-[48px] xl:text-[52px] tracking-tight drop-shadow-[0_2px_16px_rgba(255,0,0,0.4)]"
                     />
-                  </div>
-                </div>
+                  </motion.div>
+                )}
+
+                {/* Line 5: he blesses the world! */}
+                {showBlesses && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    className="pt-2 sm:pt-2.5 md:pt-3"
+                  >
+                    <BlurText
+                      text={line5Text}
+                      effect="blur"
+                      animateBy="words"
+                      direction="bottom"
+                      trigger="load"
+                      delay={60}
+                      stepDuration={0.32}
+                      blur={10}
+                      distance={16}
+                      color="#ffffff"
+                      className="font-galano font-bold text-white text-2xl sm:text-3xl md:text-[28px] lg:text-[34px] xl:text-[38px] tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
+                    />
+                  </motion.div>
+                )}
+              </div>
+            </div>
+
+            {/* Mobile View (< md): Centered at bottom above controls */}
+            <div className="md:hidden absolute bottom-[96px] sm:bottom-[108px] inset-x-0 px-4 flex flex-col items-center text-center z-20">
+              {/* Line 1: As a son, he tends the mother, */}
+              {showLine1 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                  className="flex flex-row items-center justify-center gap-x-1.5 text-[clamp(14.5px,4.1vw,17.5px)] leading-tight whitespace-nowrap"
+                >
+                  <BlurText
+                    text={line1Prefix}
+                    effect="blur"
+                    animateBy="words"
+                    direction="bottom"
+                    trigger="load"
+                    delay={60}
+                    stepDuration={0.3}
+                    blur={8}
+                    distance={12}
+                    color="rgba(255, 255, 255, 0.55)"
+                    className="font-normal font-galano justify-center"
+                  />
+                  <BlurText
+                    text={line1Suffix}
+                    effect="blur"
+                    animateBy="words"
+                    direction="bottom"
+                    trigger="load"
+                    delay={60}
+                    stepDuration={0.3}
+                    blur={8}
+                    distance={12}
+                    color="#ffffff"
+                    className="font-bold font-galano justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
+                  />
+                </motion.div>
+              )}
+
+              {/* Line 2: As a father, he lulls the child, */}
+              {showLine2 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                  className="flex flex-row items-center justify-center gap-x-1.5 text-[clamp(14.5px,4.1vw,17.5px)] leading-tight whitespace-nowrap pt-1.5 sm:pt-2"
+                >
+                  <BlurText
+                    text={line2Prefix}
+                    effect="blur"
+                    animateBy="words"
+                    direction="bottom"
+                    trigger="load"
+                    delay={60}
+                    stepDuration={0.3}
+                    blur={8}
+                    distance={12}
+                    color="rgba(255, 255, 255, 0.55)"
+                    className="font-normal font-galano justify-center"
+                  />
+                  <BlurText
+                    text={line2Suffix}
+                    effect="blur"
+                    animateBy="words"
+                    direction="bottom"
+                    trigger="load"
+                    delay={60}
+                    stepDuration={0.3}
+                    blur={8}
+                    distance={12}
+                    color="#ffffff"
+                    className="font-bold font-galano justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
+                  />
+                </motion.div>
+              )}
+
+              {/* Line 3: As a brother, he shares the fret ... */}
+              {showLine3 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                  className="flex flex-row items-center justify-center gap-x-1.5 text-[clamp(14.5px,4.1vw,17.5px)] leading-tight whitespace-nowrap pt-1.5 sm:pt-2"
+                >
+                  <BlurText
+                    text={line3Prefix}
+                    effect="blur"
+                    animateBy="words"
+                    direction="bottom"
+                    trigger="load"
+                    delay={60}
+                    stepDuration={0.3}
+                    blur={8}
+                    distance={12}
+                    color="rgba(255, 255, 255, 0.55)"
+                    className="font-normal font-galano justify-center"
+                  />
+                  <BlurText
+                    text={line3Suffix}
+                    effect="blur"
+                    animateBy="words"
+                    direction="bottom"
+                    trigger="load"
+                    delay={60}
+                    stepDuration={0.3}
+                    blur={8}
+                    distance={12}
+                    color="#ffffff"
+                    className="font-bold font-galano justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
+                  />
+                </motion.div>
+              )}
+
+              {/* Line 4: BUT... AS A WITNESS, */}
+              {showWitness && (
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                  className="flex flex-row items-center justify-center gap-x-2 text-[clamp(21px,5.8vw,26px)] leading-none whitespace-nowrap pt-3.5 sm:pt-4"
+                >
+                  <BlurText
+                    text={line4Prefix}
+                    effect="blur"
+                    animateBy="letters"
+                    direction="bottom"
+                    trigger="load"
+                    delay={65}
+                    stepDuration={0.3}
+                    blur={10}
+                    distance={15}
+                    color="#ffffff"
+                    className="font-galano font-black uppercase justify-center drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]"
+                  />
+                  <BlurText
+                    text={line4Suffix}
+                    effect="blur"
+                    animateBy="words"
+                    direction="bottom"
+                    trigger="load"
+                    delay={70}
+                    stepDuration={0.32}
+                    blur={10}
+                    distance={15}
+                    color="#ff0000"
+                    className="font-galano font-black uppercase justify-center drop-shadow-[0_2px_12px_rgba(255,0,0,0.4)]"
+                  />
+                </motion.div>
+              )}
+
+              {/* Line 5: he blesses the world! */}
+              {showBlesses && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                  className="pt-2 sm:pt-2.5"
+                >
+                  <BlurText
+                    text={line5Text}
+                    effect="blur"
+                    animateBy="words"
+                    direction="bottom"
+                    trigger="load"
+                    delay={60}
+                    stepDuration={0.3}
+                    blur={8}
+                    distance={12}
+                    color="#ffffff"
+                    className="font-galano font-bold text-[clamp(16.5px,4.6vw,20px)] leading-tight justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] whitespace-nowrap"
+                  />
+                </motion.div>
               )}
             </div>
           </motion.div>
@@ -1093,14 +1063,14 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
       </AnimatePresence>
 
       {/* -------------------------------------------------------- */}
-      {/* FRAME 4: 5 NARRATIVE BLOCKS & LARGE SRF LOGO              */}
+      {/* FRAME 3: 5 NARRATIVE BLOCKS & LARGE SRF LOGO (formerly 4)  */}
       {/* Desktop (>= md): Classic 2-column layout                   */}
       {/* Mobile (< md): Centered vertical column (27px, all centered)*/}
       {/* -------------------------------------------------------- */}
       <AnimatePresence>
-        {frame === 4 && (
+        {frame === 3 && (
           <motion.div
-            key="frame-4-content"
+            key="frame-3-content"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, transition: { duration: 0.4 } }}
@@ -1337,7 +1307,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
       {/* BOTTOM INTRO CONTROLS: DOWN ARROW & SKIP (LEFT/CENTER) + PLAY/PAUSE (TOP-RIGHT MOBILE / BOTTOM-RIGHT DESKTOP) */}
       {/* -------------------------------------------------------- */}
       <AnimatePresence>
-        {frame < 5 && showControls && (
+        {frame < 4 && showControls && (
           <>
             {/* Left/Center Controls: Next Frame Down Arrow + Skip Pill Button */}
             <motion.div

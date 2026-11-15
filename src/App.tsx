@@ -134,15 +134,15 @@ export const App: React.FC = () => {
           position="top"
           target="page"
           height={isMobileMenuOpen ? '100vh' : '10rem'}
-          strength={isMobileMenuOpen ? 4.5 : 2.8}
+          strength={2.8}
           layers={8}
           curve="linear"
           exponential
-          tint={isMobileMenuOpen ? 'rgba(11, 12, 14, 0.94)' : 'rgba(11, 12, 14, 0.82)'}
+          tint="rgba(11, 12, 14, 0.88)"
           autoHide={!isMobileMenuOpen}
           zIndex={isMobileMenuOpen ? 80 : 30}
           style={{
-            transition: 'height 0.38s cubic-bezier(0.16, 1, 0.3, 1), background 0.38s ease',
+            transition: 'height 0.38s cubic-bezier(0.16, 1, 0.3, 1)',
           }}
         />
       )}

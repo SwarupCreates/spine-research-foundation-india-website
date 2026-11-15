@@ -50,7 +50,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   const hamburgerButtonRef = useRef<HTMLButtonElement>(null)
 
   const setMenuOpen = (open: boolean) => {
-    setInternalMobileMenuOpen(open)
+    if (externalMobileMenuOpen === undefined) {
+      setInternalMobileMenuOpen(open)
+    }
     if (onMobileMenuOpenChange) {
       onMobileMenuOpenChange(open)
     }
@@ -119,30 +121,6 @@ export const Navbar: React.FC<NavbarProps> = ({
     }, 600)
   }
 
-  // Mobile View: Link logo expansion to mobile menu opening, and back to acronym on menu closing
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.innerWidth < 768) {
-      if (isMenuOpen) {
-        if (leaveTimer1Ref.current) clearTimeout(leaveTimer1Ref.current)
-        if (leaveTimer2Ref.current) clearTimeout(leaveTimer2Ref.current)
-        setIsLogoStacked(true)
-        setIsLogoHovered(true)
-        setIsLogoExpanded(true)
-      } else {
-        if (leaveTimer1Ref.current) clearTimeout(leaveTimer1Ref.current)
-        if (leaveTimer2Ref.current) clearTimeout(leaveTimer2Ref.current)
-        // Smoothly animate back to acronym state when mobile menu closes
-        leaveTimer1Ref.current = setTimeout(() => {
-          setIsLogoHovered(false)
-          setIsLogoExpanded(false)
-        }, 120)
-        leaveTimer2Ref.current = setTimeout(() => {
-          setIsLogoStacked(false)
-        }, 420)
-      }
-    }
-  }, [isMenuOpen])
-
   useEffect(() => {
     return () => {
       if (leaveTimer1Ref.current) clearTimeout(leaveTimer1Ref.current)
@@ -165,8 +143,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   }
 
   return (
-    <header className={`sticky top-0 w-full transition-all duration-300 bg-transparent border-0 backdrop-blur-none pt-1.5 sm:pt-2.5 ${isMenuOpen ? 'z-[90]' : 'z-[70]'} ${isJourneyActive && !isEnteringFromJourney ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-      <div className={`relative max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 h-20 flex items-center justify-between gap-4 ${isMenuOpen ? 'z-[90]' : 'z-[70]'}`}>
+    <header className={`sticky top-0 w-full transition-opacity duration-300 bg-transparent border-0 backdrop-blur-none pt-1.5 sm:pt-2.5 z-[90] ${isJourneyActive && !isEnteringFromJourney ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+      <div className="relative max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 h-20 flex items-center justify-between gap-4 z-[90]">
         {/* Brand Logo & Interactive Morphing Brand Name in Jost font */}
         <a
           href="#home"
@@ -427,7 +405,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               e.stopPropagation()
               setMenuOpen(!isMenuOpen)
             }}
-            className="w-11 h-11 aspect-square flex items-center justify-center rounded-xl bg-transparent hover:bg-white/[0.08] active:bg-white/[0.12] text-white border-0 shadow-none transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 cursor-pointer"
+            className="w-11 h-11 aspect-square flex items-center justify-center rounded-xl bg-transparent active:bg-white/[0.12] text-white border-0 shadow-none transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 cursor-pointer"
             aria-label={isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
             aria-expanded={isMenuOpen}
           >

@@ -840,11 +840,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
             {/* Mobile View (< md): Centered at top (BUT... AS A WITNESS,) and centered at bottom (HE BLESSES THE WORLD!) (44px on 402px base) */}
             <div className="md:hidden flex flex-col justify-between h-full pt-14 pb-24 sm:pb-28 px-6 text-center">
               {/* Top: BUT... AS A WITNESS, */}
-              <div className="flex flex-col items-center text-center space-y-0.5">
+              <div className="flex flex-col items-center text-center">
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-white font-galano font-black uppercase leading-tight text-[clamp(34px,10.95vw,44px)]"
+                  className="text-white font-galano font-black uppercase leading-[0.88] text-[clamp(34px,10.95vw,44px)]"
                 >
                   BUT
                   <span>{dotsCount >= 1 ? '.' : ''}</span>
@@ -857,7 +857,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.5, ease: 'easeOut' }}
-                    className="text-[#ff0000] font-galano font-black uppercase leading-tight text-[clamp(34px,10.95vw,44px)] mt-0.5"
+                    className="text-[#ff0000] font-galano font-black uppercase leading-[0.88] text-[clamp(34px,10.95vw,44px)] mt-1 sm:mt-1.5"
                   >
                     AS A WITNESS,
                   </motion.div>
@@ -870,11 +870,10 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, ease: 'easeOut' }}
-                  className="text-white font-galano font-black uppercase leading-tight text-[clamp(34px,10.95vw,44px)] text-center drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]"
+                  className="text-white font-galano font-black uppercase leading-[0.88] sm:leading-[0.9] text-[clamp(34px,10.95vw,44px)] text-center drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)] flex flex-col items-center"
                 >
-                  HE BLESSES
-                  <br />
-                  THE WORLD!
+                  <span>HE BLESSES</span>
+                  <span className="mt-1 sm:mt-1.5">THE WORLD!</span>
                 </motion.div>
               )}
             </div>

@@ -9,7 +9,6 @@ import TrusteeMessage from '../components/TrusteeMessage'
 import ImpactMetrics from '../components/ImpactMetrics'
 import MisconceptionsCard from '../components/MisconceptionsCard'
 import GradualBlur from '../components/GradualBlur'
-import AnimatedContent from '../components/AnimatedContent'
 
 interface HomePageProps {
   onReadMore?: () => void
@@ -236,33 +235,19 @@ export const HomePage: React.FC<HomePageProps> = ({
 
       {/* Floating Glass Cards with uniform 20px edge gutter and inter-card gap on mobile */}
       <div className="max-w-[1536px] mx-auto px-5 sm:px-10 lg:px-14 xl:px-16 space-y-5 sm:space-y-5">
-        <AnimatedContent distance={36} duration={0.8} ease="power3.out" threshold={0.08}>
-          <GlassCard onReadMore={onReadMore || (() => navigate('/about'))} />
-        </AnimatedContent>
-        <AnimatedContent distance={36} duration={0.8} ease="power3.out" threshold={0.08}>
-          <EventSection />
-        </AnimatedContent>
-        <AnimatedContent distance={36} duration={0.8} ease="power3.out" threshold={0.08}>
-          <PromiseCard onCheckOutMore={onOpenPromise || (() => navigate('/care'))} />
-        </AnimatedContent>
+        <GlassCard onReadMore={onReadMore || (() => navigate('/about'))} />
+        <EventSection />
+        <PromiseCard onCheckOutMore={onOpenPromise || (() => navigate('/care'))} />
       </div>
 
       {/* Managing Trustee's Message on Base Background */}
-      <AnimatedContent distance={36} duration={0.8} ease="power3.out" threshold={0.08}>
-        <TrusteeMessage />
-      </AnimatedContent>
+      <TrusteeMessage />
 
       {/* Education & Research, Humanitarian Impact Metrics, and Misconceptions Section */}
       <div className="max-w-[1536px] mx-auto px-5 sm:px-10 lg:px-14 xl:px-16 space-y-5 sm:space-y-5">
-        <AnimatedContent distance={36} duration={0.8} ease="power3.out" threshold={0.08}>
-          <EducationCard onCheckOutMore={onOpenEducation || (() => navigate('/discover'))} />
-        </AnimatedContent>
-        <AnimatedContent distance={36} duration={0.8} ease="power3.out" threshold={0.08}>
-          <ImpactMetrics />
-        </AnimatedContent>
-        <AnimatedContent distance={36} duration={0.8} ease="power3.out" threshold={0.08}>
-          <MisconceptionsCard onCheckOutMore={onOpenMisconceptions || (() => navigate('/treatments'))} />
-        </AnimatedContent>
+        <EducationCard onCheckOutMore={onOpenEducation || (() => navigate('/discover'))} />
+        <ImpactMetrics />
+        <MisconceptionsCard onCheckOutMore={onOpenMisconceptions || (() => navigate('/treatments'))} />
       </div>
     </>
   )

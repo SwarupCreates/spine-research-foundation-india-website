@@ -1,6 +1,5 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import AnimatedContent from './AnimatedContent'
 import { MaterialIcon } from './icons'
 
 interface HeroProps {
@@ -56,14 +55,7 @@ export const Hero: React.FC<HeroProps> = ({
       <div className="hidden md:block max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 relative z-10">
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-1 sm:gap-6 lg:gap-8 pt-4 sm:pt-6">
           {/* Left Title & Tagline */}
-          <AnimatedContent
-            trigger="mount"
-            distance={30}
-            duration={0.8}
-            ease="power3.out"
-            stagger={0.1}
-            className="space-y-2 sm:space-y-2.5 text-center sm:text-left"
-          >
+          <div className="space-y-2 sm:space-y-2.5 text-center sm:text-left">
             <h1 className="text-[24px] sm:text-[30px] md:text-[32px] lg:text-[var(--font-size-hero-title,36px)] tracking-tight leading-[1.2] sm:leading-[1.2]">
               <span className="font-normal text-white/60 block">
                 Welcome to
@@ -77,36 +69,27 @@ export const Hero: React.FC<HeroProps> = ({
             <p className="text-gray-300 text-[18px] sm:text-[20px] lg:text-[var(--font-size-hero-subtext,22px)] font-normal leading-relaxed pt-0.5 sm:pt-1">
               By your side always...
             </p>
-          </AnimatedContent>
+          </div>
 
           {/* Right Impact Stat */}
-          <AnimatedContent
-            trigger="mount"
-            distance={30}
-            delay={0.14}
-            duration={0.8}
-            ease="power3.out"
-            className="text-center lg:text-right self-center lg:self-end"
-          >
+          <div className="text-center lg:text-right self-center lg:self-end">
             <p className="text-white/95 text-sm sm:text-[20px] lg:text-[var(--font-size-hero-subtext,22px)] font-normal leading-relaxed max-w-md mx-auto lg:mx-0">
               Blessed to serve nearly{' '}
               <span className="font-medium text-emerald-400">300</span>{' '}
               underprivileged
               <br /> patients and counting
             </p>
-          </AnimatedContent>
+          </div>
         </div>
       </div>
 
       {/* ------------------------------------------------------------- */}
       {/* MOBILE VIEW (< md): Intermediate Extended Frame (100dvh) vs Collapsed Hero */}
       {/* ------------------------------------------------------------- */}
-      <motion.div
-        layout
-        transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-        className={`md:hidden relative z-10 flex flex-col items-center text-center px-6 transition-all duration-500 ease-out ${
+      <div
+        className={`md:hidden relative z-10 flex flex-col items-center text-center px-6 transition-[min-height,height,padding] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           isMobileCollapsed
-            ? 'pt-8 pb-3 sm:pt-10 sm:pb-4'
+            ? 'min-h-0 pt-7 pb-3 sm:pt-9 sm:pb-4'
             : 'h-[calc(100dvh-86px)] min-h-[calc(100dvh-86px)] justify-between pt-0 pb-0'
         }`}
       >
@@ -178,7 +161,7 @@ export const Hero: React.FC<HeroProps> = ({
             </p>
           </div>
         )}
-      </motion.div>
+      </div>
     </section>
   )
 }

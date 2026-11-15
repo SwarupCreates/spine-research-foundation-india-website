@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { MaterialIcon } from './icons'
-import AnimatedContent from './AnimatedContent'
 
 export const EventSection: React.FC = () => {
   const [isPlayingInline, setIsPlayingInline] = useState(false)
@@ -160,12 +159,7 @@ export const EventSection: React.FC = () => {
             transition={{ layout: layoutTransition }}
             className={`${isPlayingInline ? 'w-full' : 'lg:col-span-7'}`}
           >
-            <AnimatedContent
-              distance={24}
-              stagger={0.08}
-              duration={0.7}
-              ease="power3.out"
-              threshold={0.1}
+            <div
               className={`${isPlayingInline ? 'space-y-4' : 'space-y-3.5'} text-center sm:text-left`}
             >
               <div className="flex justify-center sm:justify-start">
@@ -241,7 +235,7 @@ export const EventSection: React.FC = () => {
                   <span>View on YouTube</span>
                 </a>
               </div>
-            </AnimatedContent>
+            </div>
           </motion.div>
         </motion.div>
       </motion.div>

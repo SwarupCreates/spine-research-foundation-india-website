@@ -59,6 +59,16 @@ export const Navbar: React.FC<NavbarProps> = ({
   useEffect(() => {
     setCurrentTab(activeTab)
   }, [activeTab])
+
+  // Controls the one-time navbar entry animation queue
+  const [shouldAnimateEntry, setShouldAnimateEntry] = useState(!isJourneyActive)
+
+  useEffect(() => {
+    if (!isJourneyActive || isEnteringFromJourney) {
+      setShouldAnimateEntry(true)
+    }
+  }, [isJourneyActive, isEnteringFromJourney])
+
   // Kinetic Brand Logo Interaction States:
   // Decoupled into visual hover (glow/scale), letter expansion (maxWidth/opacity),
   // and layout orientation (stacked flex-col vs inline flex-row) to prevent layout shifts
@@ -156,10 +166,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header className={`sticky top-0 w-full transition-all duration-300 bg-transparent border-0 backdrop-blur-none pt-1.5 sm:pt-2.5 ${isMenuOpen ? 'z-[90]' : 'z-[70]'} ${isJourneyActive && !isEnteringFromJourney ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-      <div
-        key={isEnteringFromJourney ? 'from-journey' : 'standard-entry'}
-        className={`relative max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 h-20 flex items-center justify-between gap-4 ${isMenuOpen ? 'z-[90]' : 'z-[70]'}`}
-      >
+      <div className={`relative max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 h-20 flex items-center justify-between gap-4 ${isMenuOpen ? 'z-[90]' : 'z-[70]'}`}>
         {/* Brand Logo & Interactive Morphing Brand Name in Jost font */}
         <a
           href="#home"
@@ -182,7 +189,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             data-testid="navbar-srf-logo"
             initial={{ opacity: 0 }}
             animate={{
-              opacity: 1,
+              opacity: shouldAnimateEntry ? 1 : 0,
               scale: isLogoHovered ? 1.09 : 1,
             }}
             transition={{
@@ -242,9 +249,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               layout
               initial={{ clipPath: 'inset(0 100% 0 0)', opacity: 0, x: -18 }}
               animate={{
-                clipPath: 'inset(0 0% 0 0)',
-                opacity: 1,
-                x: 0,
+                clipPath: shouldAnimateEntry ? 'inset(0 0% 0 0)' : 'inset(0 100% 0 0)',
+                opacity: shouldAnimateEntry ? 1 : 0,
+                x: shouldAnimateEntry ? 0 : -18,
                 scale: isLogoHovered ? 0.82 : 1,
               }}
               style={{ transformOrigin: 'left center' }}
@@ -371,7 +378,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               <motion.button
                 key={item.id}
                 initial={{ opacity: 0, y: -16 }}
-                animate={{ opacity: 1, y: 0 }}
+                animate={{
+                  opacity: shouldAnimateEntry ? 1 : 0,
+                  y: shouldAnimateEntry ? 0 : -16,
+                }}
                 transition={{
                   duration: 0.45,
                   delay: 0.35 + index * 0.08,
@@ -403,7 +413,10 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Mobile Animated Hamburger Button */}
         <motion.div
           initial={{ opacity: 0, y: -16 }}
-          animate={{ opacity: 1, y: 0 }}
+          animate={{
+            opacity: shouldAnimateEntry ? 1 : 0,
+            y: shouldAnimateEntry ? 0 : -16,
+          }}
           transition={{ duration: 0.45, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
           className="flex md:hidden items-center"
         >

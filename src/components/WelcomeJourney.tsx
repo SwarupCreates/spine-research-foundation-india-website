@@ -114,18 +114,6 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
     }
   }, [])
 
-  const [isMobileViewport, setIsMobileViewport] = useState(
-    () => (typeof window !== 'undefined' ? window.innerWidth < 768 : false)
-  )
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobileViewport(window.innerWidth < 768)
-    }
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
-
   // Full texts for Frame 2
   const line1Prefix = 'AS A SON, '
   const line1Suffix = 'HE TENDS THE MOTHER,'
@@ -489,13 +477,14 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
               }}
               className="absolute inset-0 w-full h-full"
             >
-              {/* On mobile: Shift background up by 10% of viewport height in Frame 2 */}
-              <motion.div
-                animate={{
-                  y: frame === 2 && isMobileViewport ? '-10vh' : '0vh',
+              {/* On mobile: Position background higher up in Frame 1 (-18vh) to avoid rug overlap with MEET, and climb +10vh further in Frame 2 (-28vh) */}
+              <div
+                className={`w-full h-[calc(100%+35vh)] md:h-full absolute top-0 inset-x-0 will-change-transform ${
+                  frame === 2 ? 'journey-frame-2-shift' : 'journey-frame-1-shift'
+                }`}
+                style={{
+                  transition: 'transform 0.9s cubic-bezier(0.16, 1, 0.3, 1)',
                 }}
-                transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-                className="w-full h-[calc(100%+14vh)] md:h-full absolute top-0 inset-x-0 will-change-transform"
               >
                 <picture className="w-full h-full block">
                   <source
@@ -508,7 +497,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     className="w-full h-full object-cover object-[50%_40%] sm:object-center select-none"
                   />
                 </picture>
-              </motion.div>
+              </div>
             </motion.div>
           ) : (
             <motion.div

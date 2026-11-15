@@ -177,3 +177,19 @@ body::-webkit-scrollbar,
   width: 0 !important;
   height: 0 !important;
 }
+
+/* Mobile Welcome Journey Frame 1 & 2 background elevation */
+@media (max-width: 767px) {
+  .journey-frame-1-shift {
+    transform: translateY(-18vh) !important;
+  }
+  .journey-frame-2-shift {
+    transform: translateY(-28vh) !important;
+  }
+}
+@media (min-width: 768px) {
+  .journey-frame-1-shift,
+  .journey-frame-2-shift {
+    transform: translateY(0) !important;
+  }
+}

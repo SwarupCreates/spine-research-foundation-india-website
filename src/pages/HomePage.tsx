@@ -38,20 +38,19 @@ export const HomePage: React.FC<HomePageProps> = ({
     // the background is magnetically locked at resting position (0px) so no parallax starts
     // until the user deliberately scrolls down from the home page.
     const MAGNETIC_SNAP_THRESHOLD = 70
-    const PARALLAX_FACTOR = 0.24
 
     const handleScroll = () => {
-      const isMobile = typeof window !== 'undefined' && window.innerWidth < 640
-      if (!isMobile) return
-
       const scrollY = window.scrollY || window.pageYOffset
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 640
+      const parallaxFactor = isMobile ? 0.24 : 0.20
 
       if (scrollY <= MAGNETIC_SNAP_THRESHOLD) {
         // Magnetically snap to resting position at top of home page
         targetY = 0
       } else {
-        // Parallax smoothly engages once scrolled past the magnetic snap zone on mobile
-        targetY = (scrollY - MAGNETIC_SNAP_THRESHOLD) * PARALLAX_FACTOR
+        // Parallax smoothly engages once scrolled past the magnetic snap zone
+        // Background image scrolls ~20% slower on desktop / 24% on mobile than foreground content
+        targetY = (scrollY - MAGNETIC_SNAP_THRESHOLD) * parallaxFactor
       }
 
       if (!isRunning) {
@@ -62,17 +61,10 @@ export const HomePage: React.FC<HomePageProps> = ({
 
     const animate = () => {
       const isMobile = typeof window !== 'undefined' && window.innerWidth < 640
-      if (!isMobile) {
-        if (bannerImgRef.current) {
-          bannerImgRef.current.style.transform = 'translate3d(0, 0px, 0) scale(1)'
-        }
-        isRunning = false
-        return
-      }
+      const scaleStr = isMobile ? 'scale(1.18)' : 'scale(1.02)'
 
-      // Lerp with 0.08 damping factor creates luxurious delayed inertia on mobile
+      // Lerp with 0.08 damping factor creates luxurious delayed inertia
       currentY += (targetY - currentY) * 0.08
-      const scaleStr = 'scale(1.18)'
 
       if (bannerImgRef.current) {
         bannerImgRef.current.style.transform = `translate3d(0, ${currentY.toFixed(2)}px, 0) ${scaleStr}`
@@ -106,8 +98,8 @@ export const HomePage: React.FC<HomePageProps> = ({
         className="absolute -top-[100px] sm:-top-[110px] left-0 right-0 h-[calc(76vh+100px)] sm:h-[calc(100vh+110px)] max-h-[calc(80vh+100px)] sm:max-h-none pointer-events-none z-0 overflow-hidden"
         aria-hidden="true"
       >
-        {/* Overscan wrapper: mobile keeps generous overscan for phone zoom; desktop stays flush at top-0 bottom-0 */}
-        <div className="absolute inset-x-0 -top-16 sm:top-0 -bottom-16 sm:bottom-0 overflow-hidden">
+        {/* Overscan wrapper: top overscan accommodates the downward parallax travel so no gap appears */}
+        <div className="absolute inset-x-0 -top-16 sm:-top-24 -bottom-16 sm:-bottom-12 overflow-hidden">
           {/* Background Image with Delayed Parallax Scroll: 3:5 portrait on mobile, 16:9 on desktop */}
           <picture className="w-full h-full block">
             <source
@@ -118,9 +110,9 @@ export const HomePage: React.FC<HomePageProps> = ({
               ref={bannerImgRef}
               src={`${import.meta.env.BASE_URL}banners/Solitary%20Boy%20Amid%20the%20Moving%20Crowd%201.jpg`}
               alt="Spine Research Foundation India patient banner"
-              className="w-full h-full object-cover object-[50%_12%] sm:object-[50%_22%] select-none opacity-90 will-change-transform"
+              className="w-full h-full object-cover object-[50%_12%] sm:object-[50%_24%] select-none opacity-90 will-change-transform"
               style={{
-                transform: 'translate3d(0, 0px, 0)',
+                transform: 'translate3d(0, 0px, 0) scale(1.02)',
                 transformOrigin: 'center center',
               }}
             />

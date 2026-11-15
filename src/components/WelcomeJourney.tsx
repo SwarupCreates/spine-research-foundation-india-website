@@ -408,8 +408,8 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
     const t2 = setTimeout(() => setShowCard2(true), 550)
     const t3 = setTimeout(() => setShowCard3(true), 950)
     const t4 = setTimeout(() => setShowCard4(true), 1350)
-    const t5 = setTimeout(() => setShowCard5(true), 1750)
-    const t6 = setTimeout(() => setShowLogo(true), 2150)
+    const t5 = setTimeout(() => setShowLogo(true), 1750)
+    const t6 = setTimeout(() => setShowCard5(true), 2150)
 
     return () => {
       clearTimeout(t1)
@@ -435,12 +435,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
   const sharedTextClass =
     'text-3xl sm:text-4xl md:text-5xl lg:text-[56px] xl:text-[60px] 2xl:text-[66px] font-galano font-black uppercase leading-tight whitespace-normal sm:whitespace-nowrap'
 
-  // Frame 4 narrative card font class (scaled to >= 66% of the headline scale for bold, punchy presence)
-  const frame4TextClass =
-    'font-galano font-black text-xl sm:text-2xl md:text-[32px] lg:text-[38px] xl:text-[42px] 2xl:text-[46px] uppercase leading-tight sm:leading-snug drop-shadow-md'
 
-  const frame4RedTitleClass =
-    'text-[#ff0000] font-galano font-black text-2xl sm:text-3xl md:text-[34px] lg:text-[42px] xl:text-[48px] 2xl:text-[52px] uppercase leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]'
 
   return (
     <div className="fixed inset-0 z-[100] w-full h-full pointer-events-none overflow-hidden select-none font-galano">
@@ -628,7 +623,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
             </div>
 
             {/* Mobile View (< md): Centered at bottom above controls - fixed final positions */}
-            <div className="md:hidden absolute bottom-24 sm:bottom-28 inset-x-0 flex flex-col items-center justify-center text-center px-4 z-20">
+            <div className="md:hidden absolute bottom-[108px] sm:bottom-[116px] inset-x-0 flex flex-col items-center justify-center text-center px-4 z-20">
               <div className="flex items-center justify-center">
                 {showMeet ? (
                   <BlurText
@@ -774,7 +769,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
           >
             {/* Desktop View (>= md): Left-aligned inside standard 92% container - fixed final positions */}
             <div className="hidden md:block w-[92%] mx-auto h-full relative">
-              <div className="absolute bottom-20 md:bottom-24 lg:bottom-28 left-0 select-none">
+              <div className="absolute bottom-[116px] md:bottom-[124px] lg:bottom-[132px] left-0 select-none">
                 {/* Line 1: As a son, he tends the mother, */}
                 {showLine1 ? (
                   <motion.div
@@ -989,7 +984,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
             </div>
 
             {/* Mobile View (< md): Centered at bottom above controls - all 5 lines in final positions from start */}
-            <div className="md:hidden absolute bottom-[96px] sm:bottom-[108px] inset-x-0 px-4 flex flex-col items-center text-center z-20">
+            <div className="md:hidden absolute bottom-[108px] sm:bottom-[116px] inset-x-0 px-4 flex flex-col items-center text-center z-20">
               {/* Line 1: As a son, he tends the mother, */}
               {showLine1 ? (
                 <motion.div
@@ -1207,8 +1202,8 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
 
       {/* -------------------------------------------------------- */}
       {/* FRAME 3: 5 NARRATIVE BLOCKS & LARGE SRF LOGO (formerly 4)  */}
-      {/* Desktop (>= md): Classic 2-column layout                   */}
-      {/* Mobile (< md): Centered vertical column (27px, all centered)*/}
+      {/* Desktop (>= md): Single left column with space-between     */}
+      {/* Mobile (< md): Centered vertical column in fixed slots     */}
       {/* -------------------------------------------------------- */}
       <AnimatePresence>
         {frame === 3 && (
@@ -1219,197 +1214,271 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
             exit={{ opacity: 0, transition: { duration: 0.4 } }}
             className="absolute inset-0 z-30 pointer-events-none"
           >
-            {/* Desktop View (>= md): Fixed 2-column layout - all boxes in final positions from start */}
-            <div className="hidden md:block absolute inset-0 w-[92%] mx-auto pointer-events-none">
-              {/* Top Row: Two Decades & A Family */}
-              <div className="absolute top-[10%] lg:top-[12%] inset-x-0 flex flex-row justify-between items-start gap-4">
-                <div className="w-[45%] min-h-[3.5em]">
-                  {showCard1 && (
-                    <BlurText
-                      text="TWO DECADES OF COMMITMENT & COUNTING ..."
-                      effect="blur"
-                      animateBy="words"
-                      direction="bottom"
-                      trigger="load"
-                      delay={60}
-                      stepDuration={0.32}
-                      blur={10}
-                      distance={16}
-                      className={`max-w-md sm:max-w-lg lg:max-w-xl text-white ${frame4TextClass}`}
-                    />
-                  )}
-                </div>
+            {/* Desktop Fade Gradient Overlay behind text: Dissolves in smoothly */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, ease: 'easeOut' }}
+              className="hidden md:block absolute inset-y-0 left-0 w-[55%] pointer-events-none z-10"
+              style={{
+                background:
+                  'linear-gradient(to right, rgba(11, 12, 14, 0.94) 0%, rgba(11, 12, 14, 0.82) 35%, rgba(11, 12, 14, 0.45) 65%, rgba(11, 12, 14, 0) 100%)',
+              }}
+            />
 
-                <div className="w-[45%] min-h-[3.5em] flex justify-end">
-                  {showCard2 && (
-                    <BlurText
-                      text="A FAMILY TO WORK WITH – A FAMILY TO WORK FOR"
-                      effect="blur"
-                      animateBy="words"
-                      direction="bottom"
-                      trigger="load"
-                      delay={60}
-                      stepDuration={0.32}
-                      blur={10}
-                      distance={16}
-                      className={`max-w-md sm:max-w-lg lg:max-w-xl text-white text-right justify-end ${frame4TextClass}`}
-                    />
-                  )}
-                </div>
+            {/* Desktop View (>= md): Single left-aligned vertical column distributed with space-between */}
+            <div className="hidden md:flex absolute top-[7.5%] lg:top-[8%] bottom-[124px] lg:bottom-[132px] left-[4%] xl:left-[5%] w-[44%] max-w-xl flex-col justify-between items-start pointer-events-none z-20">
+              {/* Item 1: Two decades of commitment & counting ... */}
+              <div className="w-full flex items-start">
+                {showCard1 ? (
+                  <BlurText
+                    text="Two decades of commitment & counting ..."
+                    effect="blur"
+                    animateBy="words"
+                    direction="bottom"
+                    trigger="load"
+                    delay={50}
+                    stepDuration={0.3}
+                    blur={10}
+                    distance={14}
+                    className="text-white font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
+                  />
+                ) : (
+                  <div
+                    className="invisible select-none pointer-events-none font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight"
+                    aria-hidden="true"
+                  >
+                    Two decades of commitment &amp; counting ...
+                  </div>
+                )}
               </div>
 
-              {/* Mid Row: A Bounty of Love & A Promise Spoken */}
-              <div className="absolute top-[42%] lg:top-[44%] inset-x-0 flex flex-row justify-between items-start gap-4">
-                <div className="w-[45%] min-h-[3.5em]">
-                  {showCard3 && (
-                    <BlurText
-                      text="A BOUNTY OF LOVE, A LEGACY TO UPHOLD"
-                      effect="blur"
-                      animateBy="words"
-                      direction="bottom"
-                      trigger="load"
-                      delay={60}
-                      stepDuration={0.32}
-                      blur={10}
-                      distance={16}
-                      className={`max-w-md sm:max-w-lg lg:max-w-xl text-white ${frame4TextClass}`}
-                    />
-                  )}
-                </div>
-
-                <div className="w-[45%] min-h-[3.5em] flex justify-end">
-                  {showCard4 && (
-                    <BlurText
-                      text="A PROMISE SPOKEN IN SILENCE – FULFILLED WITH GLORY"
-                      effect="blur"
-                      animateBy="words"
-                      direction="bottom"
-                      trigger="load"
-                      delay={60}
-                      stepDuration={0.32}
-                      blur={10}
-                      distance={16}
-                      className={`max-w-md sm:max-w-lg lg:max-w-xl text-white text-right justify-end ${frame4TextClass}`}
-                    />
-                  )}
-                </div>
+              {/* Item 2: A family to work with – A family to work for */}
+              <div className="w-full flex items-start">
+                {showCard2 ? (
+                  <BlurText
+                    text="A family to work with – A family to work for"
+                    effect="blur"
+                    animateBy="words"
+                    direction="bottom"
+                    trigger="load"
+                    delay={50}
+                    stepDuration={0.3}
+                    blur={10}
+                    distance={14}
+                    className="text-white font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
+                  />
+                ) : (
+                  <div
+                    className="invisible select-none pointer-events-none font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight"
+                    aria-hidden="true"
+                  >
+                    A family to work with – A family to work for
+                  </div>
+                )}
               </div>
 
-              {/* Bottom-Left: Large SRF Logo & ONE SPINE AT A TIME */}
-              <div className="absolute bottom-24 sm:bottom-28 md:bottom-32 left-0 flex flex-col items-start gap-3 sm:gap-4">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28">
-                  {showLogo && (
-                    <motion.div
-                      id="journey-frame4-logo"
-                      initial={{ opacity: 0, scale: 0.7 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                      className="w-full h-full text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.35)]"
-                    >
-                      <SrfLogo className="w-full h-full text-white" />
-                    </motion.div>
-                  )}
-                </div>
+              {/* Item 3: A bounty of love, A legacy to uphold */}
+              <div className="w-full flex items-start">
+                {showCard3 ? (
+                  <BlurText
+                    text="A bounty of love, A legacy to uphold"
+                    effect="blur"
+                    animateBy="words"
+                    direction="bottom"
+                    trigger="load"
+                    delay={50}
+                    stepDuration={0.3}
+                    blur={10}
+                    distance={14}
+                    className="text-white font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
+                  />
+                ) : (
+                  <div
+                    className="invisible select-none pointer-events-none font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight"
+                    aria-hidden="true"
+                  >
+                    A bounty of love, A legacy to uphold
+                  </div>
+                )}
+              </div>
 
-                <div className="min-h-[1.5em]">
-                  {showCard5 && (
-                    <BlurText
-                      text="ONE SPINE AT A TIME"
-                      effect="blur"
-                      animateBy="words"
-                      direction="bottom"
-                      trigger="load"
-                      delay={70}
-                      stepDuration={0.32}
-                      blur={12}
-                      distance={18}
-                      color="#ff0000"
-                      className={frame4RedTitleClass}
-                    />
-                  )}
-                </div>
+              {/* Item 4: A promise spoken in silence – fulfilled with glory */}
+              <div className="w-full flex items-start">
+                {showCard4 ? (
+                  <BlurText
+                    text="A promise spoken in silence – fulfilled with glory"
+                    effect="blur"
+                    animateBy="words"
+                    direction="bottom"
+                    trigger="load"
+                    delay={50}
+                    stepDuration={0.3}
+                    blur={10}
+                    distance={14}
+                    className="text-white font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
+                  />
+                ) : (
+                  <div
+                    className="invisible select-none pointer-events-none font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight"
+                    aria-hidden="true"
+                  >
+                    A promise spoken in silence – fulfilled with glory
+                  </div>
+                )}
+              </div>
+
+              {/* Item 5: Prominent SRF Logo */}
+              <div className="w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 lg:w-22 lg:h-22 flex items-center">
+                {showLogo ? (
+                  <motion.div
+                    id="journey-frame4-logo"
+                    initial={{ opacity: 0, scale: 0.7 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    className="w-full h-full text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.35)]"
+                  >
+                    <SrfLogo className="w-full h-full text-white" />
+                  </motion.div>
+                ) : (
+                  <div className="w-full h-full invisible select-none pointer-events-none" aria-hidden="true" />
+                )}
+              </div>
+
+              {/* Item 6: One spine at a time */}
+              <div className="w-full flex items-start">
+                {showCard5 ? (
+                  <BlurText
+                    text="One spine at a time"
+                    effect="blur"
+                    animateBy="words"
+                    direction="bottom"
+                    trigger="load"
+                    delay={60}
+                    stepDuration={0.32}
+                    blur={12}
+                    distance={16}
+                    color="#ff0000"
+                    className="font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight drop-shadow-[0_2px_16px_rgba(255,0,0,0.35)]"
+                  />
+                ) : (
+                  <div
+                    className="invisible select-none pointer-events-none font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight"
+                    aria-hidden="true"
+                  >
+                    One spine at a time
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Mobile View (< md): Stacked vertically in fixed sequential slots, equidistant and positioned matching Figma */}
+            {/* Mobile View (< md): Stacked vertically in fixed sequential slots matching Figma */}
             <div className="md:hidden absolute inset-0 z-20 pointer-events-none">
               {/* Upper cluster: 4 text blocks + prominent SRF logo distributed equidistantly */}
-              <div className="absolute top-[16%] bottom-[19%] sm:bottom-[19.5%] inset-x-0 flex flex-col items-center justify-between text-center px-4">
-                {/* Slot 1: TWO DECADES OF COMMITMENT & COUNTING ... */}
-                <div className="min-h-[56px] sm:min-h-[64px] flex items-center justify-center text-center">
-                  {showCard1 && (
+              <div className="absolute top-[14%] sm:top-[15%] bottom-[160px] sm:bottom-[172px] inset-x-0 flex flex-col items-center justify-between text-center px-4">
+                {/* Slot 1: Two decades of commitment & counting ... */}
+                <div className="min-h-[50px] sm:min-h-[56px] flex items-center justify-center text-center">
+                  {showCard1 ? (
                     <BlurText
-                      text="TWO DECADES OF COMMITMENT & COUNTING ..."
+                      text="Two decades of commitment & counting ..."
                       effect="blur"
                       animateBy="words"
                       direction="bottom"
                       trigger="load"
                       delay={50}
-                      stepDuration={0.32}
+                      stepDuration={0.3}
                       blur={10}
-                      distance={16}
-                      className="text-white font-galano font-black uppercase text-[clamp(18px,6vw,25px)] leading-[1.14] text-center drop-shadow-md max-w-[270px] sm:max-w-xs mx-auto justify-center"
+                      distance={14}
+                      className="text-white font-galano-alt font-bold text-[clamp(17px,5.2vw,23px)] leading-[1.2] text-center drop-shadow-md max-w-[280px] sm:max-w-xs mx-auto justify-center"
                     />
+                  ) : (
+                    <div
+                      className="invisible select-none pointer-events-none font-galano-alt font-bold text-[clamp(17px,5.2vw,23px)] leading-[1.2] text-center max-w-[280px] sm:max-w-xs mx-auto"
+                      aria-hidden="true"
+                    >
+                      Two decades of commitment &amp; counting ...
+                    </div>
                   )}
                 </div>
 
-                {/* Slot 2: A FAMILY TO WORK WITH – A FAMILY TO WORK FOR */}
-                <div className="min-h-[56px] sm:min-h-[64px] flex items-center justify-center text-center">
-                  {showCard2 && (
+                {/* Slot 2: A family to work with – A family to work for */}
+                <div className="min-h-[50px] sm:min-h-[56px] flex items-center justify-center text-center">
+                  {showCard2 ? (
                     <BlurText
-                      text="A FAMILY TO WORK WITH – A FAMILY TO WORK FOR"
+                      text="A family to work with – A family to work for"
                       effect="blur"
                       animateBy="words"
                       direction="bottom"
                       trigger="load"
                       delay={50}
-                      stepDuration={0.32}
+                      stepDuration={0.3}
                       blur={10}
-                      distance={16}
-                      className="text-white font-galano font-black uppercase text-[clamp(18px,6vw,25px)] leading-[1.14] text-center drop-shadow-md max-w-[270px] sm:max-w-xs mx-auto justify-center"
+                      distance={14}
+                      className="text-white font-galano-alt font-bold text-[clamp(17px,5.2vw,23px)] leading-[1.2] text-center drop-shadow-md max-w-[280px] sm:max-w-xs mx-auto justify-center"
                     />
+                  ) : (
+                    <div
+                      className="invisible select-none pointer-events-none font-galano-alt font-bold text-[clamp(17px,5.2vw,23px)] leading-[1.2] text-center max-w-[280px] sm:max-w-xs mx-auto"
+                      aria-hidden="true"
+                    >
+                      A family to work with – A family to work for
+                    </div>
                   )}
                 </div>
 
-                {/* Slot 3: A BOUNTY OF LOVE, A LEGACY TO UPHOLD */}
-                <div className="min-h-[56px] sm:min-h-[64px] flex items-center justify-center text-center">
-                  {showCard3 && (
+                {/* Slot 3: A bounty of love, A legacy to uphold */}
+                <div className="min-h-[50px] sm:min-h-[56px] flex items-center justify-center text-center">
+                  {showCard3 ? (
                     <BlurText
-                      text="A BOUNTY OF LOVE, A LEGACY TO UPHOLD"
+                      text="A bounty of love, A legacy to uphold"
                       effect="blur"
                       animateBy="words"
                       direction="bottom"
                       trigger="load"
                       delay={50}
-                      stepDuration={0.32}
+                      stepDuration={0.3}
                       blur={10}
-                      distance={16}
-                      className="text-white font-galano font-black uppercase text-[clamp(18px,6vw,25px)] leading-[1.14] text-center drop-shadow-md max-w-[260px] sm:max-w-xs mx-auto justify-center"
+                      distance={14}
+                      className="text-white font-galano-alt font-bold text-[clamp(17px,5.2vw,23px)] leading-[1.2] text-center drop-shadow-md max-w-[280px] sm:max-w-xs mx-auto justify-center"
                     />
+                  ) : (
+                    <div
+                      className="invisible select-none pointer-events-none font-galano-alt font-bold text-[clamp(17px,5.2vw,23px)] leading-[1.2] text-center max-w-[280px] sm:max-w-xs mx-auto"
+                      aria-hidden="true"
+                    >
+                      A bounty of love, A legacy to uphold
+                    </div>
                   )}
                 </div>
 
-                {/* Slot 4: A PROMISE SPOKEN IN SILENCE – FULFILLED WITH GLORY */}
-                <div className="min-h-[56px] sm:min-h-[64px] flex items-center justify-center text-center">
-                  {showCard4 && (
+                {/* Slot 4: A promise spoken in silence – fulfilled with glory */}
+                <div className="min-h-[50px] sm:min-h-[56px] flex items-center justify-center text-center">
+                  {showCard4 ? (
                     <BlurText
-                      text="A PROMISE SPOKEN IN SILENCE – FULFILLED WITH GLORY"
+                      text="A promise spoken in silence – fulfilled with glory"
                       effect="blur"
                       animateBy="words"
                       direction="bottom"
                       trigger="load"
                       delay={50}
-                      stepDuration={0.32}
+                      stepDuration={0.3}
                       blur={10}
-                      distance={16}
-                      className="text-white font-galano font-black uppercase text-[clamp(18px,6vw,25px)] leading-[1.14] text-center drop-shadow-md max-w-[270px] sm:max-w-xs mx-auto justify-center"
+                      distance={14}
+                      className="text-white font-galano-alt font-bold text-[clamp(17px,5.2vw,23px)] leading-[1.2] text-center drop-shadow-md max-w-[280px] sm:max-w-xs mx-auto justify-center"
                     />
+                  ) : (
+                    <div
+                      className="invisible select-none pointer-events-none font-galano-alt font-bold text-[clamp(17px,5.2vw,23px)] leading-[1.2] text-center max-w-[280px] sm:max-w-xs mx-auto"
+                      aria-hidden="true"
+                    >
+                      A promise spoken in silence – fulfilled with glory
+                    </div>
                   )}
                 </div>
 
                 {/* Slot 5: Prominent SRF Logo */}
                 <div className="w-20 h-20 sm:w-22 sm:h-22 min-h-[76px] sm:min-h-[84px] flex items-center justify-center">
-                  {showLogo && (
+                  {showLogo ? (
                     <motion.div
                       id="journey-frame4-logo-mobile"
                       initial={{ opacity: 0, scale: 0.7 }}
@@ -1419,15 +1488,17 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     >
                       <SrfLogo className="w-full h-full text-white" />
                     </motion.div>
+                  ) : (
+                    <div className="w-20 h-20 sm:w-22 sm:h-22 invisible select-none pointer-events-none" aria-hidden="true" />
                   )}
                 </div>
               </div>
 
-              {/* Lower position: ONE SPINE AT A TIME directly above floating buttons */}
-              <div className="absolute bottom-[11.5%] sm:bottom-[12%] inset-x-0 min-h-[28px] sm:min-h-[32px] flex items-center justify-center px-4">
-                {showCard5 && (
+              {/* Lower position: One spine at a time directly above floating buttons with safe gutter */}
+              <div className="absolute bottom-[108px] sm:bottom-[116px] inset-x-0 min-h-[28px] sm:min-h-[32px] flex items-center justify-center px-4">
+                {showCard5 ? (
                   <BlurText
-                    text="ONE SPINE AT A TIME"
+                    text="One spine at a time"
                     effect="blur"
                     animateBy="words"
                     direction="bottom"
@@ -1435,10 +1506,17 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     delay={70}
                     stepDuration={0.32}
                     blur={12}
-                    distance={18}
+                    distance={16}
                     color="#ff0000"
-                    className="font-galano font-black uppercase tracking-wide text-[clamp(21px,6.72vw,27px)] leading-tight text-center drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] justify-center"
+                    className="font-galano-alt font-bold tracking-wide text-[clamp(20px,6.2vw,26px)] leading-tight text-center drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] justify-center"
                   />
+                ) : (
+                  <div
+                    className="invisible select-none pointer-events-none font-galano-alt font-bold tracking-wide text-[clamp(20px,6.2vw,26px)] leading-tight text-center"
+                    aria-hidden="true"
+                  >
+                    One spine at a time
+                  </div>
                 )}
               </div>
             </div>

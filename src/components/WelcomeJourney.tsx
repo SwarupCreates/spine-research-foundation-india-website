@@ -289,7 +289,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
     'text-3xl sm:text-4xl md:text-5xl lg:text-[56px] xl:text-[60px] 2xl:text-[66px] font-galano font-black uppercase leading-tight whitespace-normal sm:whitespace-nowrap'
 
   return (
-    <div className="fixed inset-0 z-[100] w-screen h-screen bg-[#0b0c0e] overflow-hidden select-none font-galano">
+    <div className="fixed inset-0 z-[100] w-full h-full bg-[#0b0c0e] overflow-hidden select-none font-galano">
       {/* -------------------------------------------------------- */}
       {/* BACKGROUND IMAGE LAYER 1 & BOTTOM GRADIENT               */}
       {/* Frames 1-2: Silent Amidst the Passing Crowd 1           */}

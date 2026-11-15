@@ -367,8 +367,8 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
             exit={{ opacity: 0, transition: { duration: 0.6 } }}
             className="absolute inset-0 w-full h-full pointer-events-none z-10"
           >
-            {/* Unified Central Story Container: 90% width centered */}
-            <div className="w-[90%] mx-auto h-full relative">
+            {/* Unified Central Story Container: 92% width centered (bigger than 90%, centered) */}
+            <div className="w-[92%] mx-auto h-full relative">
               {/* "MEET" top-left: Left-aligned to DURGA */}
               {showMeet && (
                 <motion.div
@@ -381,7 +381,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
                 </motion.div>
               )}
 
-              {/* Giant "DURGA" bold red text: Spans 90% viewport width with natural letter spacing */}
+              {/* Giant "DURGA" bold red text: Spans 92% viewport width, perfectly centered with natural spacing */}
               {showDurga && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.96 }}
@@ -390,13 +390,14 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
                   className="absolute top-[16%] left-0 w-full select-none pointer-events-none"
                 >
                   <svg
-                    viewBox="0 0 810 185"
+                    viewBox="0 0 720 152"
                     className="w-full h-auto overflow-hidden select-none pointer-events-none"
                     aria-label="DURGA"
                   >
                     <text
-                      x="0"
-                      y="148"
+                      x="360"
+                      y="146"
+                      textAnchor="middle"
                       fill="#ff0000"
                       fontFamily="'Galano Grotesque Black', 'Galano Grotesque', sans-serif"
                       fontWeight="900"
@@ -452,8 +453,8 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
             exit={{ opacity: 0, transition: { duration: 0.5 } }}
             className="absolute inset-0 z-30 pointer-events-none flex flex-col justify-end pb-28 sm:pb-32 md:pb-36"
           >
-            {/* Same Unified Container: 90% width */}
-            <div className="w-[90%] mx-auto space-y-4 sm:space-y-5">
+            {/* Same Unified Container: 92% width */}
+            <div className="w-[92%] mx-auto space-y-4 sm:space-y-5">
               {/* Line 1 */}
               <div className={`${sharedTextClass}`}>
                 <span
@@ -518,8 +519,8 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
             exit={{ opacity: 0, transition: { duration: 0.5 } }}
             className="absolute inset-0 z-30 pointer-events-none flex flex-col justify-between pb-28 sm:pb-32 md:pb-36"
           >
-            {/* Same Unified Container: 90% width */}
-            <div className="w-[90%] mx-auto h-full flex flex-col justify-between">
+            {/* Same Unified Container: 92% width */}
+            <div className="w-[92%] mx-auto h-full flex flex-col justify-between">
               {/* Top-Left: BUT... AS A WITNESS, */}
               <div className="pt-10 sm:pt-14 md:pt-16">
                 <motion.div
@@ -573,8 +574,8 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
             exit={{ opacity: 0, transition: { duration: 0.4 } }}
             className="absolute inset-0 z-30 pointer-events-none flex flex-col justify-between pb-28 sm:pb-32 md:pb-36"
           >
-            {/* Same Unified Container: 90% width */}
-            <div className="w-[90%] mx-auto h-full flex flex-col justify-between">
+            {/* Same Unified Container: 92% width */}
+            <div className="w-[92%] mx-auto h-full flex flex-col justify-between">
               {/* Top Row: Two Decades & A Family */}
               <div className="flex flex-col sm:flex-row justify-between items-start gap-4 pt-8 sm:pt-10 md:pt-14">
                 {showCard1 && (

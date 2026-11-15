@@ -603,7 +603,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.75, ease: 'easeOut' }}
-                  className="text-[#ff0000] font-galano font-black uppercase tracking-tight leading-none text-[clamp(66px,21.4vw,86px)] mt-1 drop-shadow-[0_2px_16px_rgba(0,0,0,0.9)]"
+                  className="text-[#ff0000] font-galano font-black uppercase tracking-tight leading-none text-[clamp(66px,21.4vw,86px)] -mt-2 sm:-mt-2.5 drop-shadow-[0_2px_16px_rgba(0,0,0,0.9)]"
                 >
                   DURGA
                 </motion.div>
@@ -1084,11 +1084,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
               <button
                 type="button"
                 onClick={() => setIsPlaying((p) => !p)}
-                className={`w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full backdrop-blur-md border transition-all flex items-center justify-center cursor-pointer shadow-xl hover:scale-105 active:scale-95 ${
-                  isPlaying
-                    ? 'bg-black/50 border-white/15 text-white hover:bg-black/70'
-                    : 'bg-emerald-600/80 border-emerald-400/40 text-white hover:bg-emerald-600'
-                }`}
+                className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full bg-black/50 backdrop-blur-md border border-white/15 text-white/90 hover:text-white hover:bg-black/70 transition-all flex items-center justify-center cursor-pointer shadow-xl hover:scale-105 active:scale-95"
                 aria-label={isPlaying ? 'Pause auto-play' : 'Start auto-play'}
                 title={isPlaying ? 'Pause auto-play (switch to manual scroll)' : 'Start auto-play'}
               >

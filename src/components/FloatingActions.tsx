@@ -27,10 +27,10 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
   // When scrolling back up, smoothly trickle back down to the original gutter position.
   useEffect(() => {
     const getOuterEdgeGutter = (): number => {
-      if (typeof window === 'undefined') return 48
-      if (window.innerWidth >= 1024) return 48 // Desktop: 48px
-      if (window.innerWidth >= 640) return 40  // Tablet: 40px
-      return 32                               // Mobile: 32px
+      if (typeof window === 'undefined') return 28
+      if (window.innerWidth >= 1024) return 28 // Desktop: 28px (harmonized with top navbar logo mark spacing of 28px)
+      if (window.innerWidth >= 640) return 24  // Tablet: 24px
+      return 24                               // Mobile: 24px
     }
 
     const updatePosition = () => {
@@ -88,8 +88,8 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
     <aside 
       id="floating-actions"
       data-testid="floating-actions"
-      className={`fixed left-1/2 -translate-x-1/2 sm:left-auto sm:right-10 sm:translate-x-0 lg:right-12 z-[70] flex items-center gap-3.5 transition-[bottom] duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-        bottomSpacing === null ? 'bottom-8 sm:bottom-10 lg:bottom-12' : ''
+      className={`fixed left-1/2 -translate-x-1/2 sm:left-auto sm:right-6 sm:translate-x-0 lg:right-7 z-[70] flex items-center gap-3.5 transition-[bottom] duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        bottomSpacing === null ? 'bottom-6 sm:bottom-6 lg:bottom-7' : ''
       }`}
       style={{
         bottom: bottomSpacing !== null ? `${bottomSpacing}px` : undefined,

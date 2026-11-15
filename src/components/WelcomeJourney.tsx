@@ -286,7 +286,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
 
   // Shared font size class for all text across the first 3 frames (except DURGA)
   const sharedTextClass =
-    'text-3xl sm:text-5xl md:text-6xl lg:text-[62px] xl:text-[66px] font-galano font-black tracking-wide uppercase leading-tight'
+    'text-3xl sm:text-4xl md:text-5xl lg:text-[56px] xl:text-[60px] 2xl:text-[66px] font-galano font-black tracking-wide uppercase leading-tight whitespace-normal sm:whitespace-nowrap'
 
   return (
     <div className="fixed inset-0 z-[100] w-screen h-screen bg-[#0b0c0e] overflow-hidden select-none font-galano">

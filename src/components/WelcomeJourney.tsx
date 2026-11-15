@@ -763,7 +763,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     initial={{ opacity: 0, y: 14 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                    className="flex items-baseline gap-x-2.5 sm:gap-x-3 text-xl sm:text-2xl md:text-[24px] lg:text-[28px] xl:text-[30px] leading-tight"
+                    className="flex items-baseline gap-x-2.5 sm:gap-x-3 text-[clamp(22px,2.5vw,38.5px)] leading-tight"
                   >
                     <BlurText
                       text={line1Prefix}
@@ -800,7 +800,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     initial={{ opacity: 0, y: 14 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                    className="flex items-baseline gap-x-2.5 sm:gap-x-3 text-xl sm:text-2xl md:text-[24px] lg:text-[28px] xl:text-[30px] leading-tight pt-1.5 sm:pt-2 md:pt-2.5"
+                    className="flex items-baseline gap-x-2.5 sm:gap-x-3 text-[clamp(22px,2.5vw,38.5px)] leading-tight pt-2 sm:pt-2.5 md:pt-3"
                   >
                     <BlurText
                       text={line2Prefix}
@@ -837,7 +837,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     initial={{ opacity: 0, y: 14 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                    className="flex items-baseline gap-x-2.5 sm:gap-x-3 text-xl sm:text-2xl md:text-[24px] lg:text-[28px] xl:text-[30px] leading-tight pt-1.5 sm:pt-2 md:pt-2.5"
+                    className="flex items-baseline gap-x-2.5 sm:gap-x-3 text-[clamp(22px,2.5vw,38.5px)] leading-tight pt-2 sm:pt-2.5 md:pt-3"
                   >
                     <BlurText
                       text={line3Prefix}
@@ -874,7 +874,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-                    className="flex items-baseline gap-x-3 sm:gap-x-4 pt-4 sm:pt-5 md:pt-6"
+                    className="flex items-baseline gap-x-3 sm:gap-x-4 pt-1 sm:pt-1.5 md:pt-2"
                   >
                     <BlurText
                       text={line4Prefix}
@@ -887,7 +887,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                       blur={12}
                       distance={18}
                       color="#ffffff"
-                      className="font-galano font-black uppercase text-3xl sm:text-4xl md:text-[40px] lg:text-[48px] xl:text-[52px] tracking-tight drop-shadow-[0_2px_16px_rgba(0,0,0,0.9)]"
+                      className="font-galano font-black uppercase text-[clamp(38px,4.6vw,70.6px)] leading-none tracking-tight drop-shadow-[0_2px_16px_rgba(0,0,0,0.9)]"
                     />
                     <BlurText
                       text={line4Suffix}
@@ -900,7 +900,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                       blur={14}
                       distance={20}
                       color="#ff0000"
-                      className="font-galano font-black uppercase text-3xl sm:text-4xl md:text-[40px] lg:text-[48px] xl:text-[52px] tracking-tight drop-shadow-[0_2px_16px_rgba(255,0,0,0.4)]"
+                      className="font-galano font-black uppercase text-[clamp(38px,4.6vw,70.6px)] leading-none tracking-tight drop-shadow-[0_2px_16px_rgba(255,0,0,0.4)]"
                     />
                   </motion.div>
                 )}
@@ -924,7 +924,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                       blur={10}
                       distance={16}
                       color="#ffffff"
-                      className="font-galano-alt font-bold text-white text-2xl sm:text-3xl md:text-[28px] lg:text-[34px] xl:text-[38px] tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
+                      className="font-galano-alt font-bold text-white text-[clamp(22px,2.5vw,38.5px)] leading-tight tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
                     />
                   </motion.div>
                 )}
@@ -939,7 +939,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                  className="flex flex-row items-center justify-center gap-x-1.5 text-[clamp(14.5px,4.1vw,17.5px)] leading-tight whitespace-nowrap"
+                  className="flex flex-row items-center justify-center gap-x-1.5 text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap"
                 >
                   <BlurText
                     text={line1Prefix}
@@ -976,7 +976,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                  className="flex flex-row items-center justify-center gap-x-1.5 text-[clamp(14.5px,4.1vw,17.5px)] leading-tight whitespace-nowrap pt-1.5 sm:pt-2"
+                  className="flex flex-row items-center justify-center gap-x-1.5 text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap pt-1.5 sm:pt-2"
                 >
                   <BlurText
                     text={line2Prefix}
@@ -1013,7 +1013,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                  className="flex flex-row items-center justify-center gap-x-1.5 text-[clamp(14.5px,4.1vw,17.5px)] leading-tight whitespace-nowrap pt-1.5 sm:pt-2"
+                  className="flex flex-row items-center justify-center gap-x-1.5 text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap pt-1.5 sm:pt-2"
                 >
                   <BlurText
                     text={line3Prefix}
@@ -1050,7 +1050,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="flex flex-row items-center justify-center gap-x-2 text-[clamp(21px,5.8vw,26px)] leading-none whitespace-nowrap pt-3.5 sm:pt-4"
+                  className="flex flex-row items-center justify-center gap-x-2 text-[clamp(24px,7.4vw,32px)] leading-none whitespace-nowrap pt-1 sm:pt-1.5"
                 >
                   <BlurText
                     text={line4Prefix}
@@ -1087,7 +1087,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                  className="pt-2 sm:pt-2.5"
+                  className="pt-1.5 sm:pt-2"
                 >
                   <BlurText
                     text={line5Text}
@@ -1100,7 +1100,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     blur={8}
                     distance={12}
                     color="#ffffff"
-                    className="font-galano-alt font-bold text-[clamp(16.5px,4.6vw,20px)] leading-tight justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] whitespace-nowrap"
+                    className="font-galano-alt font-bold text-[clamp(16px,4.9vw,21.5px)] leading-tight justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] whitespace-nowrap"
                   />
                 </motion.div>
               )}

@@ -53,11 +53,16 @@ export const Navbar: React.FC<NavbarProps> = ({
     setCurrentTab(activeTab)
   }, [activeTab])
 
-  // Controls the one-time navbar entry animation queue
+  // Controls the navbar entry animation queue:
+  // - Starts false when journey is active so navbar elements are hidden until logo flight lands.
+  // - Resets to false whenever a journey replay starts (!isEnteringFromJourney && isJourneyActive).
+  // - Transitions to true when flight lands (isEnteringFromJourney) or when journey is inactive (!isJourneyActive).
   const [shouldAnimateEntry, setShouldAnimateEntry] = useState(!isJourneyActive)
 
   useEffect(() => {
-    if (!isJourneyActive || isEnteringFromJourney) {
+    if (isJourneyActive && !isEnteringFromJourney) {
+      setShouldAnimateEntry(false)
+    } else if (!isJourneyActive || isEnteringFromJourney) {
       setShouldAnimateEntry(true)
     }
   }, [isJourneyActive, isEnteringFromJourney])
@@ -211,7 +216,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               scale: isLogoHovered ? 1.09 : 1,
             }}
             transition={{
-              opacity: { duration: 0.5, ease: 'easeOut' },
+              opacity: { duration: shouldAnimateEntry ? 0.5 : 0, ease: 'easeOut' },
               scale: { duration: isLogoHovered ? 0.35 : 0.75, ease: activeEase },
             }}
             className="relative w-10 h-10 sm:w-11 sm:h-11 flex-shrink-0"
@@ -276,9 +281,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               transition={{
                 layout: { duration: 0.4, ease: activeEase },
                 scale: { duration: activeDuration, ease: activeEase },
-                opacity: { duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.15 },
-                clipPath: { duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.15 },
-                x: { duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.15 },
+                opacity: { duration: shouldAnimateEntry ? 0.6 : 0, ease: [0.16, 1, 0.3, 1], delay: shouldAnimateEntry ? 0.15 : 0 },
+                clipPath: { duration: shouldAnimateEntry ? 0.6 : 0, ease: [0.16, 1, 0.3, 1], delay: shouldAnimateEntry ? 0.15 : 0 },
+                x: { duration: shouldAnimateEntry ? 0.6 : 0, ease: [0.16, 1, 0.3, 1], delay: shouldAnimateEntry ? 0.15 : 0 },
               }}
               className={`font-jost select-none flex ${
                 isLogoStacked ? 'flex-col items-start gap-y-0 leading-none' : 'flex-row items-baseline'
@@ -401,8 +406,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                   y: shouldAnimateEntry ? 0 : -16,
                 }}
                 transition={{
-                  duration: 0.45,
-                  delay: 0.35 + index * 0.08,
+                  duration: shouldAnimateEntry ? 0.45 : 0,
+                  delay: shouldAnimateEntry ? 0.35 + index * 0.08 : 0,
                   ease: [0.16, 1, 0.3, 1],
                 }}
                 onClick={() => handleSelect(item.id)}
@@ -435,7 +440,11 @@ export const Navbar: React.FC<NavbarProps> = ({
             opacity: shouldAnimateEntry ? 1 : 0,
             y: shouldAnimateEntry ? 0 : -16,
           }}
-          transition={{ duration: 0.45, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          transition={{
+            duration: shouldAnimateEntry ? 0.45 : 0,
+            delay: shouldAnimateEntry ? 0.35 : 0,
+            ease: [0.16, 1, 0.3, 1],
+          }}
           className="flex md:hidden items-center"
         >
           <button

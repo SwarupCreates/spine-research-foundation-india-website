@@ -17,8 +17,8 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
   const [frame, setFrame] = useState<number>(1)
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false)
 
-  // Auto-play state: true = auto-advances; false = manual scrolling only
-  const [isPlaying, setIsPlaying] = useState<boolean>(true)
+  // Auto-play state: false = manual scrolling by default; true = auto-advances
+  const [isPlaying, setIsPlaying] = useState<boolean>(false)
 
   // Frame 1 slow sequential reveal states
   const [showBoy, setShowBoy] = useState<boolean>(false)
@@ -236,19 +236,28 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
       }
     }
 
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (['ArrowDown', 'PageDown', 'Space'].includes(e.code)) {
+        e.preventDefault()
+        advanceFrame()
+      }
+    }
+
     window.addEventListener('wheel', handleWheel, { passive: true })
     window.addEventListener('touchstart', handleTouchStart, { passive: true })
     window.addEventListener('touchend', handleTouchEnd, { passive: true })
+    window.addEventListener('keydown', handleKeyDown)
 
     return () => {
       window.removeEventListener('wheel', handleWheel)
       window.removeEventListener('touchstart', handleTouchStart)
       window.removeEventListener('touchend', handleTouchEnd)
+      window.removeEventListener('keydown', handleKeyDown)
     }
   }, [advanceFrame])
 
   // -------------------------------------------------------------
-  // Frame 1 Automation: Sequential slow reveals:
+  // Frame 1 Visual Reveal: Sequential slow reveals
   // Base image + Gradient -> Boy (+100ms) -> Controls (+400ms) -> MEET (+700ms) -> DURGA (+1300ms)
   // -------------------------------------------------------------
   useEffect(() => {
@@ -262,20 +271,22 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
     const t2 = setTimeout(() => setShowControls(true), 400)
     const t3 = setTimeout(() => setShowMeet(true), 700)
     const t4 = setTimeout(() => setShowDurga(true), 1300)
-    let t5: ReturnType<typeof setTimeout> | undefined
-
-    if (isPlaying) {
-      t5 = setTimeout(() => {
-        advanceFrame(2)
-      }, 4800)
-    }
 
     return () => {
       clearTimeout(t1)
       clearTimeout(t2)
       clearTimeout(t3)
       clearTimeout(t4)
-      if (t5) clearTimeout(t5)
+    }
+  }, [frame])
+
+  // Frame 1 Auto-advance timer (active only when user clicks play)
+  useEffect(() => {
+    if (frame === 1 && isPlaying) {
+      const t5 = setTimeout(() => {
+        advanceFrame(2)
+      }, 4800)
+      return () => clearTimeout(t5)
     }
   }, [frame, isPlaying, advanceFrame])
 
@@ -349,7 +360,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
   }, [frame, isElevated, isPlaying])
 
   // -------------------------------------------------------------
-  // Frame 3 Automation: BUT... -> AS A WITNESS -> HE BLESSES THE WORLD
+  // Frame 3 Visual Reveal: BUT... -> AS A WITNESS -> HE BLESSES THE WORLD
   // -------------------------------------------------------------
   useEffect(() => {
     if (frame !== 3) {
@@ -364,13 +375,6 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
     const t3 = setTimeout(() => setDotsCount(3), 1500)
     const t4 = setTimeout(() => setShowWitness(true), 1800)
     const t5 = setTimeout(() => setShowBlesses(true), 2400)
-    let t6: ReturnType<typeof setTimeout> | undefined
-
-    if (isPlaying) {
-      t6 = setTimeout(() => {
-        advanceFrame(4)
-      }, 4500)
-    }
 
     return () => {
       clearTimeout(t1)
@@ -378,12 +382,21 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
       clearTimeout(t3)
       clearTimeout(t4)
       clearTimeout(t5)
-      if (t6) clearTimeout(t6)
+    }
+  }, [frame])
+
+  // Frame 3 Auto-advance timer (active only when user clicks play)
+  useEffect(() => {
+    if (frame === 3 && isPlaying) {
+      const t6 = setTimeout(() => {
+        advanceFrame(4)
+      }, 4500)
+      return () => clearTimeout(t6)
     }
   }, [frame, isPlaying, advanceFrame])
 
   // -------------------------------------------------------------
-  // Frame 4 Automation: 5 Text blocks -> Large Logo -> Frame 5
+  // Frame 4 Visual Reveal: 5 Text blocks -> Large Logo
   // -------------------------------------------------------------
   useEffect(() => {
     if (frame !== 4) {
@@ -402,13 +415,6 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
     const t4 = setTimeout(() => setShowCard4(true), 1700)
     const t5 = setTimeout(() => setShowCard5(true), 2200)
     const t6 = setTimeout(() => setShowLogo(true), 2800)
-    let t7: ReturnType<typeof setTimeout> | undefined
-
-    if (isPlaying) {
-      t7 = setTimeout(() => {
-        advanceFrame(5)
-      }, 4800)
-    }
 
     return () => {
       clearTimeout(t1)
@@ -417,7 +423,16 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
       clearTimeout(t4)
       clearTimeout(t5)
       clearTimeout(t6)
-      if (t7) clearTimeout(t7)
+    }
+  }, [frame])
+
+  // Frame 4 Auto-advance timer (active only when user clicks play)
+  useEffect(() => {
+    if (frame === 4 && isPlaying) {
+      const t7 = setTimeout(() => {
+        advanceFrame(5)
+      }, 4800)
+      return () => clearTimeout(t7)
     }
   }, [frame, isPlaying, advanceFrame])
 
@@ -869,8 +884,8 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     ? 'bg-black/50 border-white/15 text-white hover:bg-black/70'
                     : 'bg-emerald-600/80 border-emerald-400/40 text-white hover:bg-emerald-600'
                 }`}
-                aria-label={isPlaying ? 'Pause auto-play' : 'Resume auto-play'}
-                title={isPlaying ? 'Pause auto-play (switch to manual scroll)' : 'Resume auto-play'}
+                aria-label={isPlaying ? 'Pause auto-play' : 'Start auto-play'}
+                title={isPlaying ? 'Pause auto-play (switch to manual scroll)' : 'Start auto-play'}
               >
                 <MaterialIcon name={isPlaying ? 'pause' : 'play_arrow'} size={22} />
               </button>

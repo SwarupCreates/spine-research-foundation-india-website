@@ -78,13 +78,11 @@ export const App: React.FC = () => {
   const [isEducationOpen, setIsEducationOpen] = useState(false)
   const [isMisconceptionsOpen, setIsMisconceptionsOpen] = useState(false)
 
-  // Welcome Journey animation state on landing
+  // Welcome Journey animation state on landing:
+  // Automatically activates when landing directly on the homepage (both on localhost and GitHub Pages subpath).
+  // Child pages (e.g. /about, /care) do not show the journey on direct landing.
   const [isJourneyActive, setIsJourneyActive] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const p = window.location.pathname.replace(/^\//, '').split('/')[0].toLowerCase()
-      if (p && p !== 'home') return false
-    }
-    return true
+    return activeTab === 'home'
   })
   const [isEnteringFromJourney, setIsEnteringFromJourney] = useState(false)
 

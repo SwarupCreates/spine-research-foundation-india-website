@@ -312,6 +312,13 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
   const sharedTextClass =
     'text-3xl sm:text-4xl md:text-5xl lg:text-[56px] xl:text-[60px] 2xl:text-[66px] font-galano font-black uppercase leading-tight whitespace-normal sm:whitespace-nowrap'
 
+  // Frame 4 narrative card font class (scaled to >= 66% of the headline scale for bold, punchy presence)
+  const frame4TextClass =
+    'font-galano font-black text-xl sm:text-2xl md:text-[32px] lg:text-[38px] xl:text-[42px] 2xl:text-[46px] uppercase leading-tight sm:leading-snug drop-shadow-md'
+
+  const frame4RedTitleClass =
+    'text-[#ff0000] font-galano font-black text-2xl sm:text-3xl md:text-[34px] lg:text-[42px] xl:text-[48px] 2xl:text-[52px] uppercase leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]'
+
   return (
     <div className="fixed inset-0 z-[100] w-full h-full bg-[#0b0c0e] overflow-hidden select-none font-galano">
       {/* -------------------------------------------------------- */}
@@ -611,7 +618,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="max-w-sm font-galano font-black text-lg sm:text-2xl md:text-3xl text-white uppercase leading-snug drop-shadow-md"
+                    className={`max-w-md sm:max-w-lg lg:max-w-xl text-white ${frame4TextClass}`}
                   >
                     TWO DECADES OF COMMITMENT &amp; COUNTING ...
                   </motion.div>
@@ -621,7 +628,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="max-w-sm font-galano font-black text-lg sm:text-2xl md:text-3xl text-white uppercase leading-snug text-left sm:text-right drop-shadow-md"
+                    className={`max-w-md sm:max-w-lg lg:max-w-xl text-white text-left sm:text-right ${frame4TextClass}`}
                   >
                     A FAMILY TO WORK WITH – A FAMILY TO WORK FOR
                   </motion.div>
@@ -634,7 +641,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="max-w-sm font-galano font-black text-lg sm:text-2xl md:text-3xl text-white uppercase leading-snug drop-shadow-md"
+                    className={`max-w-md sm:max-w-lg lg:max-w-xl text-white ${frame4TextClass}`}
                   >
                     A BOUNTY OF LOVE, A LEGACY TO UPHOLD
                   </motion.div>
@@ -644,7 +651,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="max-w-sm font-galano font-black text-lg sm:text-2xl md:text-3xl text-white uppercase leading-snug text-left sm:text-right drop-shadow-md"
+                    className={`max-w-md sm:max-w-lg lg:max-w-xl text-white text-left sm:text-right ${frame4TextClass}`}
                   >
                     A PROMISE SPOKEN IN SILENCE – FULFILLED WITH GLORY
                   </motion.div>
@@ -652,13 +659,13 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
               </div>
 
               {/* Bottom-Left: Large SRF Logo & ONE SPINE AT A TIME */}
-              <div className="flex flex-col items-start gap-3">
+              <div className="flex flex-col items-start gap-3 sm:gap-4">
                 {showLogo && (
                   <motion.div
                     initial={{ opacity: 0, scale: 0.7 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                    className="w-18 h-18 sm:w-22 sm:h-22 text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.35)]"
+                    className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.35)]"
                   >
                     <SrfLogo className="w-full h-full text-white" />
                   </motion.div>
@@ -668,7 +675,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
                   <motion.div
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="text-[#ff0000] font-galano font-black text-2xl sm:text-3xl md:text-4xl uppercase drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]"
+                    className={frame4RedTitleClass}
                   >
                     ONE SPINE AT A TIME
                   </motion.div>

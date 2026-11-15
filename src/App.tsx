@@ -172,6 +172,12 @@ export const App: React.FC = () => {
                   onOpenPromise={() => navigate('/care')}
                   onOpenEducation={() => navigate('/discover')}
                   onOpenMisconceptions={() => navigate('/treatments')}
+                  onReplayJourney={() => {
+                    setIsEnteringFromJourney(false)
+                    setIsJourneyActive(true)
+                    window.scrollTo(0, 0)
+                  }}
+                  isEnteringFromJourney={isEnteringFromJourney}
                 />
               }
             />

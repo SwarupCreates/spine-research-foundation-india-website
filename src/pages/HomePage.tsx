@@ -16,6 +16,8 @@ interface HomePageProps {
   onOpenPromise?: () => void
   onOpenEducation?: () => void
   onOpenMisconceptions?: () => void
+  onReplayJourney?: () => void
+  isEnteringFromJourney?: boolean
 }
 
 export const HomePage: React.FC<HomePageProps> = ({
@@ -23,6 +25,8 @@ export const HomePage: React.FC<HomePageProps> = ({
   onOpenPromise,
   onOpenEducation,
   onOpenMisconceptions,
+  onReplayJourney,
+  isEnteringFromJourney,
 }) => {
   const navigate = useNavigate()
   const bannerImgRef = useRef<HTMLImageElement>(null)
@@ -162,7 +166,10 @@ export const HomePage: React.FC<HomePageProps> = ({
         />
       </div>
 
-      <Hero />
+      <Hero
+        onReplayJourney={onReplayJourney}
+        isEnteringFromJourney={isEnteringFromJourney}
+      />
 
       {/* Floating Glass Cards with uniform 20px edge gutter and inter-card gap on mobile */}
       <div className="max-w-[1536px] mx-auto px-5 sm:px-10 lg:px-14 xl:px-16 space-y-5 sm:space-y-5">

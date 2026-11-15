@@ -78,7 +78,7 @@ export const JourneyReplayButton: React.FC<JourneyReplayButtonProps> = ({
           ? { type: 'spring', stiffness: 260, damping: 18, delay: 0.4 }
           : undefined
       }
-      className={`fixed left-4 sm:left-6 lg:left-7 z-[70] transition-[bottom] duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+      className={`hidden md:block fixed left-4 sm:left-6 lg:left-7 z-[70] transition-[bottom] duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] ${
         bottomSpacing === null ? 'bottom-6 sm:bottom-6 lg:bottom-7' : ''
       }`}
       style={{

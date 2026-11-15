@@ -88,13 +88,13 @@ export const App: React.FC = () => {
   })
   const [isEnteringFromJourney, setIsEnteringFromJourney] = useState(false)
 
-  const handleJourneyComplete = () => {
+  const handleJourneyComplete = React.useCallback(() => {
     setIsJourneyActive(false)
     setIsEnteringFromJourney(true)
     setTimeout(() => {
       setIsEnteringFromJourney(false)
     }, 2500)
-  }
+  }, [])
 
   const handleJourneySkip = () => {
     setIsJourneyActive(false)

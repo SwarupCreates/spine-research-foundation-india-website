@@ -56,17 +56,27 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
   const line3Suffix = 'HE SHARES THE FRET ...'
   const line3Total = line3Prefix.length + line3Suffix.length
 
-  // Advance Frame with magnetic transition
+  const isTransitioningRef = React.useRef(false)
+  isTransitioningRef.current = isTransitioning
+
+  const isPlayingRef = React.useRef(isPlaying)
+  isPlayingRef.current = isPlaying
+
+  const onCompleteRef = React.useRef(onComplete)
+  onCompleteRef.current = onComplete
+
+  // Advance Frame with magnetic transition (completely stable callback that never re-creates)
   const advanceFrame = useCallback((targetFrame?: number) => {
-    if (isTransitioning) return
+    if (isTransitioningRef.current) return
     setIsTransitioning(true)
+    isTransitioningRef.current = true
 
     setFrame((prev) => {
       const next = targetFrame !== undefined ? targetFrame : prev + 1
       if (next >= 5) {
         setIsFlyingToNavbar(true)
         setTimeout(() => {
-          onComplete()
+          onCompleteRef.current()
         }, 900)
         return 5
       }
@@ -75,8 +85,12 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
 
     setTimeout(() => {
       setIsTransitioning(false)
+      isTransitioningRef.current = false
     }, 600)
-  }, [isTransitioning, onComplete])
+  }, [])
+
+  const advanceFrameRef = React.useRef(advanceFrame)
+  advanceFrameRef.current = advanceFrame
 
   // Mouse wheel and touch swipe magnetic snap assist
   useEffect(() => {
@@ -153,7 +167,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
   }, [frame, isPlaying, advanceFrame])
 
   // -------------------------------------------------------------
-  // Frame 2 Automation: Type 3 lines smoothly -> elevate -> advance
+  // Frame 2 Automation: Type 3 lines smoothly in-place -> elevate -> advance
   // -------------------------------------------------------------
   useEffect(() => {
     if (frame !== 2) {
@@ -197,9 +211,9 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
       } else {
         timer = setTimeout(() => {
           setIsElevated(true)
-          if (isPlaying) {
+          if (isPlayingRef.current) {
             timer = setTimeout(() => {
-              advanceFrame(3)
+              advanceFrameRef.current(3)
             }, 1800)
           }
         }, 250)
@@ -209,7 +223,17 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
     timer = setTimeout(typeLine1, 220)
 
     return () => clearTimeout(timer)
-  }, [frame, isPlaying, advanceFrame, line1Total, line2Total, line3Total])
+  }, [frame, line1Total, line2Total, line3Total])
+
+  // Resume auto-advance if user toggles play while already elevated on Frame 2
+  useEffect(() => {
+    if (frame === 2 && isElevated && isPlaying) {
+      const t = setTimeout(() => {
+        advanceFrameRef.current(3)
+      }, 1200)
+      return () => clearTimeout(t)
+    }
+  }, [frame, isElevated, isPlaying])
 
   // -------------------------------------------------------------
   // Frame 3 Automation: BUT... -> AS A WITNESS -> HE BLESSES THE WORLD
@@ -451,56 +475,59 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, transition: { duration: 0.5 } }}
-            className="absolute inset-0 z-30 pointer-events-none flex flex-col justify-end pb-28 sm:pb-32 md:pb-36"
+            className="absolute inset-0 z-30 pointer-events-none"
           >
-            {/* Same Unified Container: 92% width */}
-            <div className="w-[92%] mx-auto space-y-4 sm:space-y-5">
-              {/* Line 1 */}
-              <div className={`${sharedTextClass}`}>
-                <span
-                  className={`transition-opacity duration-700 ${
-                    isElevated ? 'opacity-40 text-white/40' : 'opacity-100 text-white'
-                  }`}
-                >
-                  {line1Prefix.slice(0, Math.min(charCount1, line1Prefix.length))}
-                </span>
-                <span className="text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
-                  {charCount1 > line1Prefix.length
-                    ? line1Suffix.slice(0, charCount1 - line1Prefix.length)
-                    : ''}
-                </span>
-              </div>
+            {/* Same Unified Container: 92% width matching Frame 1 */}
+            <div className="w-[92%] mx-auto h-full relative">
+              {/* Top-anchored container: zero upward layout shift when typing successive lines */}
+              <div className="absolute top-[56%] sm:top-[57%] md:top-[58%] left-0 right-0 space-y-1.5 sm:space-y-2 md:space-y-2.5">
+                {/* Line 1 */}
+                <div className={`${sharedTextClass} min-h-[1.25em]`}>
+                  <span
+                    className={`transition-opacity duration-700 ${
+                      isElevated ? 'opacity-65 text-white/65' : 'opacity-100 text-white'
+                    }`}
+                  >
+                    {line1Prefix.slice(0, Math.min(charCount1, line1Prefix.length))}
+                  </span>
+                  <span className="text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
+                    {charCount1 > line1Prefix.length
+                      ? line1Suffix.slice(0, charCount1 - line1Prefix.length)
+                      : ''}
+                  </span>
+                </div>
 
-              {/* Line 2 */}
-              <div className={`${sharedTextClass}`}>
-                <span
-                  className={`transition-opacity duration-700 ${
-                    isElevated ? 'opacity-40 text-white/40' : 'opacity-100 text-white'
-                  }`}
-                >
-                  {line2Prefix.slice(0, Math.min(charCount2, line2Prefix.length))}
-                </span>
-                <span className="text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
-                  {charCount2 > line2Prefix.length
-                    ? line2Suffix.slice(0, charCount2 - line2Prefix.length)
-                    : ''}
-                </span>
-              </div>
+                {/* Line 2 */}
+                <div className={`${sharedTextClass} min-h-[1.25em]`}>
+                  <span
+                    className={`transition-opacity duration-700 ${
+                      isElevated ? 'opacity-65 text-white/65' : 'opacity-100 text-white'
+                    }`}
+                  >
+                    {line2Prefix.slice(0, Math.min(charCount2, line2Prefix.length))}
+                  </span>
+                  <span className="text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
+                    {charCount2 > line2Prefix.length
+                      ? line2Suffix.slice(0, charCount2 - line2Prefix.length)
+                      : ''}
+                  </span>
+                </div>
 
-              {/* Line 3 */}
-              <div className={`${sharedTextClass}`}>
-                <span
-                  className={`transition-opacity duration-700 ${
-                    isElevated ? 'opacity-40 text-white/40' : 'opacity-100 text-white'
-                  }`}
-                >
-                  {line3Prefix.slice(0, Math.min(charCount3, line3Prefix.length))}
-                </span>
-                <span className="text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
-                  {charCount3 > line3Prefix.length
-                    ? line3Suffix.slice(0, charCount3 - line3Prefix.length)
-                    : ''}
-                </span>
+                {/* Line 3 */}
+                <div className={`${sharedTextClass} min-h-[1.25em]`}>
+                  <span
+                    className={`transition-opacity duration-700 ${
+                      isElevated ? 'opacity-65 text-white/65' : 'opacity-100 text-white'
+                    }`}
+                  >
+                    {line3Prefix.slice(0, Math.min(charCount3, line3Prefix.length))}
+                  </span>
+                  <span className="text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
+                    {charCount3 > line3Prefix.length
+                      ? line3Suffix.slice(0, charCount3 - line3Prefix.length)
+                      : ''}
+                  </span>
+                </div>
               </div>
             </div>
           </motion.div>

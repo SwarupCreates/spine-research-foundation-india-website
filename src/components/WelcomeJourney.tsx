@@ -367,8 +367,8 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
             exit={{ opacity: 0, transition: { duration: 0.6 } }}
             className="absolute inset-0 w-full h-full pointer-events-none z-10"
           >
-            {/* Unified Central Story Container: 90vw centered (occupies 90% of viewport width) */}
-            <div className="w-[90vw] mx-auto h-full relative">
+            {/* Unified Central Story Container: 90% width centered */}
+            <div className="w-[90%] mx-auto h-full relative">
               {/* "MEET" top-left: Left-aligned to DURGA */}
               {showMeet && (
                 <motion.div
@@ -452,8 +452,8 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
             exit={{ opacity: 0, transition: { duration: 0.5 } }}
             className="absolute inset-0 z-30 pointer-events-none flex flex-col justify-end pb-28 sm:pb-32 md:pb-36"
           >
-            {/* Same Unified Container: 90vw (occupies 90% of viewport width) */}
-            <div className="w-[90vw] mx-auto space-y-4 sm:space-y-5">
+            {/* Same Unified Container: 90% width */}
+            <div className="w-[90%] mx-auto space-y-4 sm:space-y-5">
               {/* Line 1 */}
               <div className={`${sharedTextClass}`}>
                 <span
@@ -518,8 +518,8 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
             exit={{ opacity: 0, transition: { duration: 0.5 } }}
             className="absolute inset-0 z-30 pointer-events-none flex flex-col justify-between pb-28 sm:pb-32 md:pb-36"
           >
-            {/* Same Unified Container: 90vw (occupies 90% of viewport width) */}
-            <div className="w-[90vw] mx-auto h-full flex flex-col justify-between">
+            {/* Same Unified Container: 90% width */}
+            <div className="w-[90%] mx-auto h-full flex flex-col justify-between">
               {/* Top-Left: BUT... AS A WITNESS, */}
               <div className="pt-10 sm:pt-14 md:pt-16">
                 <motion.div
@@ -573,8 +573,8 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
             exit={{ opacity: 0, transition: { duration: 0.4 } }}
             className="absolute inset-0 z-30 pointer-events-none flex flex-col justify-between pb-28 sm:pb-32 md:pb-36"
           >
-            {/* Same Unified Container: 90vw (occupies 90% of viewport width) */}
-            <div className="w-[90vw] mx-auto h-full flex flex-col justify-between">
+            {/* Same Unified Container: 90% width */}
+            <div className="w-[90%] mx-auto h-full flex flex-col justify-between">
               {/* Top Row: Two Decades & A Family */}
               <div className="flex flex-col sm:flex-row justify-between items-start gap-4 pt-8 sm:pt-10 md:pt-14">
                 {showCard1 && (

@@ -895,149 +895,198 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
             exit={{ opacity: 0, transition: { duration: 0.4 } }}
             className="absolute inset-0 z-30 pointer-events-none"
           >
-            {/* Desktop View (>= md): Classic 2-column spread */}
-            <div className="hidden md:flex flex-col justify-between h-full w-[92%] mx-auto pb-28 sm:pb-32 md:pb-36">
+            {/* Desktop View (>= md): Fixed 2-column layout - all boxes in final positions from start */}
+            <div className="hidden md:block absolute inset-0 w-[92%] mx-auto pointer-events-none">
               {/* Top Row: Two Decades & A Family */}
-              <div className="flex flex-row justify-between items-start gap-4 pt-8 sm:pt-10 md:pt-14">
-                {showCard1 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className={`max-w-md sm:max-w-lg lg:max-w-xl text-white ${frame4TextClass}`}
-                  >
-                    TWO DECADES OF COMMITMENT &amp; COUNTING ...
-                  </motion.div>
-                )}
+              <div className="absolute top-[10%] lg:top-[12%] inset-x-0 flex flex-row justify-between items-start gap-4">
+                <div className="w-[45%] min-h-[3.5em]">
+                  {showCard1 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, ease: 'easeOut' }}
+                      className={`max-w-md sm:max-w-lg lg:max-w-xl text-white ${frame4TextClass}`}
+                    >
+                      TWO DECADES OF COMMITMENT &amp; COUNTING ...
+                    </motion.div>
+                  )}
+                </div>
 
-                {showCard2 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className={`max-w-md sm:max-w-lg lg:max-w-xl text-white text-right ${frame4TextClass}`}
-                  >
-                    A FAMILY TO WORK WITH – A FAMILY TO WORK FOR
-                  </motion.div>
-                )}
+                <div className="w-[45%] min-h-[3.5em] flex justify-end">
+                  {showCard2 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, ease: 'easeOut' }}
+                      className={`max-w-md sm:max-w-lg lg:max-w-xl text-white text-right ${frame4TextClass}`}
+                    >
+                      A FAMILY TO WORK WITH – A FAMILY TO WORK FOR
+                    </motion.div>
+                  )}
+                </div>
               </div>
 
               {/* Mid Row: A Bounty of Love & A Promise Spoken */}
-              <div className="flex flex-row justify-between items-start gap-4 my-auto">
-                {showCard3 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className={`max-w-md sm:max-w-lg lg:max-w-xl text-white ${frame4TextClass}`}
-                  >
-                    A BOUNTY OF LOVE, A LEGACY TO UPHOLD
-                  </motion.div>
-                )}
+              <div className="absolute top-[42%] lg:top-[44%] inset-x-0 flex flex-row justify-between items-start gap-4">
+                <div className="w-[45%] min-h-[3.5em]">
+                  {showCard3 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, ease: 'easeOut' }}
+                      className={`max-w-md sm:max-w-lg lg:max-w-xl text-white ${frame4TextClass}`}
+                    >
+                      A BOUNTY OF LOVE, A LEGACY TO UPHOLD
+                    </motion.div>
+                  )}
+                </div>
 
-                {showCard4 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className={`max-w-md sm:max-w-lg lg:max-w-xl text-white text-right ${frame4TextClass}`}
-                  >
-                    A PROMISE SPOKEN IN SILENCE – FULFILLED WITH GLORY
-                  </motion.div>
-                )}
+                <div className="w-[45%] min-h-[3.5em] flex justify-end">
+                  {showCard4 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, ease: 'easeOut' }}
+                      className={`max-w-md sm:max-w-lg lg:max-w-xl text-white text-right ${frame4TextClass}`}
+                    >
+                      A PROMISE SPOKEN IN SILENCE – FULFILLED WITH GLORY
+                    </motion.div>
+                  )}
+                </div>
               </div>
 
               {/* Bottom-Left: Large SRF Logo & ONE SPINE AT A TIME */}
-              <div className="flex flex-col items-start gap-3 sm:gap-4">
-                {showLogo && (
-                  <motion.div
-                    id="journey-frame4-logo"
-                    initial={{ opacity: 0, scale: 0.7 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                    className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.35)]"
-                  >
-                    <SrfLogo className="w-full h-full text-white" />
-                  </motion.div>
-                )}
+              <div className="absolute bottom-24 sm:bottom-28 md:bottom-32 left-0 flex flex-col items-start gap-3 sm:gap-4">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28">
+                  {showLogo && (
+                    <motion.div
+                      id="journey-frame4-logo"
+                      initial={{ opacity: 0, scale: 0.7 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                      className="w-full h-full text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.35)]"
+                    >
+                      <SrfLogo className="w-full h-full text-white" />
+                    </motion.div>
+                  )}
+                </div>
 
-                {showCard5 && (
-                  <motion.div
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className={frame4RedTitleClass}
-                  >
-                    ONE SPINE AT A TIME
-                  </motion.div>
-                )}
+                <div className="min-h-[1.5em]">
+                  {showCard5 && (
+                    <motion.div
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      className={frame4RedTitleClass}
+                    >
+                      ONE SPINE AT A TIME
+                    </motion.div>
+                  )}
+                </div>
               </div>
             </div>
 
-            {/* Mobile View (< md): Stacked vertically in a single centered column (27px on 402px base, all centered) */}
-            <div className="md:hidden flex flex-col justify-between h-full pt-12 pb-24 sm:pb-28 px-5 text-center">
-              {/* Block 1 */}
-              {showCard1 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-white font-galano font-black uppercase text-[clamp(19px,6.72vw,27px)] leading-tight text-center drop-shadow-md"
-                >
-                  TWO DECADES OF COMMITMENT &amp; COUNTING ...
-                </motion.div>
-              )}
-
-              {/* Block 2 */}
-              {showCard2 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-white font-galano font-black uppercase text-[clamp(19px,6.72vw,27px)] leading-tight text-center drop-shadow-md"
-                >
-                  A FAMILY TO WORK WITH – A FAMILY TO WORK FOR
-                </motion.div>
-              )}
-
-              {/* Block 3 */}
-              {showCard3 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-white font-galano font-black uppercase text-[clamp(19px,6.72vw,27px)] leading-tight text-center drop-shadow-md"
-                >
-                  A BOUNTY OF LOVE, A LEGACY TO UPHOLD
-                </motion.div>
-              )}
-
-              {/* Block 4 */}
-              {showCard4 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-white font-galano font-black uppercase text-[clamp(19px,6.72vw,27px)] leading-tight text-center drop-shadow-md"
-                >
-                  A PROMISE SPOKEN IN SILENCE – FULFILLED WITH GLORY
-                </motion.div>
-              )}
-
-              {/* Logo & ONE SPINE AT A TIME */}
-              <div className="flex flex-col items-center justify-center gap-2 pt-1">
-                {showLogo && (
-                  <motion.div
-                    id="journey-frame4-logo-mobile"
-                    initial={{ opacity: 0, scale: 0.7 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                    className="w-16 h-16 sm:w-18 sm:h-18 mx-auto text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.35)]"
-                  >
-                    <SrfLogo className="w-full h-full text-white" />
-                  </motion.div>
-                )}
-
-                {showCard5 && (
+            {/* Mobile View (< md): Stacked vertically in fixed sequential slots, compact & positioned lower matching Figma */}
+            <div className="md:hidden absolute top-[15%] sm:top-[16%] inset-x-0 flex flex-col items-center justify-start text-center px-6 z-20 space-y-3.5 sm:space-y-4">
+              {/* Slot 1: TWO DECADES OF COMMITMENT & COUNTING ... */}
+              <div className="min-h-[64px] sm:min-h-[72px] flex items-center justify-center text-center">
+                {showCard1 && (
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="text-[#ff0000] font-galano font-black uppercase tracking-wide text-[clamp(21px,6.72vw,27px)] leading-tight text-center drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]"
+                    transition={{ duration: 0.5, ease: 'easeOut' }}
+                    className="text-white font-galano font-black uppercase text-[clamp(18px,6vw,25px)] leading-[1.14] text-center drop-shadow-md max-w-[270px] sm:max-w-xs mx-auto"
                   >
-                    ONE SPINE AT A TIME
+                    TWO DECADES OF
+                    <br />
+                    COMMITMENT &amp;
+                    <br />
+                    COUNTING ...
                   </motion.div>
                 )}
+              </div>
+
+              {/* Slot 2: A FAMILY TO WORK WITH – A FAMILY TO WORK FOR */}
+              <div className="min-h-[64px] sm:min-h-[72px] flex items-center justify-center text-center">
+                {showCard2 && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5, ease: 'easeOut' }}
+                    className="text-white font-galano font-black uppercase text-[clamp(18px,6vw,25px)] leading-[1.14] text-center drop-shadow-md max-w-[270px] sm:max-w-xs mx-auto"
+                  >
+                    A FAMILY TO WORK
+                    <br />
+                    WITH – A FAMILY
+                    <br />
+                    TO WORK FOR
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Slot 3: A BOUNTY OF LOVE, A LEGACY TO UPHOLD */}
+              <div className="min-h-[64px] sm:min-h-[72px] flex items-center justify-center text-center">
+                {showCard3 && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5, ease: 'easeOut' }}
+                    className="text-white font-galano font-black uppercase text-[clamp(18px,6vw,25px)] leading-[1.14] text-center drop-shadow-md max-w-[260px] sm:max-w-xs mx-auto"
+                  >
+                    A BOUNTY OF
+                    <br />
+                    LOVE, A LEGACY
+                    <br />
+                    TO UPHOLD
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Slot 4: A PROMISE SPOKEN IN SILENCE – FULFILLED WITH GLORY */}
+              <div className="min-h-[64px] sm:min-h-[72px] flex items-center justify-center text-center">
+                {showCard4 && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5, ease: 'easeOut' }}
+                    className="text-white font-galano font-black uppercase text-[clamp(18px,6vw,25px)] leading-[1.14] text-center drop-shadow-md max-w-[270px] sm:max-w-xs mx-auto"
+                  >
+                    A PROMISE SPOKEN IN
+                    <br />
+                    SILENCE – FULFILLED
+                    <br />
+                    WITH GLORY
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Slot 5: Prominent SRF Logo & ONE SPINE AT A TIME */}
+              <div className="flex flex-col items-center justify-center pt-2 sm:pt-3">
+                <div className="w-20 h-20 sm:w-22 sm:h-22 min-h-[80px] sm:min-h-[88px] flex items-center justify-center">
+                  {showLogo && (
+                    <motion.div
+                      id="journey-frame4-logo-mobile"
+                      initial={{ opacity: 0, scale: 0.7 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                      className="w-20 h-20 sm:w-22 sm:h-22 mx-auto text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.4)]"
+                    >
+                      <SrfLogo className="w-full h-full text-white" />
+                    </motion.div>
+                  )}
+                </div>
+
+                <div className="min-h-[32px] flex items-center justify-center pt-2">
+                  {showCard5 && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.5, ease: 'easeOut' }}
+                      className="text-[#ff0000] font-galano font-black uppercase tracking-wide text-[clamp(21px,6.72vw,27px)] leading-tight text-center drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]"
+                    >
+                      ONE SPINE AT A TIME
+                    </motion.div>
+                  )}
+                </div>
               </div>
             </div>
           </motion.div>

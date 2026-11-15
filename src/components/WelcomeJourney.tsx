@@ -78,6 +78,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
     height: number
   }>({ left: 60, top: 700, width: 112, height: 112 })
 
+  // Ensure viewport starts at the top
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
   // Synchronize target coordinates dynamically from the navbar element in the DOM
   useEffect(() => {
     const updateTarget = () => {

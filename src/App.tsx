@@ -78,6 +78,32 @@ export const App: React.FC = () => {
   const [isEducationOpen, setIsEducationOpen] = useState(false)
   const [isMisconceptionsOpen, setIsMisconceptionsOpen] = useState(false)
 
+  // Ensure the page always starts at top (scrollY = 0) on revisit, reload, or mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if ('scrollRestoration' in window.history) {
+        window.history.scrollRestoration = 'manual'
+      }
+      window.scrollTo(0, 0)
+
+      const handleResetScroll = () => {
+        window.scrollTo(0, 0)
+      }
+
+      window.addEventListener('beforeunload', handleResetScroll)
+      window.addEventListener('pagehide', handleResetScroll)
+      window.addEventListener('pageshow', handleResetScroll)
+      window.addEventListener('load', handleResetScroll)
+
+      return () => {
+        window.removeEventListener('beforeunload', handleResetScroll)
+        window.removeEventListener('pagehide', handleResetScroll)
+        window.removeEventListener('pageshow', handleResetScroll)
+        window.removeEventListener('load', handleResetScroll)
+      }
+    }
+  }, [])
+
   // Welcome Journey animation state on landing:
   // Automatically activates when landing directly on the homepage (both on localhost and GitHub Pages subpath).
   // Child pages (e.g. /about, /care) do not show the journey on direct landing.
@@ -88,18 +114,22 @@ export const App: React.FC = () => {
 
   const handleLandedAtNavbar = React.useCallback(() => {
     setIsEnteringFromJourney(true)
+    window.scrollTo(0, 0)
   }, [])
 
   const handleJourneyComplete = React.useCallback(() => {
     setIsJourneyActive(false)
+    window.scrollTo(0, 0)
     setTimeout(() => {
       setIsEnteringFromJourney(false)
+      window.scrollTo(0, 0)
     }, 2000)
   }, [])
 
   const handleJourneySkip = () => {
     setIsJourneyActive(false)
     setIsEnteringFromJourney(false)
+    window.scrollTo(0, 0)
   }
 
   // Lock manual scrolling while the cinematic journey is playing
@@ -109,6 +139,7 @@ export const App: React.FC = () => {
       window.scrollTo(0, 0)
     } else {
       document.body.style.overflow = ''
+      window.scrollTo(0, 0)
     }
     return () => {
       document.body.style.overflow = ''

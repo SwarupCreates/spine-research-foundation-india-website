@@ -31,10 +31,17 @@ export const HomePage: React.FC<HomePageProps> = ({
   const bannerImgRef = useRef<HTMLImageElement>(null)
   const [isMobileCollapsed, setIsMobileCollapsed] = useState(false)
 
+  // Reset to intermediate extended frame on initial mount
+  useEffect(() => {
+    setIsMobileCollapsed(false)
+    window.scrollTo(0, 0)
+  }, [])
+
   // Reset to intermediate extended frame when entering from journey or replaying
   useEffect(() => {
     if (isEnteringFromJourney) {
       setIsMobileCollapsed(false)
+      window.scrollTo(0, 0)
     }
   }, [isEnteringFromJourney])
 
@@ -99,7 +106,7 @@ export const HomePage: React.FC<HomePageProps> = ({
       const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
       const parallaxFactor = isMobile ? 0.24 : 0.20
 
-      if (isMobile && scrollY > 20 && !isMobileCollapsed) {
+      if (isMobile && scrollY > 20 && !isMobileCollapsed && !isEnteringFromJourney) {
         setIsMobileCollapsed(true)
       }
 
@@ -140,7 +147,9 @@ export const HomePage: React.FC<HomePageProps> = ({
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
-    handleScroll()
+    if (window.scrollY > 0) {
+      handleScroll()
+    }
 
     return () => {
       window.removeEventListener('scroll', handleScroll)

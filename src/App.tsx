@@ -25,6 +25,17 @@ export const App: React.FC = () => {
   const activeTab = pathSegment ? pathSegment : 'home'
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' ? window.innerWidth < 768 : false
+  )
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   // Automatically close mobile menu, dismiss any open modals, and scroll to top upon navigating
   useEffect(() => {
@@ -344,11 +355,11 @@ export const App: React.FC = () => {
         </footer>
       </div>
 
-      {/* Bottom Page-level Gradual Blur (Hidden on mobile so it never blurs card text or action buttons) */}
+      {/* Bottom Page-level Gradual Blur (renders on both mobile and PC with responsive calibration) */}
       <GradualBlur
         position="bottom"
         target="page"
-        height="7.5rem"
+        height={isMobile ? '6.5rem' : '7.5rem'}
         strength={2.5}
         layers={8}
         curve="linear"
@@ -356,7 +367,6 @@ export const App: React.FC = () => {
         tint="rgba(11, 12, 14, 0.7)"
         autoHide
         zIndex={30}
-        className="hidden md:block"
       />
 
       {/* Minimal Custom Pill-Shaped Page Scroller */}

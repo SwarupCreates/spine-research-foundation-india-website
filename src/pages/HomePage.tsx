@@ -120,8 +120,7 @@ export const HomePage: React.FC<HomePageProps> = ({
     }
 
     const animate = () => {
-      const isMobile = typeof window !== 'undefined' && window.innerWidth < 640
-      const scaleStr = isMobile ? 'scale(1.18)' : 'scale(1.02)'
+      const scaleStr = 'scale(1)'
 
       // Lerp with 0.08 damping factor creates luxurious delayed inertia
       currentY += (targetY - currentY) * 0.08
@@ -153,31 +152,28 @@ export const HomePage: React.FC<HomePageProps> = ({
   return (
     <>
       {/* Landing Scroll Level Hero Background Banner with Delayed Parallax & Magnetic Snap */}
-      {/* On mobile: Render with full 100dvh height in intermediate state */}
+      {/* On mobile: Render with full 100dvh height in intermediate state matching Frame 4 */}
       <div 
-        className="absolute -top-[100px] sm:-top-[110px] left-0 right-0 h-[calc(100dvh+100px)] sm:h-[calc(100vh+110px)] pointer-events-none z-0 overflow-hidden"
+        className="absolute -top-[86px] sm:-top-[90px] left-0 right-0 h-[100dvh] sm:h-[calc(100vh+90px)] pointer-events-none z-0 overflow-hidden"
         aria-hidden="true"
       >
-        {/* Overscan wrapper: top overscan accommodates the downward parallax travel so no gap appears */}
-        <div className="absolute inset-x-0 -top-16 sm:-top-24 -bottom-16 sm:-bottom-12 overflow-hidden">
-          {/* Background Image with Delayed Parallax Scroll: 3:5 portrait on mobile, 16:9 on desktop */}
-          <picture className="w-full h-full block">
-            <source
-              media="(max-width: 768px)"
-              srcSet={`${import.meta.env.BASE_URL}banners/Solitary%20Boy%20Amid%20the%20Moving%20Crowd%201%20-%20phone.png`}
-            />
-            <img
-              ref={bannerImgRef}
-              src={`${import.meta.env.BASE_URL}banners/Solitary%20Boy%20Amid%20the%20Moving%20Crowd%201.jpg`}
-              alt="Spine Research Foundation India patient banner"
-              className="w-full h-full object-cover object-[50%_12%] sm:object-[50%_24%] select-none opacity-90 will-change-transform"
-              style={{
-                transform: 'translate3d(0, 0px, 0) scale(1.02)',
-                transformOrigin: 'center center',
-              }}
-            />
-          </picture>
-        </div>
+        {/* Background Image with Delayed Parallax Scroll: identical framing & zoom to Frame 4 */}
+        <picture className="w-full h-full block">
+          <source
+            media="(max-width: 768px)"
+            srcSet={`${import.meta.env.BASE_URL}banners/Solitary%20Boy%20Amid%20the%20Moving%20Crowd%201%20-%20phone.png`}
+          />
+          <img
+            ref={bannerImgRef}
+            src={`${import.meta.env.BASE_URL}banners/Solitary%20Boy%20Amid%20the%20Moving%20Crowd%201.jpg`}
+            alt="Spine Research Foundation India patient banner"
+            className="w-full h-full object-cover object-[50%_25%] sm:object-[50%_28%] select-none opacity-100 will-change-transform"
+            style={{
+              transform: 'translate3d(0, 0px, 0) scale(1)',
+              transformOrigin: 'center center',
+            }}
+          />
+        </picture>
 
         {/* Gradual blur softening as we move up to the overlay: adjusted for 100dvh height on mobile */}
         <div className="block sm:hidden">

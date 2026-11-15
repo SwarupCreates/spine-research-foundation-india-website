@@ -1,5 +1,5 @@
 import React from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import AnimatedContent from './AnimatedContent'
 import { MaterialIcon } from './icons'
 
@@ -30,7 +30,7 @@ export const Hero: React.FC<HeroProps> = ({
               ? { duration: 0.45, ease: 'easeOut', delay: 0.45 }
               : undefined
           }
-          className="md:hidden absolute top-4 right-6 z-20 pointer-events-auto"
+          className="md:hidden absolute top-0.5 right-5 sm:right-6 z-20 pointer-events-auto"
         >
           <button
             type="button"
@@ -106,17 +106,22 @@ export const Hero: React.FC<HeroProps> = ({
         transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
         className={`md:hidden relative z-10 flex flex-col items-center text-center px-6 transition-all duration-500 ease-out ${
           isMobileCollapsed
-            ? 'pt-4 pb-4'
-            : 'h-[calc(100dvh-62px)] min-h-[calc(100dvh-62px)] pt-4 pb-24 justify-between'
+            ? 'pt-8 pb-3 sm:pt-10 sm:pb-4'
+            : 'h-[calc(100dvh-86px)] min-h-[calc(100dvh-86px)] justify-between pt-0 pb-0'
         }`}
       >
+        {/* Extended Frame Top Spacer: Centers the upper hero text block on the screen */}
+        {!isMobileCollapsed && (
+          <div className="flex-1 min-h-[16vh] max-h-[25vh] pointer-events-none" aria-hidden="true" />
+        )}
+
         {/* Upper Portion: Welcome to Spine Research Foundation India / By your side always... */}
         <div
-          className={`flex flex-col items-center text-center transition-all duration-500 ${
-            isMobileCollapsed ? 'pt-2 space-y-1' : 'pt-16 sm:pt-20 space-y-1.5'
+          className={`flex flex-col items-center text-center transition-all duration-500 shrink-0 ${
+            isMobileCollapsed ? 'space-y-1' : 'space-y-1.5'
           }`}
         >
-          <span className="text-white/70 text-[clamp(17px,5vw,20px)] font-normal tracking-normal leading-snug">
+          <span className="text-white/70 text-[clamp(16px,4.8vw,19px)] font-normal tracking-normal leading-snug">
             Welcome to
           </span>
           <h1 className="text-white text-[clamp(26px,8.2vw,34px)] font-bold tracking-tight leading-[1.18] flex flex-col items-center">
@@ -126,22 +131,16 @@ export const Hero: React.FC<HeroProps> = ({
               <span className="text-white/60 font-normal">India</span>
             </span>
           </h1>
-          <p className="text-gray-300 text-[clamp(15px,4.4vw,18px)] font-normal pt-0.5">
+          <p className="text-gray-300 text-[clamp(14.5px,4.2vw,17px)] font-normal pt-1">
             By your side always...
           </p>
         </div>
 
-        {/* Middle Portion (Extended Only): Down arrow button indicating scroll down to reveal */}
-        <AnimatePresence>
-          {!isMobileCollapsed && (
-            <motion.div
-              key="hero-mobile-down-arrow"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.6, transition: { duration: 0.25 } }}
-              transition={{ duration: 0.5, ease: 'easeOut' }}
-              className="my-auto py-2 flex flex-col items-center justify-center"
-            >
+        {/* Lower Portion & Scroll Indicator */}
+        {!isMobileCollapsed ? (
+          <div className="flex-1 w-full flex flex-col items-center justify-between pointer-events-auto">
+            {/* Down arrow indicator positioned at a lower position between first part and 2nd part */}
+            <div className="flex-1 flex flex-col items-center justify-end pb-3 sm:pb-5">
               <motion.button
                 type="button"
                 onClick={onCollapseMobile}
@@ -151,41 +150,34 @@ export const Hero: React.FC<HeroProps> = ({
                 aria-label="Scroll down to reveal cards"
                 title="Scroll down to reveal"
               >
-                <MaterialIcon name="arrow_cool_down" size={30} />
+                <MaterialIcon name="arrow_cool_down" size={28} />
               </motion.button>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            </div>
 
-        {/* Lower Portion: Blessed to serve nearly 300 underprivileged patients and counting */}
-        <motion.div
-          layout
-          transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-          className={`flex flex-col items-center text-center ${
-            isMobileCollapsed ? 'pt-3 pb-2' : 'pb-6'
-          }`}
-        >
-          <p className="text-white/95 text-[clamp(15px,4.5vw,19px)] font-normal leading-relaxed max-w-xs mx-auto">
-            {isMobileCollapsed ? (
-              <>
-                Blessed to serve nearly{' '}
-                <span className="font-semibold text-emerald-400">300</span>{' '}
-                underprivileged
-                <br />
-                patients and counting
-              </>
-            ) : (
-              <>
+            {/* 2nd part of hero text (Extended: 3 lines) cleared above bottom floating action buttons */}
+            <div className="pb-24 sm:pb-28 shrink-0">
+              <p className="text-white/95 text-[clamp(15px,4.5vw,18px)] font-normal leading-relaxed max-w-xs mx-auto">
                 Blessed to serve nearly{' '}
                 <span className="font-semibold text-emerald-400">300</span>
                 <br />
                 underprivileged
                 <br />
                 patients and counting
-              </>
-            )}
-          </p>
-        </motion.div>
+              </p>
+            </div>
+          </div>
+        ) : (
+          /* Collapsed state: 2nd part of hero text rearranged into 2 lines with shorter font */
+          <div className="pt-2.5 pb-1">
+            <p className="text-white/80 text-[13.5px] sm:text-[14px] font-normal leading-snug max-w-xs mx-auto">
+              Blessed to serve nearly{' '}
+              <span className="font-medium text-emerald-400">300</span>{' '}
+              underprivileged
+              <br />
+              patients and counting
+            </p>
+          </div>
+        )}
       </motion.div>
     </section>
   )

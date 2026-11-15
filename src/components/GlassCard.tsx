@@ -8,17 +8,17 @@ interface GlassCardProps {
 
 export const GlassCard: React.FC<GlassCardProps> = ({ onReadMore }) => {
   return (
-    <div className="relative rounded-3xl sm:rounded-[32px] overflow-hidden glass-panel border border-white/[0.08] px-6 py-8 sm:px-10 sm:py-12 lg:px-14 lg:py-14 text-center sm:text-left shadow-xl transition duration-300 hover:border-white/[0.14]">
+    <div className="relative rounded-3xl sm:rounded-[32px] overflow-hidden glass-panel border border-white/[0.08] px-5 py-5 sm:px-10 sm:py-12 lg:px-14 lg:py-14 text-center sm:text-left shadow-xl transition duration-300 hover:border-white/[0.14]">
       {/* Mobile Top Forehead Region: Enlarged center-aligned watermark with white blend gradient and content overlap */}
       <div 
-        className="sm:hidden flex justify-center -mt-1 -mb-6 select-none pointer-events-none overflow-hidden" 
+        className="sm:hidden flex justify-center mt-1 -mb-16 select-none pointer-events-none overflow-hidden" 
         aria-hidden="true"
         style={{
-          maskImage: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.36) 0%, rgba(255, 255, 255, 0.16) 45%, rgba(255, 255, 255, 0.04) 75%, rgba(255, 255, 255, 0) 100%)',
-          WebkitMaskImage: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.36) 0%, rgba(255, 255, 255, 0.16) 45%, rgba(255, 255, 255, 0.04) 75%, rgba(255, 255, 255, 0) 100%)',
+          maskImage: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.14) 45%, rgba(255, 255, 255, 0.03) 75%, rgba(255, 255, 255, 0) 100%)',
+          WebkitMaskImage: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.14) 45%, rgba(255, 255, 255, 0.03) 75%, rgba(255, 255, 255, 0) 100%)',
         }}
       >
-        <div className="w-48 h-48 text-white shrink-0 drop-shadow-[0_0_28px_rgba(255,255,255,0.12)]">
+        <div className="w-44 h-44 text-white shrink-0 drop-shadow-[0_0_24px_rgba(255,255,255,0.1)]">
           <SrfLogo className="w-full h-full text-white" />
         </div>
       </div>
@@ -44,7 +44,7 @@ export const GlassCard: React.FC<GlassCardProps> = ({ onReadMore }) => {
         duration={0.7}
         ease="power3.out"
         threshold={0.1}
-        className="relative z-10 max-w-xl lg:max-w-2xl text-center sm:text-left mx-auto sm:mx-0 space-y-3 sm:space-y-4"
+        className="relative z-10 max-w-xl lg:max-w-2xl text-center sm:text-left mx-auto sm:mx-0 space-y-2.5 sm:space-y-4"
       >
         <h2 className="text-2xl sm:text-3xl lg:text-[var(--font-size-card-title,28px)] font-medium text-white tracking-tight leading-snug">
           The best of health care within your reach
@@ -54,7 +54,7 @@ export const GlassCard: React.FC<GlassCardProps> = ({ onReadMore }) => {
           We commit to your problems with all zeal and might
         </p>
 
-        <div className="pt-2 sm:pt-3 flex justify-center sm:justify-start">
+        <div className="pt-1.5 sm:pt-3 flex justify-center sm:justify-start">
           <button
             type="button"
             onClick={onReadMore}

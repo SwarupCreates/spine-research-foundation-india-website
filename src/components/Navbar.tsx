@@ -49,15 +49,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   const menuContainerRef = useRef<HTMLDivElement>(null)
   const hamburgerButtonRef = useRef<HTMLButtonElement>(null)
 
-  const setMenuOpen = (open: boolean) => {
-    if (externalMobileMenuOpen === undefined) {
-      setInternalMobileMenuOpen(open)
-    }
-    if (onMobileMenuOpenChange) {
-      onMobileMenuOpenChange(open)
-    }
-  }
-
   useEffect(() => {
     setCurrentTab(activeTab)
   }, [activeTab])
@@ -80,6 +71,55 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const leaveTimer1Ref = useRef<ReturnType<typeof setTimeout> | null>(null)
   const leaveTimer2Ref = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Synchronous mobile menu controller:
+  // In React 18, state updates triggered inside this event handler (open state + logo expansion)
+  // are automatically batched into a SINGLE render cycle, eliminating the 1-frame delayed
+  // useEffect execution that previously caused the top navbar area to "refresh once" on entry!
+  const setMenuOpen = (open: boolean) => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      if (open) {
+        if (leaveTimer1Ref.current) clearTimeout(leaveTimer1Ref.current)
+        if (leaveTimer2Ref.current) clearTimeout(leaveTimer2Ref.current)
+        setIsLogoStacked(true)
+        setIsLogoHovered(true)
+        setIsLogoExpanded(true)
+      } else {
+        if (leaveTimer1Ref.current) clearTimeout(leaveTimer1Ref.current)
+        if (leaveTimer2Ref.current) clearTimeout(leaveTimer2Ref.current)
+        leaveTimer1Ref.current = setTimeout(() => {
+          setIsLogoHovered(false)
+          setIsLogoExpanded(false)
+        }, 120)
+        leaveTimer2Ref.current = setTimeout(() => {
+          setIsLogoStacked(false)
+        }, 420)
+      }
+    }
+    if (externalMobileMenuOpen === undefined) {
+      setInternalMobileMenuOpen(open)
+    }
+    if (onMobileMenuOpenChange) {
+      onMobileMenuOpenChange(open)
+    }
+  }
+
+  // Synchronize mobile logo contraction when menu is closed externally (e.g. route navigation)
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      if (!isMenuOpen && (isLogoHovered || isLogoExpanded || isLogoStacked)) {
+        if (leaveTimer1Ref.current) clearTimeout(leaveTimer1Ref.current)
+        if (leaveTimer2Ref.current) clearTimeout(leaveTimer2Ref.current)
+        leaveTimer1Ref.current = setTimeout(() => {
+          setIsLogoHovered(false)
+          setIsLogoExpanded(false)
+        }, 120)
+        leaveTimer2Ref.current = setTimeout(() => {
+          setIsLogoStacked(false)
+        }, 420)
+      }
+    }
+  }, [isMenuOpen, isLogoHovered, isLogoExpanded, isLogoStacked])
 
   // Smooth hover transition timings:
   // Deliberate exit delay and multi-phase contraction so nav items on the right never jerk

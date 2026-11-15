@@ -5,6 +5,7 @@ import { MaterialIcon } from './icons'
 interface HeroProps {
   onReplayJourney?: () => void
   isEnteringFromJourney?: boolean
+  mobileScrollProgress?: number
   isMobileCollapsed?: boolean
   onCollapseMobile?: () => void
 }
@@ -12,9 +13,17 @@ interface HeroProps {
 export const Hero: React.FC<HeroProps> = ({
   onReplayJourney,
   isEnteringFromJourney = false,
+  mobileScrollProgress,
   isMobileCollapsed = false,
   onCollapseMobile,
 }) => {
+  // Effective smooth scroll progress from 0 (full intermediate screen) to 1 (collapsed hero)
+  const p =
+    mobileScrollProgress !== undefined
+      ? mobileScrollProgress
+      : isMobileCollapsed
+      ? 1
+      : 0
   return (
     <section className="relative md:pt-36 md:pb-10 lg:pt-48 lg:pb-12 overflow-hidden">
       {/* Mobile-only Silent Journey Replay Button: Pinned to top-right of the hero banner image, scrolls away naturally with page scroll */}
@@ -84,83 +93,107 @@ export const Hero: React.FC<HeroProps> = ({
       </div>
 
       {/* ------------------------------------------------------------- */}
-      {/* MOBILE VIEW (< md): Intermediate Extended Frame (100dvh) vs Collapsed Hero */}
+      {/* MOBILE VIEW (< md): Continuous Scroll-Linked Morphing Hero   */}
       {/* ------------------------------------------------------------- */}
       <div
-        className={`md:hidden relative z-10 flex flex-col items-center text-center px-6 transition-[min-height,height,padding] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-          isMobileCollapsed
-            ? 'min-h-0 pt-7 pb-3 sm:pt-9 sm:pb-4'
-            : 'h-[calc(100dvh-86px)] min-h-[calc(100dvh-86px)] justify-between pt-0 pb-0'
-        }`}
+        className="md:hidden relative z-10 flex flex-col items-center text-center px-6 transition-all duration-75"
+        style={{
+          minHeight: p >= 1 ? '0px' : `calc(${(1 - p).toFixed(3)} * (100dvh - 86px))`,
+          paddingTop: `${Math.round(p * 24)}px`,
+          paddingBottom: `${Math.round(p * 12)}px`,
+          justifyContent: p > 0.8 ? 'flex-start' : 'space-between',
+        }}
       >
-        {/* Extended Frame Top Spacer: Centers the upper hero text block slightly lower on the screen */}
-        {!isMobileCollapsed && (
-          <div className="flex-[1.3] min-h-[22vh] max-h-[32vh] pointer-events-none" aria-hidden="true" />
-        )}
-
-        {/* Upper Portion: Welcome to Spine Research Foundation India / By your side always... */}
+        {/* Extended Frame Top Spacer: Smoothly lowers height from 24vh down to 0 */}
         <div
-          className={`flex flex-col items-center text-center transition-all duration-500 shrink-0 ${
-            isMobileCollapsed ? 'space-y-1' : 'space-y-1.5'
-          }`}
-        >
-          <span className="text-white/70 text-[clamp(16px,4.8vw,19px)] font-normal tracking-normal leading-snug">
+          style={{
+            height: `${((1 - p) * 24).toFixed(1)}vh`,
+            minHeight: 0,
+            opacity: 1 - p,
+          }}
+          className="pointer-events-none transition-all duration-75 shrink-0"
+          aria-hidden="true"
+        />
+
+        {/* Center Title Block: Font size and inter-line spacing gradually scale down */}
+        <div className="flex flex-col items-center text-center shrink-0">
+          <span
+            style={{
+              fontSize: `${(18 - p * 3.5).toFixed(1)}px`,
+              opacity: 1 - p * 0.3,
+            }}
+            className="text-white/70 font-normal tracking-normal leading-snug"
+          >
             Welcome to
           </span>
-          <h1 className="text-white text-[clamp(26px,8.2vw,34px)] font-bold tracking-tight leading-[1.18] flex flex-col items-center">
+          <h1
+            style={{
+              fontSize: `${(32 - p * 9).toFixed(1)}px`,
+              lineHeight: 1.18,
+            }}
+            className="text-white font-bold tracking-tight flex flex-col items-center pt-1"
+          >
             <span>Spine Research</span>
             <span>
               Foundation{' '}
               <span className="text-white/60 font-normal">India</span>
             </span>
           </h1>
-          <p className="text-gray-300 text-[clamp(14.5px,4.2vw,17px)] font-normal pt-1">
+          <p
+            style={{
+              fontSize: `${(16.5 - p * 2.5).toFixed(1)}px`,
+              paddingTop: `${Math.round(4 * (1 - p))}px`,
+            }}
+            className="text-gray-300 font-normal"
+          >
             By your side always...
           </p>
         </div>
 
-        {/* Lower Portion & Scroll Indicator */}
-        {!isMobileCollapsed ? (
-          <div className="flex-1 w-full flex flex-col items-center justify-between pointer-events-auto">
-            {/* Down arrow indicator positioned at a lower position between first part and 2nd part */}
-            <div className="flex-1 flex flex-col items-center justify-center py-2">
-              <motion.button
-                type="button"
-                onClick={onCollapseMobile}
-                animate={{ y: [0, 8, 0] }}
-                transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
-                className="text-white/60 hover:text-white active:scale-90 transition-all p-3 cursor-pointer"
-                aria-label="Scroll down to reveal cards"
-                title="Scroll down to reveal"
-              >
-                <MaterialIcon name="arrow_cool_down" size={28} />
-              </motion.button>
-            </div>
+        {/* Down Arrow Scroll Indicator: Smoothly dissolves as user starts scrolling */}
+        <div
+          style={{
+            opacity: Math.max(0, 1 - p * 2.5),
+            height: p > 0.4 ? 0 : 'auto',
+            pointerEvents: p > 0.3 ? 'none' : 'auto',
+          }}
+          className="flex flex-col items-center justify-center py-2 transition-opacity duration-150 shrink-0"
+        >
+          <motion.button
+            type="button"
+            onClick={onCollapseMobile}
+            animate={{ y: [0, 8, 0] }}
+            transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
+            className="text-white/60 hover:text-white active:scale-90 transition-all p-3 cursor-pointer"
+            aria-label="Scroll down to reveal cards"
+            title="Scroll down to reveal"
+          >
+            <MaterialIcon name="arrow_cool_down" size={28} />
+          </motion.button>
+        </div>
 
-            {/* 2nd part of hero text (Extended: 3 lines) cleared above bottom floating action buttons */}
-            <div className="pb-24 sm:pb-28 shrink-0">
-              <p className="text-white/95 text-[clamp(15px,4.5vw,18px)] font-normal leading-relaxed max-w-xs mx-auto">
-                Blessed to serve nearly{' '}
-                <span className="font-semibold text-emerald-400">300</span>
-                <br />
-                underprivileged
-                <br />
-                patients and counting
-              </p>
-            </div>
-          </div>
-        ) : (
-          /* Collapsed state: 2nd part of hero text rearranged into 2 lines with shorter font */
-          <div className="pt-2.5 pb-1">
-            <p className="text-white/80 text-[13.5px] sm:text-[14px] font-normal leading-snug max-w-xs mx-auto">
-              Blessed to serve nearly{' '}
-              <span className="font-medium text-emerald-400">300</span>{' '}
-              underprivileged
-              <br />
-              patients and counting
-            </p>
-          </div>
-        )}
+        {/* Lower Portion: Impact stat seamlessly settles from 3-line format to compact header */}
+        <div
+          style={{
+            paddingBottom: `${Math.round(14 + (1 - p) * 82)}px`,
+            paddingTop: `${Math.round(p * 8)}px`,
+          }}
+          className="shrink-0 transition-all duration-75"
+        >
+          <p
+            style={{
+              fontSize: `${(16.5 - p * 2.5).toFixed(1)}px`,
+            }}
+            className="text-white/95 font-normal leading-relaxed max-w-xs mx-auto"
+          >
+            Blessed to serve nearly{' '}
+            <span className="font-semibold text-emerald-400">300</span>
+            {p < 0.6 ? <br /> : ' '}
+            underprivileged
+            <br />
+            patients and counting
+          </p>
+        </div>
       </div>
     </section>
   )

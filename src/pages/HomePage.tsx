@@ -30,10 +30,12 @@ export const HomePage: React.FC<HomePageProps> = ({
   const navigate = useNavigate()
   const bannerImgRef = useRef<HTMLImageElement>(null)
   const [isMobileCollapsed, setIsMobileCollapsed] = useState(false)
+  const [mobileScrollProgress, setMobileScrollProgress] = useState(0)
 
   // Reset to intermediate extended frame on initial mount
   useEffect(() => {
     setIsMobileCollapsed(false)
+    setMobileScrollProgress(0)
     window.scrollTo(0, 0)
   }, [])
 
@@ -41,53 +43,10 @@ export const HomePage: React.FC<HomePageProps> = ({
   useEffect(() => {
     if (isEnteringFromJourney) {
       setIsMobileCollapsed(false)
+      setMobileScrollProgress(0)
       window.scrollTo(0, 0)
     }
   }, [isEnteringFromJourney])
-
-  // Touch and wheel collapse triggers for mobile viewport
-  useEffect(() => {
-    const isMobile = () => typeof window !== 'undefined' && window.innerWidth < 768
-
-    let touchStartY = 0
-
-    const handleTouchStart = (e: TouchEvent) => {
-      touchStartY = e.touches[0].clientY
-    }
-
-    const handleTouchMove = (e: TouchEvent) => {
-      if (!isMobile()) return
-      const currentY = e.touches[0].clientY
-      const diff = touchStartY - currentY
-
-      if (!isMobileCollapsed && diff > 15) {
-        // Swiping up to scroll down -> collapse hero
-        setIsMobileCollapsed(true)
-      } else if (isMobileCollapsed && window.scrollY <= 2 && diff < -35) {
-        // Pulling down while at the very top -> expand hero
-        setIsMobileCollapsed(false)
-      }
-    }
-
-    const handleWheel = (e: WheelEvent) => {
-      if (!isMobile()) return
-      if (!isMobileCollapsed && e.deltaY > 10) {
-        setIsMobileCollapsed(true)
-      } else if (isMobileCollapsed && window.scrollY <= 2 && e.deltaY < -15) {
-        setIsMobileCollapsed(false)
-      }
-    }
-
-    window.addEventListener('touchstart', handleTouchStart, { passive: true })
-    window.addEventListener('touchmove', handleTouchMove, { passive: true })
-    window.addEventListener('wheel', handleWheel, { passive: true })
-
-    return () => {
-      window.removeEventListener('touchstart', handleTouchStart)
-      window.removeEventListener('touchmove', handleTouchMove)
-      window.removeEventListener('wheel', handleWheel)
-    }
-  }, [isMobileCollapsed])
 
   // Fluid delayed parallax scroll effect with magnetic top snapping
   useEffect(() => {
@@ -106,8 +65,15 @@ export const HomePage: React.FC<HomePageProps> = ({
       const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
       const parallaxFactor = isMobile ? 0.24 : 0.20
 
-      if (isMobile && scrollY > 20 && !isMobileCollapsed && !isEnteringFromJourney) {
-        setIsMobileCollapsed(true)
+      if (isMobile) {
+        // Continuous scroll-linked collapse over 220px of scroll range
+        const COLLAPSE_RANGE = 220
+        const p = Math.min(1, Math.max(0, scrollY / COLLAPSE_RANGE))
+        setMobileScrollProgress(p)
+        setIsMobileCollapsed(p >= 0.85)
+      } else {
+        setIsMobileCollapsed(false)
+        setMobileScrollProgress(0)
       }
 
       if (scrollY <= MAGNETIC_SNAP_THRESHOLD) {
@@ -165,23 +131,19 @@ export const HomePage: React.FC<HomePageProps> = ({
         className="absolute -top-[86px] sm:-top-[90px] left-0 right-0 h-[100dvh] sm:h-[calc(100vh+90px)] pointer-events-none z-0 overflow-hidden"
         aria-hidden="true"
       >
-        {/* Background Image with Delayed Parallax Scroll: identical framing & zoom to Frame 4 */}
-        <picture className="w-full h-full block">
-          <source
-            media="(max-width: 768px)"
-            srcSet={`${import.meta.env.BASE_URL}banners/Solitary%20Boy%20Amid%20the%20Moving%20Crowd%201%20-%20phone.png`}
-          />
+        {/* Background Image with Delayed Parallax Scroll: full high-res source image with rich crowd details */}
+        <div className="w-full h-full block">
           <img
             ref={bannerImgRef}
             src={`${import.meta.env.BASE_URL}banners/Solitary%20Boy%20Amid%20the%20Moving%20Crowd%201.jpg`}
             alt="Spine Research Foundation India patient banner"
-            className="w-full h-full object-cover object-[50%_25%] sm:object-[50%_28%] select-none opacity-100 will-change-transform"
+            className="w-full h-full object-cover object-[48%_25%] md:object-center select-none opacity-100 will-change-transform"
             style={{
               transform: 'translate3d(0, 0px, 0) scale(1)',
               transformOrigin: 'center center',
             }}
           />
-        </picture>
+        </div>
 
         {/* Gradual blur softening as we move up to the overlay: adjusted for 100dvh height on mobile */}
         <div className="block sm:hidden">
@@ -238,8 +200,9 @@ export const HomePage: React.FC<HomePageProps> = ({
       <Hero
         onReplayJourney={onReplayJourney}
         isEnteringFromJourney={isEnteringFromJourney}
+        mobileScrollProgress={mobileScrollProgress}
         isMobileCollapsed={isMobileCollapsed}
-        onCollapseMobile={() => setIsMobileCollapsed(true)}
+        onCollapseMobile={() => window.scrollTo({ top: 220, behavior: 'smooth' })}
       />
 
       {/* Floating Glass Cards with uniform 20px edge gutter and inter-card gap on mobile */}

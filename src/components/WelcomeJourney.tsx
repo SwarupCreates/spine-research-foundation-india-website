@@ -432,12 +432,6 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
     }
   }, [])
 
-  // Shared font size class for all text across the first 3 frames (except DURGA)
-  const sharedTextClass =
-    'text-3xl sm:text-4xl md:text-5xl lg:text-[56px] xl:text-[60px] 2xl:text-[66px] font-galano font-black uppercase leading-tight whitespace-normal sm:whitespace-nowrap'
-
-
-
   return (
     <div className="fixed inset-0 z-[100] w-full h-full pointer-events-none overflow-hidden select-none font-galano">
       {/* Background dark backdrop & story frames (smoothly dissolves to 0 on landing flight) */}
@@ -498,17 +492,13 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
               transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
               className="absolute inset-0 w-full h-full overflow-hidden"
             >
-              <picture className="w-full h-full block relative z-0 md:transform-none md:scale-100 md:translate-y-0 scale-[0.90] -translate-y-7 sm:-translate-y-9 origin-center">
-                <source
-                  media="(max-width: 768px)"
-                  srcSet={`${import.meta.env.BASE_URL}banners/Solitary%20Boy%20Amid%20the%20Moving%20Crowd%201%20-%20phone.png`}
-                />
+              <div className="w-full h-full block relative z-0">
                 <img
                   src={`${import.meta.env.BASE_URL}banners/Solitary%20Boy%20Amid%20the%20Moving%20Crowd%201.jpg`}
                   alt="Solitary Boy Amid the Moving Crowd"
-                  className="w-full h-full object-cover object-[50%_20%] md:object-center select-none"
+                  className="w-full h-full object-cover object-[48%_25%] md:object-center select-none"
                 />
-              </picture>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -579,7 +569,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
           >
             {/* Desktop View (>= md): Full-width 92% container */}
             <div className="hidden md:block w-[92%] mx-auto h-full relative">
-              <div className={`absolute top-[7.5%] left-0 text-white select-none ${sharedTextClass}`}>
+              <div className="absolute top-[2.8%] sm:top-[3.2%] lg:top-[3.8%] left-0 text-white select-none">
                 <ScrollReveal
                   mode="scrub"
                   progress={f1_meet}
@@ -593,7 +583,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   baseOffset={0}
                   enableBlur={true}
                   blurStrength={4}
-                  containerClassName="text-white font-galano font-black uppercase tracking-wide leading-none text-4xl sm:text-5xl md:text-[56px] lg:text-[68px] xl:text-[76px]"
+                  containerClassName="text-white font-galano font-black uppercase tracking-wide leading-none text-3xl sm:text-4xl md:text-5xl lg:text-[56px] xl:text-[64px] 2xl:text-[70px]"
                 >
                   MEET
                 </ScrollReveal>
@@ -605,7 +595,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   transform: `scale(${0.96 + 0.04 * f1_durga})`,
                   filter: `blur(${(8 * (1 - f1_durga)).toFixed(1)}px)`,
                 }}
-                className="absolute top-[16%] left-0 w-full select-none pointer-events-none"
+                className="absolute top-[14%] lg:top-[14.5%] left-0 w-full select-none pointer-events-none"
               >
                 <svg
                   viewBox="0 0 720 152"
@@ -724,7 +714,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   transform: `scale(${0.96 + 0.04 * f1_durga})`,
                   filter: `blur(${(8 * (1 - f1_durga)).toFixed(1)}px)`,
                 }}
-                className="absolute top-[16%] left-0 w-full select-none pointer-events-none"
+                className="absolute top-[14%] lg:top-[14.5%] left-0 w-full select-none pointer-events-none"
               >
                 <svg
                   viewBox="0 0 720 152"
@@ -1152,7 +1142,8 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
             />
 
             {/* Desktop View (>= md): Single left-aligned vertical column distributed with space-between */}
-            <div className="hidden md:flex absolute top-[7.5%] lg:top-[8%] bottom-[124px] lg:bottom-[132px] left-[4%] xl:left-[5%] w-[44%] max-w-xl flex-col justify-between items-start pointer-events-none z-20">
+            {/* iPad Air Portrait (md:max-lg): w-[68%] provides comfortable reading width without crowding */}
+            <div className="hidden md:flex absolute top-[7.5%] lg:top-[8%] bottom-[124px] lg:bottom-[132px] left-[4%] xl:left-[5%] w-[68%] md:max-lg:w-[68%] lg:w-[44%] max-w-xl flex-col justify-between items-start pointer-events-none z-20">
               {/* Item 1: Two decades of commitment & counting ... */}
               <div className="w-full flex items-start">
                 <ScrollReveal
@@ -1275,12 +1266,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
               </div>
             </div>
 
-            {/* Mobile View (< md): Stacked vertically in fixed sequential slots matching Figma */}
-            <div className="md:hidden absolute inset-0 z-20 pointer-events-none">
-              {/* Upper cluster: 4 text blocks + prominent SRF logo distributed equidistantly */}
-              <div className="absolute top-[14%] sm:top-[15%] bottom-[160px] sm:bottom-[172px] inset-x-0 flex flex-col items-center justify-between text-center px-4">
-                {/* Slot 1: Two decades of commitment & counting ... */}
-                <div className="min-h-[50px] sm:min-h-[56px] flex items-center justify-center text-center">
+            {/* Mobile View (< md): Unified compact sequential flow matching Figma design */}
+            <div className="md:hidden absolute top-[18%] sm:top-[19.5%] inset-x-0 flex flex-col items-center text-center px-4 pointer-events-none z-20">
+              <div className="w-full max-w-[320px] sm:max-w-sm flex flex-col items-center space-y-3 sm:space-y-3.5">
+                {/* Line 1: Two decades of commitment & counting ... */}
+                <div className="w-full flex items-center justify-center text-center">
                   <ScrollReveal
                     mode="scrub"
                     progress={f3_p1}
@@ -1294,14 +1284,14 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     baseOffset={0}
                     enableBlur={true}
                     blurStrength={4}
-                    containerClassName="font-galano-alt font-bold text-white text-[clamp(17px,5.2vw,23px)] leading-[1.2] text-center drop-shadow-md max-w-[280px] sm:max-w-xs mx-auto justify-center"
+                    containerClassName="font-galano-alt font-bold text-white text-[clamp(17px,5.2vw,22.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center"
                   >
                     Two decades of commitment &amp; counting ...
                   </ScrollReveal>
                 </div>
 
-                {/* Slot 2: A family to work with – A family to work for */}
-                <div className="min-h-[50px] sm:min-h-[56px] flex items-center justify-center text-center">
+                {/* Line 2: A family to work with – A family to work for */}
+                <div className="w-full flex items-center justify-center text-center">
                   <ScrollReveal
                     mode="scrub"
                     progress={f3_p2}
@@ -1315,14 +1305,14 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     baseOffset={0}
                     enableBlur={true}
                     blurStrength={4}
-                    containerClassName="font-galano-alt font-bold text-white text-[clamp(17px,5.2vw,23px)] leading-[1.2] text-center drop-shadow-md max-w-[280px] sm:max-w-xs mx-auto justify-center"
+                    containerClassName="font-galano-alt font-bold text-white text-[clamp(17px,5.2vw,22.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center"
                   >
                     A family to work with – A family to work for
                   </ScrollReveal>
                 </div>
 
-                {/* Slot 3: A bounty of love, A legacy to uphold */}
-                <div className="min-h-[50px] sm:min-h-[56px] flex items-center justify-center text-center">
+                {/* Line 3: A bounty of love, A legacy to uphold */}
+                <div className="w-full flex items-center justify-center text-center">
                   <ScrollReveal
                     mode="scrub"
                     progress={f3_p3}
@@ -1336,14 +1326,14 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     baseOffset={0}
                     enableBlur={true}
                     blurStrength={4}
-                    containerClassName="font-galano-alt font-bold text-white text-[clamp(17px,5.2vw,23px)] leading-[1.2] text-center drop-shadow-md max-w-[280px] sm:max-w-xs mx-auto justify-center"
+                    containerClassName="font-galano-alt font-bold text-white text-[clamp(17px,5.2vw,22.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center"
                   >
                     A bounty of love, A legacy to uphold
                   </ScrollReveal>
                 </div>
 
-                {/* Slot 4: A promise spoken in silence – fulfilled with glory */}
-                <div className="min-h-[50px] sm:min-h-[56px] flex items-center justify-center text-center">
+                {/* Line 4: A promise spoken in silence – fulfilled with glory */}
+                <div className="w-full flex items-center justify-center text-center">
                   <ScrollReveal
                     mode="scrub"
                     progress={f3_p4}
@@ -1357,14 +1347,14 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     baseOffset={0}
                     enableBlur={true}
                     blurStrength={4}
-                    containerClassName="font-galano-alt font-bold text-white text-[clamp(17px,5.2vw,23px)] leading-[1.2] text-center drop-shadow-md max-w-[280px] sm:max-w-xs mx-auto justify-center"
+                    containerClassName="font-galano-alt font-bold text-white text-[clamp(17px,5.2vw,22.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center"
                   >
                     A promise spoken in silence – fulfilled with glory
                   </ScrollReveal>
                 </div>
 
-                {/* Slot 5: Prominent SRF Logo */}
-                <div className="w-20 h-20 sm:w-22 sm:h-22 min-h-[76px] sm:min-h-[84px] flex items-center justify-center">
+                {/* Prominent SRF Logo: positioned directly below line 4 matching Figma */}
+                <div className="w-18 h-18 sm:w-20 sm:h-20 pt-1.5 sm:pt-2 flex items-center justify-center">
                   <div
                     id="journey-frame4-logo-mobile"
                     style={{
@@ -1372,33 +1362,33 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                       transform: `scale(${(0.75 + 0.25 * f3_logo).toFixed(3)})`,
                       filter: f3_logo < 1 ? `blur(${((1 - f3_logo) * 4).toFixed(1)}px)` : 'none',
                     }}
-                    className="w-20 h-20 sm:w-22 sm:h-22 mx-auto text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.4)] transition-all duration-75"
+                    className="w-18 h-18 sm:w-20 sm:h-20 mx-auto text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.4)] transition-all duration-75"
                   >
                     <SrfLogo className="w-full h-full text-white" />
                   </div>
                 </div>
-              </div>
 
-              {/* Lower position: One spine at a time directly above floating buttons with safe gutter */}
-              <div className="absolute bottom-[108px] sm:bottom-[116px] inset-x-0 min-h-[28px] sm:min-h-[32px] flex items-center justify-center px-4">
-                <ScrollReveal
-                  mode="scrub"
-                  progress={f3_p5}
-                  splitBy="words"
-                  effect="fade"
-                  stagger={0.05}
-                  duration={0.8}
-                  smoothing={0}
-                  baseOpacity={0.1}
-                  baseRotation={0}
-                  baseOffset={0}
-                  enableBlur={true}
-                  blurStrength={4}
-                  highlightColor="#ff0000"
-                  containerClassName="font-galano-alt font-bold tracking-wide text-[#ff0000] text-[clamp(20px,6.2vw,26px)] leading-tight text-center drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] justify-center"
-                >
-                  One spine at a time
-                </ScrollReveal>
+                {/* One spine at a time: positioned directly below logo matching Figma */}
+                <div className="w-full pt-1 flex items-center justify-center text-center">
+                  <ScrollReveal
+                    mode="scrub"
+                    progress={f3_p5}
+                    splitBy="words"
+                    effect="fade"
+                    stagger={0.05}
+                    duration={0.8}
+                    smoothing={0}
+                    baseOpacity={0.1}
+                    baseRotation={0}
+                    baseOffset={0}
+                    enableBlur={true}
+                    blurStrength={4}
+                    highlightColor="#ff0000"
+                    containerClassName="font-galano-alt font-bold tracking-wide text-[#ff0000] text-[clamp(19px,5.8vw,25px)] leading-tight text-center drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] justify-center"
+                  >
+                    One spine at a time
+                  </ScrollReveal>
+                </div>
               </div>
             </div>
           </motion.div>

@@ -82,7 +82,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   // are automatically batched into a SINGLE render cycle, eliminating the 1-frame delayed
   // useEffect execution that previously caused the top navbar area to "refresh once" on entry!
   const setMenuOpen = (open: boolean) => {
-    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
       if (open) {
         if (leaveTimer1Ref.current) clearTimeout(leaveTimer1Ref.current)
         if (leaveTimer2Ref.current) clearTimeout(leaveTimer2Ref.current)
@@ -111,7 +111,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   // Synchronize mobile logo contraction when menu is closed externally (e.g. route navigation)
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
       if (!isMenuOpen && (isLogoHovered || isLogoExpanded || isLogoStacked)) {
         if (leaveTimer1Ref.current) clearTimeout(leaveTimer1Ref.current)
         if (leaveTimer2Ref.current) clearTimeout(leaveTimer2Ref.current)
@@ -129,8 +129,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   // Smooth hover transition timings:
   // Deliberate exit delay and multi-phase contraction so nav items on the right never jerk
   const handleLogoMouseEnter = () => {
-    // On mobile view, disable hover animation (expansion is driven by mobile menu state instead)
-    if (typeof window !== 'undefined' && window.innerWidth < 768) return
+    // On mobile/tablet portrait view, disable hover animation (expansion is driven by mobile menu state instead)
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) return
 
     if (leaveTimer1Ref.current) {
       clearTimeout(leaveTimer1Ref.current)
@@ -146,8 +146,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   }
 
   const handleLogoMouseLeave = () => {
-    // On mobile view, disable hover animation
-    if (typeof window !== 'undefined' && window.innerWidth < 768) return
+    // On mobile/tablet portrait view, disable hover animation
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) return
 
     if (leaveTimer1Ref.current) clearTimeout(leaveTimer1Ref.current)
     if (leaveTimer2Ref.current) clearTimeout(leaveTimer2Ref.current)
@@ -391,8 +391,10 @@ export const Navbar: React.FC<NavbarProps> = ({
         </a>
 
         {/* Floating Nav Menu: NO dark pill container, NO background, NO border, completely clear */}
+        {/* On iPad Air Portrait (< 1024px) & phones: renders sleek AnimatedList hamburger menu */}
+        {/* On iPad Air Landscape (>= 1024px) & desktops: renders full horizontal navigation row */}
         <nav
-          className="hidden md:flex items-center gap-1.5 lg:gap-3 bg-transparent border-0 p-0 shadow-none ml-auto shrink-0"
+          className="hidden lg:flex items-center gap-1.5 lg:gap-3 bg-transparent border-0 p-0 shadow-none ml-auto shrink-0"
           aria-label="Main Navigation"
         >
           {NAV_ITEMS.map((item, index) => {
@@ -433,7 +435,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           })}
         </nav>
 
-        {/* Mobile Animated Hamburger Button */}
+        {/* Mobile / Tablet Portrait Animated Hamburger Button */}
         <motion.div
           initial={{ opacity: 0, y: -16 }}
           animate={{
@@ -445,7 +447,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             delay: shouldAnimateEntry ? 0.35 : 0,
             ease: [0.16, 1, 0.3, 1],
           }}
-          className="flex md:hidden items-center"
+          className="flex lg:hidden items-center"
         >
           <button
             ref={hamburgerButtonRef}
@@ -487,7 +489,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Tap interceptor backdrop: sits at z-[85] behind the z-[90] header bar and drawer */}
       {isMenuOpen && (
         <div
-          className="fixed inset-0 z-[85] bg-transparent md:hidden"
+          className="fixed inset-0 z-[85] bg-transparent lg:hidden"
           onClick={(e) => {
             e.stopPropagation()
             setMenuOpen(false)
@@ -510,7 +512,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               scale: 0.96,
               transition: { duration: 0.18, ease: [0.16, 1, 0.3, 1] },
             }}
-            className="md:hidden absolute top-full left-0 right-0 z-[90] pointer-events-auto px-4 sm:px-6 pt-2 pb-6 overflow-visible"
+            className="lg:hidden absolute top-full left-0 right-0 z-[90] pointer-events-auto px-4 sm:px-6 pt-2 pb-6 overflow-visible"
           >
             <AnimatedList
               items={ANIMATED_NAV_ITEMS}

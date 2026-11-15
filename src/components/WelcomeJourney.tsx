@@ -286,7 +286,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
 
   // Shared font size class for all text across the first 3 frames (except DURGA)
   const sharedTextClass =
-    'text-3xl sm:text-4xl md:text-5xl lg:text-[56px] xl:text-[60px] 2xl:text-[66px] font-galano font-black tracking-wide uppercase leading-tight whitespace-normal sm:whitespace-nowrap'
+    'text-3xl sm:text-4xl md:text-5xl lg:text-[56px] xl:text-[60px] 2xl:text-[66px] font-galano font-black uppercase leading-tight whitespace-normal sm:whitespace-nowrap'
 
   return (
     <div className="fixed inset-0 z-[100] w-screen h-screen bg-[#0b0c0e] overflow-hidden select-none font-galano">
@@ -367,8 +367,8 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
             exit={{ opacity: 0, transition: { duration: 0.6 } }}
             className="absolute inset-0 w-full h-full pointer-events-none z-10"
           >
-            {/* Unified Central Story Container: 84vw centered with wide gutters */}
-            <div className="w-[84vw] max-w-[1400px] mx-auto h-full relative">
+            {/* Unified Central Story Container: 90vw centered (occupies 90% of viewport width) */}
+            <div className="w-[90vw] mx-auto h-full relative">
               {/* "MEET" top-left: Left-aligned to DURGA */}
               {showMeet && (
                 <motion.div
@@ -381,7 +381,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
                 </motion.div>
               )}
 
-              {/* Giant "DURGA" bold red text: Spans container width in center, behind boy */}
+              {/* Giant "DURGA" bold red text: Spans 90% viewport width with natural letter spacing */}
               {showDurga && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.96 }}
@@ -390,19 +390,17 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
                   className="absolute top-[16%] left-0 w-full select-none pointer-events-none"
                 >
                   <svg
-                    viewBox="0 0 1000 195"
+                    viewBox="0 0 810 185"
                     className="w-full h-auto overflow-hidden select-none pointer-events-none"
                     aria-label="DURGA"
                   >
                     <text
                       x="0"
-                      y="170"
+                      y="148"
                       fill="#ff0000"
                       fontFamily="'Galano Grotesque Black', 'Galano Grotesque', sans-serif"
                       fontWeight="900"
-                      fontSize="220"
-                      textLength="1000"
-                      lengthAdjust="spacing"
+                      fontSize="200"
                     >
                       DURGA
                     </text>
@@ -454,8 +452,8 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
             exit={{ opacity: 0, transition: { duration: 0.5 } }}
             className="absolute inset-0 z-30 pointer-events-none flex flex-col justify-end pb-28 sm:pb-32 md:pb-36"
           >
-            {/* Same Unified Container & Left Alignment */}
-            <div className="w-[84vw] max-w-[1400px] mx-auto space-y-4 sm:space-y-5">
+            {/* Same Unified Container: 90vw (occupies 90% of viewport width) */}
+            <div className="w-[90vw] mx-auto space-y-4 sm:space-y-5">
               {/* Line 1 */}
               <div className={`${sharedTextClass}`}>
                 <span
@@ -520,8 +518,8 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
             exit={{ opacity: 0, transition: { duration: 0.5 } }}
             className="absolute inset-0 z-30 pointer-events-none flex flex-col justify-between pb-28 sm:pb-32 md:pb-36"
           >
-            {/* Same Unified Container & Left Alignment */}
-            <div className="w-[84vw] max-w-[1400px] mx-auto h-full flex flex-col justify-between">
+            {/* Same Unified Container: 90vw (occupies 90% of viewport width) */}
+            <div className="w-[90vw] mx-auto h-full flex flex-col justify-between">
               {/* Top-Left: BUT... AS A WITNESS, */}
               <div className="pt-10 sm:pt-14 md:pt-16">
                 <motion.div
@@ -575,15 +573,15 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
             exit={{ opacity: 0, transition: { duration: 0.4 } }}
             className="absolute inset-0 z-30 pointer-events-none flex flex-col justify-between pb-28 sm:pb-32 md:pb-36"
           >
-            {/* Same Unified Container & Left Alignment */}
-            <div className="w-[84vw] max-w-[1400px] mx-auto h-full flex flex-col justify-between">
+            {/* Same Unified Container: 90vw (occupies 90% of viewport width) */}
+            <div className="w-[90vw] mx-auto h-full flex flex-col justify-between">
               {/* Top Row: Two Decades & A Family */}
               <div className="flex flex-col sm:flex-row justify-between items-start gap-4 pt-8 sm:pt-10 md:pt-14">
                 {showCard1 && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="max-w-sm font-galano font-black text-lg sm:text-2xl md:text-3xl text-white uppercase tracking-wide leading-snug drop-shadow-md"
+                    className="max-w-sm font-galano font-black text-lg sm:text-2xl md:text-3xl text-white uppercase leading-snug drop-shadow-md"
                   >
                     TWO DECADES OF COMMITMENT &amp; COUNTING ...
                   </motion.div>
@@ -593,7 +591,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="max-w-sm font-galano font-black text-lg sm:text-2xl md:text-3xl text-white uppercase tracking-wide leading-snug text-left sm:text-right drop-shadow-md"
+                    className="max-w-sm font-galano font-black text-lg sm:text-2xl md:text-3xl text-white uppercase leading-snug text-left sm:text-right drop-shadow-md"
                   >
                     A FAMILY TO WORK WITH – A FAMILY TO WORK FOR
                   </motion.div>
@@ -606,7 +604,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="max-w-sm font-galano font-black text-lg sm:text-2xl md:text-3xl text-white uppercase tracking-wide leading-snug drop-shadow-md"
+                    className="max-w-sm font-galano font-black text-lg sm:text-2xl md:text-3xl text-white uppercase leading-snug drop-shadow-md"
                   >
                     A BOUNTY OF LOVE, A LEGACY TO UPHOLD
                   </motion.div>
@@ -616,7 +614,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="max-w-sm font-galano font-black text-lg sm:text-2xl md:text-3xl text-white uppercase tracking-wide leading-snug text-left sm:text-right drop-shadow-md"
+                    className="max-w-sm font-galano font-black text-lg sm:text-2xl md:text-3xl text-white uppercase leading-snug text-left sm:text-right drop-shadow-md"
                   >
                     A PROMISE SPOKEN IN SILENCE – FULFILLED WITH GLORY
                   </motion.div>
@@ -640,7 +638,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
                   <motion.div
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="text-[#ff0000] font-galano font-black text-2xl sm:text-3xl md:text-4xl tracking-wide uppercase drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]"
+                    className="text-[#ff0000] font-galano font-black text-2xl sm:text-3xl md:text-4xl uppercase drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]"
                   >
                     ONE SPINE AT A TIME
                   </motion.div>
@@ -719,7 +717,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
               <button
                 type="button"
                 onClick={onSkip}
-                className="h-12 px-6 rounded-full bg-black/50 backdrop-blur-md border border-white/15 text-white/90 hover:text-white hover:bg-black/70 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 font-sans text-sm font-semibold tracking-wider cursor-pointer shadow-xl uppercase"
+                className="h-12 px-6 rounded-full bg-black/50 backdrop-blur-md border border-white/15 text-white/90 hover:text-white hover:bg-black/70 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 font-sans text-sm font-semibold tracking-normal cursor-pointer shadow-xl uppercase"
                 aria-label="Skip welcome journey"
               >
                 <MaterialIcon name="fast_forward" size={18} />

@@ -114,15 +114,18 @@ export const App: React.FC = () => {
 
   const handleLandedAtNavbar = React.useCallback(() => {
     setIsEnteringFromJourney(true)
-    window.scrollTo(0, 0)
+    if (window.scrollY > 0) {
+      window.scrollTo(0, 0)
+    }
   }, [])
 
   const handleJourneyComplete = React.useCallback(() => {
     setIsJourneyActive(false)
-    window.scrollTo(0, 0)
+    if (window.scrollY > 0) {
+      window.scrollTo(0, 0)
+    }
     setTimeout(() => {
       setIsEnteringFromJourney(false)
-      window.scrollTo(0, 0)
     }, 2000)
   }, [])
 
@@ -139,7 +142,6 @@ export const App: React.FC = () => {
       window.scrollTo(0, 0)
     } else {
       document.body.style.overflow = ''
-      window.scrollTo(0, 0)
     }
     return () => {
       document.body.style.overflow = ''
@@ -455,7 +457,6 @@ export const App: React.FC = () => {
         curve="linear"
         exponential
         tint="rgba(11, 12, 14, 0.7)"
-        autoHide
         zIndex={30}
       />
 

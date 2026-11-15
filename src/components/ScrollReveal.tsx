@@ -126,6 +126,7 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
 }) => {
   const containerRef = useRef<HTMLHeadingElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
+  const renderRef = useRef<((customP?: number) => void) | null>(null);
 
   const text = useMemo(() => {
     const parts = Children.toArray(children);
@@ -172,7 +173,7 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
     const gap = Math.max(0, stagger);
     const look: RevealLook = {
       effect,
-      masked: effect === 'rise' && wrappers.length > 0,
+      masked: effect === 'rise' && wrappers.length > 0 && !baseOffset,
       baseOpacity,
       blur: enableBlur ? blurStrength : 0,
       offset: baseOffset,
@@ -201,7 +202,10 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
 
     const total = () => span + Math.max(0, count - 1) * gap;
 
-    const render = () => {
+    const render = (customP?: number) => {
+      if (customP !== undefined) {
+        state.p = customP;
+      }
       const at = state.p * total();
       pieces.forEach((piece, index) => {
         const t = clamp01((at - order[index] * gap) / span);
@@ -210,6 +214,8 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
         paintPiece(piece, t, look);
       });
     };
+
+    renderRef.current = render;
 
     measure();
     pieces.forEach(piece => {
@@ -225,11 +231,10 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
 
     // Direct progress-driven mode (when progress prop is provided)
     if (progress !== undefined) {
-      state.p = clamp01(progress);
-      render();
+      render(clamp01(progress));
       if (baseRotation) {
         el.style.transformOrigin = '0% 50%';
-        el.style.transform = `rotate(${(baseRotation * (1 - state.p)).toFixed(2)}deg)`;
+        el.style.transform = `rotate(${(baseRotation * (1 - clamp01(progress))).toFixed(2)}deg)`;
       }
       return () => {
         pieces.forEach(piece => {
@@ -357,9 +362,20 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
     stagger,
     smoothing,
     rotationEnd,
-    wordAnimationEnd,
-    progress
+    wordAnimationEnd
   ]);
+
+  // High-performance direct progress scrubbing (zero DOM re-querying or style clearing)
+  useIsomorphicLayoutEffect(() => {
+    if (progress === undefined) return;
+    if (renderRef.current) {
+      renderRef.current(clamp01(progress));
+    }
+    if (baseRotation && containerRef.current) {
+      containerRef.current.style.transformOrigin = '0% 50%';
+      containerRef.current.style.transform = `rotate(${(baseRotation * (1 - clamp01(progress))).toFixed(2)}deg)`;
+    }
+  }, [progress, baseRotation]);
 
   return (
     <h2 ref={containerRef} className={`scroll-reveal ${containerClassName}`} aria-label={text ?? undefined}>

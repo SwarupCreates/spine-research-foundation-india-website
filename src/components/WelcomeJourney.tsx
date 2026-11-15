@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { SrfLogo, MaterialIcon } from './icons'
+import { BlurText } from './BlurText'
 import { ScrollReveal } from './ScrollReveal'
 import GradualBlur from './GradualBlur'
 
@@ -17,21 +18,39 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
   onSkip,
   onLandedAtNavbar,
 }) => {
-  // Current journey frame: 1 through 4, then 5 for landing transition
+  // Current journey frame: 1 through 3, then 4 for landing transition
   const [frame, setFrame] = useState<number>(1)
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false)
+  const [transitionDirection, setTransitionDirection] = useState<'forward' | 'backward'>('forward')
+
+  // Frame 1 slow sequential reveal states (BlurText)
+  const [showMeet, setShowMeet] = useState<boolean>(false)
+  const [showDurga, setShowDurga] = useState<boolean>(false)
+  const [showControls, setShowControls] = useState<boolean>(false)
 
   // Continuous scroll reveal progress (0..1) within current frame
   const [frameProgress, setFrameProgress] = useState<number>(0)
   const targetProgressRef = useRef<number>(0)
 
+  // Mobile detection for responsive offsets
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth < 768 : false
+  )
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   // Auto-play state: false = manual scrolling by default; true = auto-advances
   const [isPlaying, setIsPlaying] = useState<boolean>(false)
 
-  // Frame progress mapping across frames
-  // Frame 1 progress
-  const f1_meet = clamp01(frameProgress / 0.5)
-  const f1_durga = clamp01((frameProgress - 0.35) / 0.65)
+  // Frame 1 Exit when scrolling forward
+  const f1Exit = clamp01(frameProgress / 0.55)
+  const f1ExitY = -f1Exit * 90
+  const f1ExitBlur = f1Exit * 16
+  const f1ExitOpacity = Math.max(0, 1 - f1Exit)
 
   // Frame 2 progress (5 combined storytelling lines)
   const f2_p1 = clamp01((frameProgress - 0.0) / 0.22)
@@ -47,6 +66,34 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
   const f3_p4 = clamp01((frameProgress - 0.48) / 0.20)
   const f3_logo = clamp01((frameProgress - 0.64) / 0.18)
   const f3_p5 = clamp01((frameProgress - 0.78) / 0.22)
+
+  // Bidirectional Frame Exit Physics (Frame 2 & 3):
+  // Forward exit: continues scrolling down past 1.0 towards next frame -> moves UPWARD & blurs out
+  const forwardExit = clamp01((frameProgress - 1.0) / 0.18)
+  // Reverse exit: continues scrolling up past 0.0 towards previous frame -> moves DOWNWARD & blurs out
+  const reverseExit = clamp01(-frameProgress / 0.15)
+
+  const frameExitY = forwardExit > 0 ? -forwardExit * 90 : reverseExit > 0 ? reverseExit * 90 : 0
+  const frameExitBlur = Math.max(forwardExit, reverseExit) * 14
+  const frameExitOpacity = Math.max(0, 1 - Math.max(forwardExit, reverseExit))
+
+  // Initial sequential BlurText reveal triggers on Frame 1 load
+  useEffect(() => {
+    if (frame === 1) {
+      const tMeet = setTimeout(() => setShowMeet(true), 400)
+      const tDurga = setTimeout(() => setShowDurga(true), 1000)
+      const tControls = setTimeout(() => setShowControls(true), 1400)
+      return () => {
+        clearTimeout(tMeet)
+        clearTimeout(tDurga)
+        clearTimeout(tControls)
+      }
+    } else {
+      setShowMeet(true)
+      setShowDurga(true)
+      setShowControls(true)
+    }
+  }, [frame])
 
   // Frame 5 flight to navbar & seamless dissolve
   const [isFlyingToNavbar, setIsFlyingToNavbar] = useState<boolean>(false)
@@ -152,17 +199,18 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
   const onLandedAtNavbarRef = React.useRef(onLandedAtNavbar)
   onLandedAtNavbarRef.current = onLandedAtNavbar
 
-  // Advance Frame with magnetic transition (completely stable callback that never re-creates)
+  // Advance Frame with forward exit (completely stable callback that never re-creates)
   const advanceFrame = useCallback((targetFrame?: number) => {
     if (isTransitioningRef.current) return
     setIsTransitioning(true)
     isTransitioningRef.current = true
+    setTransitionDirection('forward')
 
     const currentFrame = frameRef.current
     const next = targetFrame !== undefined ? targetFrame : currentFrame + 1
 
     if (next >= 4) {
-      // Find visible logo from Frame 3 (formerly Frame 4)
+      // Find visible logo from Frame 3
       const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 768
       const primaryId = isDesktop ? 'journey-frame4-logo' : 'journey-frame4-logo-mobile'
       const fallbackId = isDesktop ? 'journey-frame4-logo-mobile' : 'journey-frame4-logo'
@@ -270,6 +318,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
 
     isTransitioningRef.current = true
     setIsTransitioning(true)
+    setTransitionDirection('backward')
 
     const prev = frame - 1
     setFrame(prev)
@@ -285,22 +334,12 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
   const previousFrameRef = useRef(previousFrame)
   previousFrameRef.current = previousFrame
 
-  // Initial gentle entrance reveal for Frame 1
-  useEffect(() => {
-    const t = setTimeout(() => {
-      if (targetProgressRef.current === 0) {
-        targetProgressRef.current = 1.0
-      }
-    }, 1200)
-    return () => clearTimeout(t)
-  }, [])
-
   // Smooth RAF ticker for frameProgress lerp (60fps continuous interpolation)
   useEffect(() => {
     let animId: number
     const tick = () => {
       setFrameProgress((curr) => {
-        const target = Math.min(Math.max(targetProgressRef.current, 0), 1)
+        const target = Math.min(Math.max(targetProgressRef.current, -0.25), 1.25)
         const diff = target - curr
         if (Math.abs(diff) < 0.002) return target
         return curr + diff * 0.18
@@ -345,22 +384,37 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
       const delta = e.deltaY
       if (Math.abs(delta) < 3) return
 
-      const progressDelta = delta / 420
-      const currentTarget = targetProgressRef.current
-      const nextTarget = currentTarget + progressDelta
+      const currentFrame = frameRef.current
 
-      targetProgressRef.current = Math.min(Math.max(nextTarget, -0.2), 1.25)
+      if (currentFrame === 1) {
+        const progressDelta = delta / 360
+        const nextTarget = Math.min(Math.max(targetProgressRef.current + progressDelta, 0), 1.25)
+        targetProgressRef.current = nextTarget
 
-      const now = Date.now()
-      if (nextTarget >= 1.08) {
-        if (now - lastWheelTime > 500) {
-          lastWheelTime = now
-          advanceFrameRef.current()
+        const now = Date.now()
+        if (nextTarget >= 0.75) {
+          if (now - lastWheelTime > 500) {
+            lastWheelTime = now
+            advanceFrameRef.current()
+          }
         }
-      } else if (nextTarget <= -0.08) {
-        if (now - lastWheelTime > 500) {
-          lastWheelTime = now
-          previousFrameRef.current()
+      } else {
+        const progressDelta = delta / 420
+        const currentTarget = targetProgressRef.current
+        const nextTarget = Math.min(Math.max(currentTarget + progressDelta, -0.22), 1.25)
+        targetProgressRef.current = nextTarget
+
+        const now = Date.now()
+        if (nextTarget >= 1.15) {
+          if (now - lastWheelTime > 500) {
+            lastWheelTime = now
+            advanceFrameRef.current()
+          }
+        } else if (nextTarget <= -0.12) {
+          if (now - lastWheelTime > 500) {
+            lastWheelTime = now
+            previousFrameRef.current()
+          }
         }
       }
     }
@@ -380,20 +434,36 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
 
         if (Math.abs(delta) < 2) return
 
+        const currentFrame = frameRef.current
         const progressDelta = delta / 260
-        targetProgressRef.current = Math.min(
-          Math.max(targetProgressRef.current + progressDelta, -0.2),
-          1.25
-        )
+
+        if (currentFrame === 1) {
+          targetProgressRef.current = Math.min(
+            Math.max(targetProgressRef.current + progressDelta, 0),
+            1.25
+          )
+        } else {
+          targetProgressRef.current = Math.min(
+            Math.max(targetProgressRef.current + progressDelta, -0.22),
+            1.25
+          )
+        }
       }
     }
 
     const handleTouchEnd = () => {
       const p = targetProgressRef.current
-      if (p >= 1.05) {
-        advanceFrameRef.current()
-      } else if (p <= -0.05) {
-        previousFrameRef.current()
+      const currentFrame = frameRef.current
+      if (currentFrame === 1) {
+        if (p >= 0.7) {
+          advanceFrameRef.current()
+        }
+      } else {
+        if (p >= 1.12) {
+          advanceFrameRef.current()
+        } else if (p <= -0.1) {
+          previousFrameRef.current()
+        }
       }
     }
 
@@ -562,103 +632,111 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
         {frame === 1 && (
           <motion.div
             key="frame-1-depth-text"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: 0.6 } }}
+            initial={transitionDirection === 'backward' ? { opacity: 0, y: -50, filter: 'blur(12px)' } : { opacity: 0 }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, transition: { duration: 0.5 } }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="absolute inset-0 w-full h-full pointer-events-none z-10"
           >
             {/* Desktop View (>= md): Full-width 92% container */}
-            <div className="hidden md:block w-[92%] mx-auto h-full relative">
-              <div className="absolute top-[2.8%] sm:top-[3.2%] lg:top-[3.8%] left-0 text-white select-none">
-                <ScrollReveal
-                  mode="scrub"
-                  progress={f1_meet}
-                  splitBy="words"
-                  effect="fade"
-                  stagger={0.05}
-                  duration={0.8}
-                  smoothing={0}
-                  baseOpacity={0.1}
-                  baseRotation={0}
-                  baseOffset={0}
-                  enableBlur={true}
-                  blurStrength={4}
-                  containerClassName="text-white font-galano font-black uppercase tracking-wide leading-none text-3xl sm:text-4xl md:text-5xl lg:text-[56px] xl:text-[64px] 2xl:text-[70px]"
-                >
-                  MEET
-                </ScrollReveal>
-              </div>
+            <div 
+              className="hidden md:block w-[92%] mx-auto h-full relative"
+              style={{
+                transform: `translate3d(0, ${f1ExitY.toFixed(1)}px, 0)`,
+                filter: f1ExitBlur > 0 ? `blur(${f1ExitBlur.toFixed(1)}px)` : undefined,
+                opacity: f1ExitOpacity,
+                transition: 'transform 0.05s linear, filter 0.05s linear, opacity 0.05s linear',
+              }}
+            >
+              {showMeet && (
+                <div className="absolute top-[1.6%] sm:top-[2.0%] lg:top-[2.4%] left-0 text-white select-none">
+                  <BlurText
+                    text="MEET"
+                    effect="blur"
+                    animateBy="letters"
+                    direction="bottom"
+                    trigger="load"
+                    delay={80}
+                    stepDuration={0.3}
+                    blur={12}
+                    distance={20}
+                    className="text-white font-galano font-black uppercase tracking-wide leading-none text-3xl sm:text-4xl md:text-5xl lg:text-[56px] xl:text-[64px] 2xl:text-[70px]"
+                  />
+                </div>
+              )}
 
-              <motion.div
-                style={{
-                  opacity: f1_durga,
-                  transform: `scale(${0.96 + 0.04 * f1_durga})`,
-                  filter: `blur(${(8 * (1 - f1_durga)).toFixed(1)}px)`,
-                }}
-                className="absolute top-[14%] lg:top-[14.5%] left-0 w-full select-none pointer-events-none"
-              >
-                <svg
-                  viewBox="0 0 720 152"
-                  className="w-full h-auto overflow-hidden select-none pointer-events-none"
-                  aria-label="DURGA"
+              {showDurga && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.96, filter: 'blur(16px)' }}
+                  animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                  transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
+                  className="absolute top-[14%] lg:top-[14.5%] left-0 w-full select-none pointer-events-none"
                 >
-                  <text
-                    x="360"
-                    y="146"
-                    textAnchor="middle"
-                    fill="#ff0000"
-                    fontFamily="'Galano Grotesque Black', 'Galano Grotesque', sans-serif"
-                    fontWeight="900"
-                    fontSize="200"
+                  <svg
+                    viewBox="0 0 720 152"
+                    className="w-full h-auto overflow-hidden select-none pointer-events-none"
+                    aria-label="DURGA"
                   >
-                    DURGA
-                  </text>
-                </svg>
-              </motion.div>
+                    <text
+                      x="360"
+                      y="146"
+                      textAnchor="middle"
+                      fill="#ff0000"
+                      fontFamily="'Galano Grotesque Black', 'Galano Grotesque', sans-serif"
+                      fontWeight="900"
+                      fontSize="200"
+                    >
+                      DURGA
+                    </text>
+                  </svg>
+                </motion.div>
+              )}
             </div>
 
-            {/* Mobile View (< md): Centered at bottom above controls - fixed final positions */}
-            <div className="md:hidden absolute bottom-[108px] sm:bottom-[116px] inset-x-0 flex flex-col items-center justify-center text-center px-4 z-20">
-              <div className="flex items-center justify-center">
-                <ScrollReveal
-                  mode="scrub"
-                  progress={f1_meet}
-                  splitBy="words"
-                  effect="fade"
-                  stagger={0.05}
-                  duration={0.8}
-                  smoothing={0}
-                  baseOpacity={0.1}
-                  baseRotation={0}
-                  baseOffset={0}
-                  enableBlur={true}
-                  blurStrength={4}
-                  containerClassName="text-white font-galano font-black uppercase tracking-wide leading-none text-[clamp(34px,10.95vw,44px)] justify-center text-center"
-                >
-                  MEET
-                </ScrollReveal>
-              </div>
+            {/* Mobile View (< md): Centered at bottom above controls */}
+            <div 
+              className="md:hidden absolute bottom-[108px] sm:bottom-[116px] inset-x-0 flex flex-col items-center justify-center text-center px-4 z-20"
+              style={{
+                transform: `translate3d(0, ${f1ExitY.toFixed(1)}px, 0)`,
+                filter: f1ExitBlur > 0 ? `blur(${f1ExitBlur.toFixed(1)}px)` : undefined,
+                opacity: f1ExitOpacity,
+                transition: 'transform 0.05s linear, filter 0.05s linear, opacity 0.05s linear',
+              }}
+            >
+              {showMeet && (
+                <div className="flex items-center justify-center">
+                  <BlurText
+                    text="MEET"
+                    effect="blur"
+                    animateBy="letters"
+                    direction="bottom"
+                    trigger="load"
+                    delay={80}
+                    stepDuration={0.3}
+                    blur={10}
+                    distance={16}
+                    className="text-white font-galano font-black uppercase tracking-wide leading-none text-[clamp(34px,10.95vw,44px)] justify-center text-center"
+                  />
+                </div>
+              )}
 
-              <div className="flex items-center justify-center -mt-2 sm:-mt-2.5">
-                <ScrollReveal
-                  mode="scrub"
-                  progress={f1_durga}
-                  splitBy="words"
-                  effect="fade"
-                  stagger={0.05}
-                  duration={0.8}
-                  smoothing={0}
-                  baseOpacity={0.1}
-                  baseRotation={0}
-                  baseOffset={0}
-                  enableBlur={true}
-                  blurStrength={4}
-                  highlightColor="#ff0000"
-                  containerClassName="text-[#ff0000] font-galano font-black uppercase tracking-tight leading-none text-[clamp(66px,21.4vw,86px)] drop-shadow-[0_2px_16px_rgba(255,0,0,0.4)] justify-center text-center"
-                >
-                  DURGA
-                </ScrollReveal>
-              </div>
+              {showDurga && (
+                <div className="flex items-center justify-center mt-1 sm:mt-1.5">
+                  <BlurText
+                    text="DURGA"
+                    effect="blur"
+                    animateBy="letters"
+                    direction="bottom"
+                    trigger="load"
+                    delay={90}
+                    stepDuration={0.32}
+                    blur={14}
+                    distance={20}
+                    color="#ff0000"
+                    className="font-galano font-black uppercase tracking-tight leading-none text-[clamp(66px,21.4vw,86px)] drop-shadow-[0_2px_16px_rgba(255,0,0,0.4)] justify-center text-center"
+                  />
+                </div>
+              )}
             </div>
           </motion.div>
         )}
@@ -702,41 +780,50 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
         {frame === 1 && (
           <motion.div
             key="durga-outline-layer"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: 0.6 } }}
+            initial={transitionDirection === 'backward' ? { opacity: 0, y: -50, filter: 'blur(12px)' } : { opacity: 0 }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, transition: { duration: 0.5 } }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="absolute inset-0 w-full h-full pointer-events-none z-[25] hidden md:block"
           >
-            <div className="w-[92%] mx-auto h-full relative">
-              <motion.div
-                style={{
-                  opacity: f1_durga,
-                  transform: `scale(${0.96 + 0.04 * f1_durga})`,
-                  filter: `blur(${(8 * (1 - f1_durga)).toFixed(1)}px)`,
-                }}
-                className="absolute top-[14%] lg:top-[14.5%] left-0 w-full select-none pointer-events-none"
-              >
-                <svg
-                  viewBox="0 0 720 152"
-                  className="w-full h-auto overflow-hidden select-none pointer-events-none"
-                  aria-hidden="true"
+            <div 
+              className="w-[92%] mx-auto h-full relative"
+              style={{
+                transform: `translate3d(0, ${f1ExitY.toFixed(1)}px, 0)`,
+                filter: f1ExitBlur > 0 ? `blur(${f1ExitBlur.toFixed(1)}px)` : undefined,
+                opacity: f1ExitOpacity,
+                transition: 'transform 0.05s linear, filter 0.05s linear, opacity 0.05s linear',
+              }}
+            >
+              {showDurga && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.96, filter: 'blur(16px)' }}
+                  animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                  transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
+                  className="absolute top-[14%] lg:top-[14.5%] left-0 w-full select-none pointer-events-none"
                 >
-                  <text
-                    x="360"
-                    y="146"
-                    textAnchor="middle"
-                    fill="none"
-                    stroke="#ff0000"
-                    strokeWidth="2"
-                    strokeMiterlimit="3"
-                    fontFamily="'Galano Grotesque Black', 'Galano Grotesque', sans-serif"
-                    fontWeight="900"
-                    fontSize="200"
+                  <svg
+                    viewBox="0 0 720 152"
+                    className="w-full h-auto overflow-hidden select-none pointer-events-none"
+                    aria-hidden="true"
                   >
-                    DURGA
-                  </text>
-                </svg>
-              </motion.div>
+                    <text
+                      x="360"
+                      y="146"
+                      textAnchor="middle"
+                      fill="none"
+                      stroke="#ff0000"
+                      strokeWidth="2"
+                      strokeMiterlimit="3"
+                      fontFamily="'Galano Grotesque Black', 'Galano Grotesque', sans-serif"
+                      fontWeight="900"
+                      fontSize="200"
+                    >
+                      DURGA
+                    </text>
+                  </svg>
+                </motion.div>
+              )}
             </div>
           </motion.div>
         )}
@@ -751,13 +838,21 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
         {frame === 2 && (
           <motion.div
             key="frame-2-content"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={transitionDirection === 'backward' ? { opacity: 0, y: -40, filter: 'blur(10px)' } : { opacity: 0 }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             exit={{ opacity: 0, transition: { duration: 0.5 } }}
             className="absolute inset-0 z-30 pointer-events-none"
           >
             {/* Desktop View (>= md): Left-aligned inside standard 92% container - fixed final positions */}
-            <div className="hidden md:block w-[92%] mx-auto h-full relative">
+            <div 
+              className="hidden md:block w-[92%] mx-auto h-full relative"
+              style={{
+                transform: `translate3d(0, ${frameExitY.toFixed(1)}px, 0)`,
+                filter: frameExitBlur > 0 ? `blur(${frameExitBlur.toFixed(1)}px)` : undefined,
+                opacity: frameExitOpacity,
+                transition: 'transform 0.05s linear, filter 0.05s linear, opacity 0.05s linear',
+              }}
+            >
               <div className="absolute bottom-[116px] md:bottom-[124px] lg:bottom-[132px] left-0 select-none">
                 {/* Line 1: As a son, he tends the mother, */}
                 <div className="flex items-baseline gap-x-2.5 sm:gap-x-3 text-[clamp(22px,2.5vw,38.5px)] leading-tight">
@@ -769,11 +864,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     stagger={0.05}
                     duration={0.8}
                     smoothing={0}
-                    baseOpacity={0.1}
+                    baseOpacity={0.0}
                     baseRotation={0}
-                    baseOffset={0}
+                    baseOffset={isMobile ? 85 : 110}
                     enableBlur={true}
-                    blurStrength={4}
+                    blurStrength={isMobile ? 12 : 14}
                     containerClassName="text-white/55 font-normal font-galano-alt"
                   >
                     {line1Prefix}
@@ -786,11 +881,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     stagger={0.05}
                     duration={0.8}
                     smoothing={0}
-                    baseOpacity={0.1}
+                    baseOpacity={0.0}
                     baseRotation={0}
-                    baseOffset={0}
+                    baseOffset={isMobile ? 85 : 110}
                     enableBlur={true}
-                    blurStrength={4}
+                    blurStrength={isMobile ? 12 : 14}
                     containerClassName="text-white font-bold font-galano-alt drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
                   >
                     {line1Suffix}
@@ -807,11 +902,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     stagger={0.05}
                     duration={0.8}
                     smoothing={0}
-                    baseOpacity={0.1}
+                    baseOpacity={0.0}
                     baseRotation={0}
-                    baseOffset={0}
+                    baseOffset={isMobile ? 85 : 110}
                     enableBlur={true}
-                    blurStrength={4}
+                    blurStrength={isMobile ? 12 : 14}
                     containerClassName="text-white/55 font-normal font-galano-alt"
                   >
                     {line2Prefix}
@@ -824,11 +919,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     stagger={0.05}
                     duration={0.8}
                     smoothing={0}
-                    baseOpacity={0.1}
+                    baseOpacity={0.0}
                     baseRotation={0}
-                    baseOffset={0}
+                    baseOffset={isMobile ? 85 : 110}
                     enableBlur={true}
-                    blurStrength={4}
+                    blurStrength={isMobile ? 12 : 14}
                     containerClassName="text-white font-bold font-galano-alt drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
                   >
                     {line2Suffix}
@@ -845,11 +940,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     stagger={0.05}
                     duration={0.8}
                     smoothing={0}
-                    baseOpacity={0.1}
+                    baseOpacity={0.0}
                     baseRotation={0}
-                    baseOffset={0}
+                    baseOffset={isMobile ? 85 : 110}
                     enableBlur={true}
-                    blurStrength={4}
+                    blurStrength={isMobile ? 12 : 14}
                     containerClassName="text-white/55 font-normal font-galano-alt"
                   >
                     {line3Prefix}
@@ -862,11 +957,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     stagger={0.05}
                     duration={0.8}
                     smoothing={0}
-                    baseOpacity={0.1}
+                    baseOpacity={0.0}
                     baseRotation={0}
-                    baseOffset={0}
+                    baseOffset={isMobile ? 85 : 110}
                     enableBlur={true}
-                    blurStrength={4}
+                    blurStrength={isMobile ? 12 : 14}
                     containerClassName="text-white font-bold font-galano-alt drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
                   >
                     {line3Suffix}
@@ -883,11 +978,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     stagger={0.05}
                     duration={0.8}
                     smoothing={0}
-                    baseOpacity={0.1}
+                    baseOpacity={0.0}
                     baseRotation={0}
-                    baseOffset={0}
+                    baseOffset={isMobile ? 85 : 110}
                     enableBlur={true}
-                    blurStrength={4}
+                    blurStrength={isMobile ? 12 : 14}
                     containerClassName="text-white font-galano font-black uppercase text-[clamp(38px,4.6vw,70.6px)] leading-none tracking-tight drop-shadow-[0_2px_16px_rgba(0,0,0,0.9)]"
                   >
                     {line4Prefix}
@@ -900,11 +995,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     stagger={0.05}
                     duration={0.8}
                     smoothing={0}
-                    baseOpacity={0.1}
+                    baseOpacity={0.0}
                     baseRotation={0}
-                    baseOffset={0}
+                    baseOffset={isMobile ? 85 : 110}
                     enableBlur={true}
-                    blurStrength={4}
+                    blurStrength={isMobile ? 12 : 14}
                     highlightColor="#ff0000"
                     containerClassName="text-[#ff0000] font-galano font-black uppercase text-[clamp(38px,4.6vw,70.6px)] leading-none tracking-tight drop-shadow-[0_2px_16px_rgba(255,0,0,0.4)]"
                   >
@@ -922,11 +1017,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     stagger={0.05}
                     duration={0.8}
                     smoothing={0}
-                    baseOpacity={0.1}
+                    baseOpacity={0.0}
                     baseRotation={0}
-                    baseOffset={0}
+                    baseOffset={isMobile ? 85 : 110}
                     enableBlur={true}
-                    blurStrength={4}
+                    blurStrength={isMobile ? 12 : 14}
                     containerClassName="font-galano-alt font-bold text-white text-[clamp(22px,2.5vw,38.5px)] leading-tight tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
                   >
                     {line5Text}
@@ -936,7 +1031,15 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
             </div>
 
             {/* Mobile View (< md): Centered at bottom above controls - all 5 lines in final positions from start */}
-            <div className="md:hidden absolute bottom-[108px] sm:bottom-[116px] inset-x-0 px-4 flex flex-col items-center text-center z-20">
+            <div 
+              className="md:hidden absolute bottom-[108px] sm:bottom-[116px] inset-x-0 px-4 flex flex-col items-center text-center z-20"
+              style={{
+                transform: `translate3d(0, ${frameExitY.toFixed(1)}px, 0)`,
+                filter: frameExitBlur > 0 ? `blur(${frameExitBlur.toFixed(1)}px)` : undefined,
+                opacity: frameExitOpacity,
+                transition: 'transform 0.05s linear, filter 0.05s linear, opacity 0.05s linear',
+              }}
+            >
               {/* Line 1: As a son, he tends the mother, */}
               <div className="flex flex-row items-center justify-center gap-x-1.5 text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap">
                 <ScrollReveal
@@ -947,11 +1050,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   stagger={0.05}
                   duration={0.8}
                   smoothing={0}
-                  baseOpacity={0.1}
+                  baseOpacity={0.0}
                   baseRotation={0}
-                  baseOffset={0}
+                  baseOffset={isMobile ? 85 : 110}
                   enableBlur={true}
-                  blurStrength={4}
+                  blurStrength={isMobile ? 12 : 14}
                   containerClassName="text-white/55 font-normal font-galano-alt justify-center"
                 >
                   {line1Prefix}
@@ -964,11 +1067,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   stagger={0.05}
                   duration={0.8}
                   smoothing={0}
-                  baseOpacity={0.1}
+                  baseOpacity={0.0}
                   baseRotation={0}
-                  baseOffset={0}
+                  baseOffset={isMobile ? 85 : 110}
                   enableBlur={true}
-                  blurStrength={4}
+                  blurStrength={isMobile ? 12 : 14}
                   containerClassName="text-white font-bold font-galano-alt justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
                 >
                   {line1Suffix}
@@ -985,11 +1088,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   stagger={0.05}
                   duration={0.8}
                   smoothing={0}
-                  baseOpacity={0.1}
+                  baseOpacity={0.0}
                   baseRotation={0}
-                  baseOffset={0}
+                  baseOffset={isMobile ? 85 : 110}
                   enableBlur={true}
-                  blurStrength={4}
+                  blurStrength={isMobile ? 12 : 14}
                   containerClassName="text-white/55 font-normal font-galano-alt justify-center"
                 >
                   {line2Prefix}
@@ -1002,11 +1105,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   stagger={0.05}
                   duration={0.8}
                   smoothing={0}
-                  baseOpacity={0.1}
+                  baseOpacity={0.0}
                   baseRotation={0}
-                  baseOffset={0}
+                  baseOffset={isMobile ? 85 : 110}
                   enableBlur={true}
-                  blurStrength={4}
+                  blurStrength={isMobile ? 12 : 14}
                   containerClassName="text-white font-bold font-galano-alt justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
                 >
                   {line2Suffix}
@@ -1023,11 +1126,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   stagger={0.05}
                   duration={0.8}
                   smoothing={0}
-                  baseOpacity={0.1}
+                  baseOpacity={0.0}
                   baseRotation={0}
-                  baseOffset={0}
+                  baseOffset={isMobile ? 85 : 110}
                   enableBlur={true}
-                  blurStrength={4}
+                  blurStrength={isMobile ? 12 : 14}
                   containerClassName="text-white/55 font-normal font-galano-alt justify-center"
                 >
                   {line3Prefix}
@@ -1040,11 +1143,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   stagger={0.05}
                   duration={0.8}
                   smoothing={0}
-                  baseOpacity={0.1}
+                  baseOpacity={0.0}
                   baseRotation={0}
-                  baseOffset={0}
+                  baseOffset={isMobile ? 85 : 110}
                   enableBlur={true}
-                  blurStrength={4}
+                  blurStrength={isMobile ? 12 : 14}
                   containerClassName="text-white font-bold font-galano-alt justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
                 >
                   {line3Suffix}
@@ -1061,11 +1164,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   stagger={0.05}
                   duration={0.8}
                   smoothing={0}
-                  baseOpacity={0.1}
+                  baseOpacity={0.0}
                   baseRotation={0}
-                  baseOffset={0}
+                  baseOffset={isMobile ? 85 : 110}
                   enableBlur={true}
-                  blurStrength={4}
+                  blurStrength={isMobile ? 12 : 14}
                   containerClassName="text-white font-galano font-black uppercase justify-center drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]"
                 >
                   {line4Prefix}
@@ -1078,11 +1181,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   stagger={0.05}
                   duration={0.8}
                   smoothing={0}
-                  baseOpacity={0.1}
+                  baseOpacity={0.0}
                   baseRotation={0}
-                  baseOffset={0}
+                  baseOffset={isMobile ? 85 : 110}
                   enableBlur={true}
-                  blurStrength={4}
+                  blurStrength={isMobile ? 12 : 14}
                   highlightColor="#ff0000"
                   containerClassName="text-[#ff0000] font-galano font-black uppercase justify-center drop-shadow-[0_2px_12px_rgba(255,0,0,0.4)]"
                 >
@@ -1100,11 +1203,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   stagger={0.05}
                   duration={0.8}
                   smoothing={0}
-                  baseOpacity={0.1}
+                  baseOpacity={0.0}
                   baseRotation={0}
-                  baseOffset={0}
+                  baseOffset={isMobile ? 85 : 110}
                   enableBlur={true}
-                  blurStrength={4}
+                  blurStrength={isMobile ? 12 : 14}
                   containerClassName="font-galano-alt font-bold text-white text-[clamp(16px,4.9vw,21.5px)] leading-tight justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] whitespace-nowrap"
                 >
                   {line5Text}
@@ -1124,8 +1227,8 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
         {frame === 3 && (
           <motion.div
             key="frame-3-content"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={transitionDirection === 'backward' ? { opacity: 0, y: -40, filter: 'blur(10px)' } : { opacity: 0 }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             exit={{ opacity: 0, transition: { duration: 0.4 } }}
             className="absolute inset-0 z-30 pointer-events-none"
           >
@@ -1143,7 +1246,15 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
 
             {/* Desktop View (>= md): Single left-aligned vertical column distributed with space-between */}
             {/* iPad Air Portrait (md:max-lg): w-[68%] provides comfortable reading width without crowding */}
-            <div className="hidden md:flex absolute top-[7.5%] lg:top-[8%] bottom-[124px] lg:bottom-[132px] left-[4%] xl:left-[5%] w-[68%] md:max-lg:w-[68%] lg:w-[44%] max-w-xl flex-col justify-between items-start pointer-events-none z-20">
+            <div 
+              className="hidden md:flex absolute top-[7.5%] lg:top-[8%] bottom-[124px] lg:bottom-[132px] left-[4%] xl:left-[5%] w-[68%] md:max-lg:w-[68%] lg:w-[44%] max-w-xl flex-col justify-between items-start pointer-events-none z-20"
+              style={{
+                transform: `translate3d(0, ${frameExitY.toFixed(1)}px, 0)`,
+                filter: frameExitBlur > 0 ? `blur(${frameExitBlur.toFixed(1)}px)` : undefined,
+                opacity: frameExitOpacity,
+                transition: 'transform 0.05s linear, filter 0.05s linear, opacity 0.05s linear',
+              }}
+            >
               {/* Item 1: Two decades of commitment & counting ... */}
               <div className="w-full flex items-start">
                 <ScrollReveal
@@ -1154,11 +1265,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   stagger={0.05}
                   duration={0.8}
                   smoothing={0}
-                  baseOpacity={0.1}
+                  baseOpacity={0.0}
                   baseRotation={0}
-                  baseOffset={0}
+                  baseOffset={isMobile ? 85 : 110}
                   enableBlur={true}
-                  blurStrength={4}
+                  blurStrength={isMobile ? 12 : 14}
                   containerClassName="font-galano-alt font-bold text-white text-[clamp(22px,2.5vw,38.5px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
                 >
                   Two decades of commitment &amp; counting ...
@@ -1175,11 +1286,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   stagger={0.05}
                   duration={0.8}
                   smoothing={0}
-                  baseOpacity={0.1}
+                  baseOpacity={0.0}
                   baseRotation={0}
-                  baseOffset={0}
+                  baseOffset={isMobile ? 85 : 110}
                   enableBlur={true}
-                  blurStrength={4}
+                  blurStrength={isMobile ? 12 : 14}
                   containerClassName="font-galano-alt font-bold text-white text-[clamp(22px,2.5vw,38.5px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
                 >
                   A family to work with – A family to work for
@@ -1196,11 +1307,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   stagger={0.05}
                   duration={0.8}
                   smoothing={0}
-                  baseOpacity={0.1}
+                  baseOpacity={0.0}
                   baseRotation={0}
-                  baseOffset={0}
+                  baseOffset={isMobile ? 85 : 110}
                   enableBlur={true}
-                  blurStrength={4}
+                  blurStrength={isMobile ? 12 : 14}
                   containerClassName="font-galano-alt font-bold text-white text-[clamp(22px,2.5vw,38.5px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
                 >
                   A bounty of love, A legacy to uphold
@@ -1217,11 +1328,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   stagger={0.05}
                   duration={0.8}
                   smoothing={0}
-                  baseOpacity={0.1}
+                  baseOpacity={0.0}
                   baseRotation={0}
-                  baseOffset={0}
+                  baseOffset={isMobile ? 85 : 110}
                   enableBlur={true}
-                  blurStrength={4}
+                  blurStrength={isMobile ? 12 : 14}
                   containerClassName="font-galano-alt font-bold text-white text-[clamp(22px,2.5vw,38.5px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
                 >
                   A promise spoken in silence – fulfilled with glory
@@ -1233,11 +1344,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                 <div
                   id="journey-frame4-logo"
                   style={{
-                    opacity: Math.max(0.08, f3_logo),
-                    transform: `scale(${(0.75 + 0.25 * f3_logo).toFixed(3)})`,
-                    filter: f3_logo < 1 ? `blur(${((1 - f3_logo) * 4).toFixed(1)}px)` : 'none',
+                    opacity: Math.max(0.0, f3_logo),
+                    transform: `translate3d(0, ${((1 - f3_logo) * 90).toFixed(1)}px, 0) scale(${(0.75 + 0.25 * f3_logo).toFixed(3)})`,
+                    filter: f3_logo < 1 ? `blur(${((1 - f3_logo) * 12).toFixed(1)}px)` : 'none',
                   }}
-                  className="w-full h-full text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.35)] transition-all duration-75"
+                  className="w-full h-full text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.35)] will-change-transform"
                 >
                   <SrfLogo className="w-full h-full text-white" />
                 </div>
@@ -1253,11 +1364,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   stagger={0.05}
                   duration={0.8}
                   smoothing={0}
-                  baseOpacity={0.1}
+                  baseOpacity={0.0}
                   baseRotation={0}
-                  baseOffset={0}
+                  baseOffset={isMobile ? 85 : 110}
                   enableBlur={true}
-                  blurStrength={4}
+                  blurStrength={isMobile ? 12 : 14}
                   highlightColor="#ff0000"
                   containerClassName="font-galano-alt font-bold text-[#ff0000] text-[clamp(22px,2.5vw,38.5px)] leading-tight drop-shadow-[0_2px_16px_rgba(255,0,0,0.35)]"
                 >
@@ -1267,7 +1378,15 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
             </div>
 
             {/* Mobile View (< md): Unified compact sequential flow matching Figma design */}
-            <div className="md:hidden absolute top-[18%] sm:top-[19.5%] inset-x-0 flex flex-col items-center text-center px-4 pointer-events-none z-20">
+            <div 
+              className="md:hidden absolute top-[18%] sm:top-[19.5%] inset-x-0 flex flex-col items-center text-center px-4 pointer-events-none z-20"
+              style={{
+                transform: `translate3d(0, ${frameExitY.toFixed(1)}px, 0)`,
+                filter: frameExitBlur > 0 ? `blur(${frameExitBlur.toFixed(1)}px)` : undefined,
+                opacity: frameExitOpacity,
+                transition: 'transform 0.05s linear, filter 0.05s linear, opacity 0.05s linear',
+              }}
+            >
               <div className="w-full max-w-[320px] sm:max-w-sm flex flex-col items-center space-y-3 sm:space-y-3.5">
                 {/* Line 1: Two decades of commitment & counting ... */}
                 <div className="w-full flex items-center justify-center text-center">
@@ -1279,11 +1398,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     stagger={0.05}
                     duration={0.8}
                     smoothing={0}
-                    baseOpacity={0.1}
+                    baseOpacity={0.0}
                     baseRotation={0}
-                    baseOffset={0}
+                    baseOffset={isMobile ? 85 : 110}
                     enableBlur={true}
-                    blurStrength={4}
+                    blurStrength={isMobile ? 12 : 14}
                     containerClassName="font-galano-alt font-bold text-white text-[clamp(17px,5.2vw,22.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center"
                   >
                     Two decades of commitment &amp; counting ...
@@ -1300,11 +1419,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     stagger={0.05}
                     duration={0.8}
                     smoothing={0}
-                    baseOpacity={0.1}
+                    baseOpacity={0.0}
                     baseRotation={0}
-                    baseOffset={0}
+                    baseOffset={isMobile ? 85 : 110}
                     enableBlur={true}
-                    blurStrength={4}
+                    blurStrength={isMobile ? 12 : 14}
                     containerClassName="font-galano-alt font-bold text-white text-[clamp(17px,5.2vw,22.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center"
                   >
                     A family to work with – A family to work for
@@ -1321,11 +1440,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     stagger={0.05}
                     duration={0.8}
                     smoothing={0}
-                    baseOpacity={0.1}
+                    baseOpacity={0.0}
                     baseRotation={0}
-                    baseOffset={0}
+                    baseOffset={isMobile ? 85 : 110}
                     enableBlur={true}
-                    blurStrength={4}
+                    blurStrength={isMobile ? 12 : 14}
                     containerClassName="font-galano-alt font-bold text-white text-[clamp(17px,5.2vw,22.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center"
                   >
                     A bounty of love, A legacy to uphold
@@ -1342,11 +1461,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     stagger={0.05}
                     duration={0.8}
                     smoothing={0}
-                    baseOpacity={0.1}
+                    baseOpacity={0.0}
                     baseRotation={0}
-                    baseOffset={0}
+                    baseOffset={isMobile ? 85 : 110}
                     enableBlur={true}
-                    blurStrength={4}
+                    blurStrength={isMobile ? 12 : 14}
                     containerClassName="font-galano-alt font-bold text-white text-[clamp(17px,5.2vw,22.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center"
                   >
                     A promise spoken in silence – fulfilled with glory
@@ -1358,11 +1477,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   <div
                     id="journey-frame4-logo-mobile"
                     style={{
-                      opacity: Math.max(0.08, f3_logo),
-                      transform: `scale(${(0.75 + 0.25 * f3_logo).toFixed(3)})`,
-                      filter: f3_logo < 1 ? `blur(${((1 - f3_logo) * 4).toFixed(1)}px)` : 'none',
+                      opacity: Math.max(0.0, f3_logo),
+                      transform: `translate3d(0, ${((1 - f3_logo) * 70).toFixed(1)}px, 0) scale(${(0.75 + 0.25 * f3_logo).toFixed(3)})`,
+                      filter: f3_logo < 1 ? `blur(${((1 - f3_logo) * 10).toFixed(1)}px)` : 'none',
                     }}
-                    className="w-18 h-18 sm:w-20 sm:h-20 mx-auto text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.4)] transition-all duration-75"
+                    className="w-18 h-18 sm:w-20 sm:h-20 mx-auto text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.4)] will-change-transform"
                   >
                     <SrfLogo className="w-full h-full text-white" />
                   </div>
@@ -1378,11 +1497,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     stagger={0.05}
                     duration={0.8}
                     smoothing={0}
-                    baseOpacity={0.1}
+                    baseOpacity={0.0}
                     baseRotation={0}
-                    baseOffset={0}
+                    baseOffset={isMobile ? 85 : 110}
                     enableBlur={true}
-                    blurStrength={4}
+                    blurStrength={isMobile ? 12 : 14}
                     highlightColor="#ff0000"
                     containerClassName="font-galano-alt font-bold tracking-wide text-[#ff0000] text-[clamp(19px,5.8vw,25px)] leading-tight text-center drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] justify-center"
                   >
@@ -1396,10 +1515,30 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
       </AnimatePresence>
 
       {/* -------------------------------------------------------- */}
+      {/* BOTTOM EDGE GRADUAL BLUR OVERLAY (Frames 1-3)            */}
+      {/* Sits at z-[45] above text (z-30) and below controls (z-50) */}
+      {/* -------------------------------------------------------- */}
+      {frame < 4 && (
+        <div className="fixed bottom-0 inset-x-0 pointer-events-none z-[45]">
+          <GradualBlur
+            position="bottom"
+            target="parent"
+            height={isMobile ? '6.5rem' : '7.5rem'}
+            strength={2.5}
+            layers={8}
+            curve="linear"
+            exponential
+            tint="rgba(11, 12, 14, 0.75)"
+            zIndex={45}
+          />
+        </div>
+      )}
+
+      {/* -------------------------------------------------------- */}
       {/* BOTTOM INTRO CONTROLS: DOWN ARROW & SKIP (LEFT/CENTER) + PLAY/PAUSE (TOP-RIGHT MOBILE / BOTTOM-RIGHT DESKTOP) */}
       {/* -------------------------------------------------------- */}
       <AnimatePresence>
-        {frame < 4 && (
+        {frame < 4 && showControls && (
           <>
             {/* Left/Center Controls: Previous/Next Frame Buttons + Skip Pill Button */}
             <motion.div

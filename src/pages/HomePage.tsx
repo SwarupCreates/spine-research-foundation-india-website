@@ -36,7 +36,9 @@ export const HomePage: React.FC<HomePageProps> = ({
   useEffect(() => {
     setIsMobileCollapsed(false)
     setMobileScrollProgress(0)
-    window.scrollTo(0, 0)
+    if (window.scrollY === 0) {
+      window.scrollTo(0, 0)
+    }
   }, [])
 
   // Reset to intermediate extended frame when entering from journey or replaying
@@ -44,7 +46,9 @@ export const HomePage: React.FC<HomePageProps> = ({
     if (isEnteringFromJourney) {
       setIsMobileCollapsed(false)
       setMobileScrollProgress(0)
-      window.scrollTo(0, 0)
+      if (window.scrollY === 0) {
+        window.scrollTo(0, 0)
+      }
     }
   }, [isEnteringFromJourney])
 

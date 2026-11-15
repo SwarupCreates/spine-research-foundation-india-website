@@ -15,6 +15,7 @@ import {
 } from './components/ActionModals'
 import { SrfLogo } from './components/icons'
 import { WelcomeJourney } from './components/WelcomeJourney'
+import JourneyReplayButton from './components/JourneyReplayButton'
 import { HomePage, WorkInProgressPage, NotFoundPage } from './pages'
 
 export const App: React.FC = () => {
@@ -438,6 +439,18 @@ export const App: React.FC = () => {
           }}
           onCloseParticipate={() => setIsParticipateOpen(false)}
           onCloseFeedback={() => setIsFeedbackOpen(false)}
+        />
+      )}
+
+      {/* Homepage Journey Replay Button (Bottom-Left z-[70]) */}
+      {!isJourneyActive && (activeTab === 'home' || location.pathname === '/') && (
+        <JourneyReplayButton
+          isEnteringFromJourney={isEnteringFromJourney}
+          onReplay={() => {
+            setIsEnteringFromJourney(false)
+            setIsJourneyActive(true)
+            window.scrollTo(0, 0)
+          }}
         />
       )}
 

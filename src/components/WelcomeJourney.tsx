@@ -56,30 +56,6 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
   const line3Suffix = 'HE SHARES THE FRET ...'
   const line3Total = line3Prefix.length + line3Suffix.length
 
-  // Restart Journey handler
-  const handleRestart = useCallback(() => {
-    setIsTransitioning(false)
-    setFrame(1)
-    setShowBoy(false)
-    setShowMeet(false)
-    setShowDurga(false)
-    setShowControls(false)
-    setCharCount1(0)
-    setCharCount2(0)
-    setCharCount3(0)
-    setIsElevated(false)
-    setDotsCount(0)
-    setShowWitness(false)
-    setShowBlesses(false)
-    setShowCard1(false)
-    setShowCard2(false)
-    setShowCard3(false)
-    setShowCard4(false)
-    setShowCard5(false)
-    setShowLogo(false)
-    setIsFlyingToNavbar(false)
-  }, [])
-
   // Advance Frame with magnetic transition
   const advanceFrame = useCallback((targetFrame?: number) => {
     if (isTransitioning) return
@@ -308,6 +284,10 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
     }
   }, [frame, isPlaying, advanceFrame])
 
+  // Shared font size class for all text across the first 3 frames (except DURGA)
+  const sharedTextClass =
+    'text-3xl sm:text-5xl md:text-6xl lg:text-[62px] xl:text-[66px] font-galano font-black tracking-wide uppercase leading-tight'
+
   return (
     <div className="fixed inset-0 z-[100] w-screen h-screen bg-[#0b0c0e] overflow-hidden select-none font-galano">
       {/* -------------------------------------------------------- */}
@@ -387,37 +367,55 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
             exit={{ opacity: 0, transition: { duration: 0.6 } }}
             className="absolute inset-0 w-full h-full pointer-events-none z-10"
           >
-            {/* "MEET" top-left: exactly aligned with left of D, y: 7.8% */}
-            {showMeet && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.65, ease: 'easeOut' }}
-                className="absolute top-[7.8%] left-[4.6%] text-white font-galano font-black text-3xl sm:text-4xl md:text-[42px] tracking-wide select-none leading-none"
-              >
-                MEET
-              </motion.div>
-            )}
+            {/* Unified Central Story Container: 84vw centered with wide gutters */}
+            <div className="w-[84vw] max-w-[1400px] mx-auto h-full relative">
+              {/* "MEET" top-left: Left-aligned to DURGA */}
+              {showMeet && (
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.65, ease: 'easeOut' }}
+                  className={`absolute top-[7.5%] left-0 text-white select-none ${sharedTextClass}`}
+                >
+                  MEET
+                </motion.div>
+              )}
 
-            {/* Giant "DURGA" bold red text spanning behind boy: top 15.8%, left 4.6%, width 91.4% */}
-            {showDurga && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.96 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.85, ease: 'easeOut' }}
-                className="absolute top-[15.8%] left-[4.6%] w-[91.4%] text-[#ff0000] font-galano font-black leading-[0.8] select-none pointer-events-none tracking-[-0.035em] whitespace-nowrap"
-                style={{ fontSize: 'min(21.8vw, 27vh)' }}
-              >
-                DURGA
-              </motion.div>
-            )}
+              {/* Giant "DURGA" bold red text: Spans container width in center, behind boy */}
+              {showDurga && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.96 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.85, ease: 'easeOut' }}
+                  className="absolute top-[16%] left-0 w-full select-none pointer-events-none"
+                >
+                  <svg
+                    viewBox="0 0 1000 195"
+                    className="w-full h-auto overflow-hidden select-none pointer-events-none"
+                    aria-label="DURGA"
+                  >
+                    <text
+                      x="0"
+                      y="170"
+                      fill="#ff0000"
+                      fontFamily="'Galano Grotesque Black', 'Galano Grotesque', sans-serif"
+                      fontWeight="900"
+                      fontSize="220"
+                      textLength="1000"
+                      lengthAdjust="spacing"
+                    >
+                      DURGA
+                    </text>
+                  </svg>
+                </motion.div>
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* -------------------------------------------------------- */}
       {/* BOY CUTOUT LAYER (Frames 1 & 2): Sits over "DURGA" text   */}
-      {/* Renders after 100ms in Frame 1                            */}
       {/* -------------------------------------------------------- */}
       <AnimatePresence>
         {frame <= 2 && showBoy && (
@@ -454,11 +452,12 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, transition: { duration: 0.5 } }}
-            className="absolute inset-0 z-30 pointer-events-none flex flex-col justify-end p-7 sm:p-14 md:p-20 pb-28 sm:pb-32 md:pb-36"
+            className="absolute inset-0 z-30 pointer-events-none flex flex-col justify-end pb-28 sm:pb-32 md:pb-36"
           >
-            <div className="max-w-4xl space-y-3 sm:space-y-4">
+            {/* Same Unified Container & Left Alignment */}
+            <div className="w-[84vw] max-w-[1400px] mx-auto space-y-4 sm:space-y-5">
               {/* Line 1 */}
-              <div className="text-2xl sm:text-4xl md:text-[44px] font-galano uppercase tracking-wide leading-tight">
+              <div className={`${sharedTextClass}`}>
                 <span
                   className={`transition-opacity duration-700 ${
                     isElevated ? 'opacity-40 text-white/40' : 'opacity-100 text-white'
@@ -474,7 +473,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
               </div>
 
               {/* Line 2 */}
-              <div className="text-2xl sm:text-4xl md:text-[44px] font-galano uppercase tracking-wide leading-tight">
+              <div className={`${sharedTextClass}`}>
                 <span
                   className={`transition-opacity duration-700 ${
                     isElevated ? 'opacity-40 text-white/40' : 'opacity-100 text-white'
@@ -490,7 +489,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
               </div>
 
               {/* Line 3 */}
-              <div className="text-2xl sm:text-4xl md:text-[44px] font-galano uppercase tracking-wide leading-tight">
+              <div className={`${sharedTextClass}`}>
                 <span
                   className={`transition-opacity duration-700 ${
                     isElevated ? 'opacity-40 text-white/40' : 'opacity-100 text-white'
@@ -519,44 +518,47 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, transition: { duration: 0.5 } }}
-            className="absolute inset-0 z-30 pointer-events-none p-7 sm:p-14 md:p-20 flex flex-col justify-between pb-28 sm:pb-32 md:pb-36"
+            className="absolute inset-0 z-30 pointer-events-none flex flex-col justify-between pb-28 sm:pb-32 md:pb-36"
           >
-            {/* Top-Left: BUT... AS A WITNESS, */}
-            <div className="pt-8 sm:pt-10 md:pt-14">
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-white font-galano text-4xl sm:text-6xl md:text-[68px] tracking-wide uppercase leading-none"
-              >
-                BUT
-                <span>{dotsCount >= 1 ? '.' : ''}</span>
-                <span>{dotsCount >= 2 ? '.' : ''}</span>
-                <span>{dotsCount >= 3 ? '.' : ''}</span>
-              </motion.div>
-
-              {showWitness && (
+            {/* Same Unified Container & Left Alignment */}
+            <div className="w-[84vw] max-w-[1400px] mx-auto h-full flex flex-col justify-between">
+              {/* Top-Left: BUT... AS A WITNESS, */}
+              <div className="pt-10 sm:pt-14 md:pt-16">
                 <motion.div
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, ease: 'easeOut' }}
-                  className="text-[#ff0000] font-galano text-3xl sm:text-5xl md:text-[54px] tracking-wide uppercase mt-2 sm:mt-3 leading-tight"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`text-white leading-none ${sharedTextClass}`}
                 >
-                  AS A WITNESS,
+                  BUT
+                  <span>{dotsCount >= 1 ? '.' : ''}</span>
+                  <span>{dotsCount >= 2 ? '.' : ''}</span>
+                  <span>{dotsCount >= 3 ? '.' : ''}</span>
+                </motion.div>
+
+                {showWitness && (
+                  <motion.div
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, ease: 'easeOut' }}
+                    className={`text-[#ff0000] mt-3 sm:mt-4 ${sharedTextClass}`}
+                  >
+                    AS A WITNESS,
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Bottom-Left: HE BLESSES THE WORLD! */}
+              {showBlesses && (
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, ease: 'easeOut' }}
+                  className={`text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)] max-w-4xl ${sharedTextClass}`}
+                >
+                  HE BLESSES THE WORLD!
                 </motion.div>
               )}
             </div>
-
-            {/* Bottom-Left: HE BLESSES THE WORLD! */}
-            {showBlesses && (
-              <motion.div
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, ease: 'easeOut' }}
-                className="text-white font-galano text-3xl sm:text-5xl md:text-[54px] tracking-wide uppercase leading-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)] max-w-3xl"
-              >
-                HE BLESSES THE WORLD!
-              </motion.div>
-            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -571,76 +573,79 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, transition: { duration: 0.4 } }}
-            className="absolute inset-0 z-30 pointer-events-none p-7 sm:p-14 md:p-20 flex flex-col justify-between pb-28 sm:pb-32 md:pb-36"
+            className="absolute inset-0 z-30 pointer-events-none flex flex-col justify-between pb-28 sm:pb-32 md:pb-36"
           >
-            {/* Top Row: Two Decades & A Family */}
-            <div className="flex flex-col sm:flex-row justify-between items-start gap-4 pt-6 sm:pt-8 md:pt-10">
-              {showCard1 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="max-w-sm font-galano text-base sm:text-xl md:text-2xl text-white uppercase tracking-wide leading-snug drop-shadow-md"
-                >
-                  TWO DECADES OF COMMITMENT &amp; COUNTING ...
-                </motion.div>
-              )}
+            {/* Same Unified Container & Left Alignment */}
+            <div className="w-[84vw] max-w-[1400px] mx-auto h-full flex flex-col justify-between">
+              {/* Top Row: Two Decades & A Family */}
+              <div className="flex flex-col sm:flex-row justify-between items-start gap-4 pt-8 sm:pt-10 md:pt-14">
+                {showCard1 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="max-w-sm font-galano font-black text-lg sm:text-2xl md:text-3xl text-white uppercase tracking-wide leading-snug drop-shadow-md"
+                  >
+                    TWO DECADES OF COMMITMENT &amp; COUNTING ...
+                  </motion.div>
+                )}
 
-              {showCard2 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="max-w-sm font-galano text-base sm:text-xl md:text-2xl text-white uppercase tracking-wide leading-snug text-left sm:text-right drop-shadow-md"
-                >
-                  A FAMILY TO WORK WITH – A FAMILY TO WORK FOR
-                </motion.div>
-              )}
-            </div>
+                {showCard2 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="max-w-sm font-galano font-black text-lg sm:text-2xl md:text-3xl text-white uppercase tracking-wide leading-snug text-left sm:text-right drop-shadow-md"
+                  >
+                    A FAMILY TO WORK WITH – A FAMILY TO WORK FOR
+                  </motion.div>
+                )}
+              </div>
 
-            {/* Mid Row: A Bounty of Love & A Promise Spoken */}
-            <div className="flex flex-col sm:flex-row justify-between items-start gap-4 my-auto">
-              {showCard3 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="max-w-sm font-galano text-base sm:text-xl md:text-2xl text-white uppercase tracking-wide leading-snug drop-shadow-md"
-                >
-                  A BOUNTY OF LOVE, A LEGACY TO UPHOLD
-                </motion.div>
-              )}
+              {/* Mid Row: A Bounty of Love & A Promise Spoken */}
+              <div className="flex flex-col sm:flex-row justify-between items-start gap-4 my-auto">
+                {showCard3 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="max-w-sm font-galano font-black text-lg sm:text-2xl md:text-3xl text-white uppercase tracking-wide leading-snug drop-shadow-md"
+                  >
+                    A BOUNTY OF LOVE, A LEGACY TO UPHOLD
+                  </motion.div>
+                )}
 
-              {showCard4 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="max-w-sm font-galano text-base sm:text-xl md:text-2xl text-white uppercase tracking-wide leading-snug text-left sm:text-right drop-shadow-md"
-                >
-                  A PROMISE SPOKEN IN SILENCE – FULFILLED WITH GLORY
-                </motion.div>
-              )}
-            </div>
+                {showCard4 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="max-w-sm font-galano font-black text-lg sm:text-2xl md:text-3xl text-white uppercase tracking-wide leading-snug text-left sm:text-right drop-shadow-md"
+                  >
+                    A PROMISE SPOKEN IN SILENCE – FULFILLED WITH GLORY
+                  </motion.div>
+                )}
+              </div>
 
-            {/* Bottom-Left: Large SRF Logo & ONE SPINE AT A TIME */}
-            <div className="flex flex-col items-start gap-3">
-              {showLogo && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.7 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                  className="w-18 h-18 sm:w-22 sm:h-22 text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.35)]"
-                >
-                  <SrfLogo className="w-full h-full text-white" />
-                </motion.div>
-              )}
+              {/* Bottom-Left: Large SRF Logo & ONE SPINE AT A TIME */}
+              <div className="flex flex-col items-start gap-3">
+                {showLogo && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.7 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    className="w-18 h-18 sm:w-22 sm:h-22 text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.35)]"
+                  >
+                    <SrfLogo className="w-full h-full text-white" />
+                  </motion.div>
+                )}
 
-              {showCard5 && (
-                <motion.div
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className="text-[#ff0000] font-galano text-xl sm:text-3xl md:text-[34px] tracking-wide uppercase drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]"
-                >
-                  ONE SPINE AT A TIME
-                </motion.div>
-              )}
+                {showCard5 && (
+                  <motion.div
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="text-[#ff0000] font-galano font-black text-2xl sm:text-3xl md:text-4xl tracking-wide uppercase drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]"
+                  >
+                    ONE SPINE AT A TIME
+                  </motion.div>
+                )}
+              </div>
             </div>
           </motion.div>
         )}
@@ -681,13 +686,12 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
       )}
 
       {/* -------------------------------------------------------- */}
-      {/* BOTTOM CONTROLS: RESTART & SKIP (LEFT) + PLAY/PAUSE (RIGHT) */}
-      {/* Smooth entrance from outward (left & right)              */}
+      {/* BOTTOM INTRO CONTROLS: DOWN ARROW & SKIP (LEFT) + PLAY/PAUSE (RIGHT) */}
       {/* -------------------------------------------------------- */}
       <AnimatePresence>
         {frame < 5 && showControls && (
           <>
-            {/* Left Controls: Restart Button + Skip Pill Button */}
+            {/* Left Controls: Next Frame Down Arrow + Skip Pill Button */}
             <motion.div
               key="left-journey-controls"
               initial={{ opacity: 0, x: -90 }}
@@ -700,15 +704,15 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
               className="absolute bottom-6 sm:bottom-7 left-6 sm:left-7 z-50 flex items-center gap-3.5 pointer-events-auto"
             >
-              {/* Restart / Replay Button */}
+              {/* Next Frame Down Button with arrow_cool_down icon */}
               <button
                 type="button"
-                onClick={handleRestart}
+                onClick={() => advanceFrame()}
                 className="w-12 h-12 rounded-full bg-black/50 backdrop-blur-md border border-white/15 text-white/90 hover:text-white hover:bg-black/70 hover:scale-105 active:scale-95 transition-all flex items-center justify-center cursor-pointer shadow-xl"
-                aria-label="Restart animation from beginning"
-                title="Restart from beginning"
+                aria-label="Next frame"
+                title="Next frame"
               >
-                <MaterialIcon name="refresh" size={22} />
+                <MaterialIcon name="arrow_cool_down" size={24} />
               </button>
 
               {/* Skip Pill Button: In usual Google Sans font (font-sans) */}

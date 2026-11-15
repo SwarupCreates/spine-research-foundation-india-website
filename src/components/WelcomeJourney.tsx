@@ -15,6 +15,12 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
   // Auto-play state: true = auto-advances; false = manual scrolling only
   const [isPlaying, setIsPlaying] = useState<boolean>(true)
 
+  // Frame 1 slow sequential reveal states
+  const [showBoy, setShowBoy] = useState<boolean>(false)
+  const [showMeet, setShowMeet] = useState<boolean>(false)
+  const [showDurga, setShowDurga] = useState<boolean>(false)
+  const [showControls, setShowControls] = useState<boolean>(false)
+
   // Frame 2 progressive character typing
   const [charCount1, setCharCount1] = useState<number>(0)
   const [charCount2, setCharCount2] = useState<number>(0)
@@ -54,6 +60,10 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
   const handleRestart = useCallback(() => {
     setIsTransitioning(false)
     setFrame(1)
+    setShowBoy(false)
+    setShowMeet(false)
+    setShowDurga(false)
+    setShowControls(false)
     setCharCount1(0)
     setCharCount2(0)
     setCharCount3(0)
@@ -135,16 +145,35 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
   }, [advanceFrame])
 
   // -------------------------------------------------------------
-  // Frame 1 Automation: Meet -> Durga -> wait 1.2s -> advance
+  // Frame 1 Automation: Sequential slow reveals:
+  // Base image + Gradient -> Boy (+100ms) -> Controls (+400ms) -> MEET (+700ms) -> DURGA (+1300ms)
   // -------------------------------------------------------------
   useEffect(() => {
-    if (frame !== 1 || !isPlaying) return
+    if (frame !== 1) {
+      setShowBoy(true)
+      setShowControls(true)
+      return
+    }
 
-    const timer = setTimeout(() => {
-      advanceFrame(2)
-    }, 3800)
+    const t1 = setTimeout(() => setShowBoy(true), 100)
+    const t2 = setTimeout(() => setShowControls(true), 400)
+    const t3 = setTimeout(() => setShowMeet(true), 700)
+    const t4 = setTimeout(() => setShowDurga(true), 1300)
+    let t5: ReturnType<typeof setTimeout> | undefined
 
-    return () => clearTimeout(timer)
+    if (isPlaying) {
+      t5 = setTimeout(() => {
+        advanceFrame(2)
+      }, 4800)
+    }
+
+    return () => {
+      clearTimeout(t1)
+      clearTimeout(t2)
+      clearTimeout(t3)
+      clearTimeout(t4)
+      if (t5) clearTimeout(t5)
+    }
   }, [frame, isPlaying, advanceFrame])
 
   // -------------------------------------------------------------
@@ -282,7 +311,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
   return (
     <div className="fixed inset-0 z-[100] w-screen h-screen bg-[#0b0c0e] overflow-hidden select-none font-galano">
       {/* -------------------------------------------------------- */}
-      {/* BACKGROUND IMAGE LAYER 1                                 */}
+      {/* BACKGROUND IMAGE LAYER 1 & BOTTOM GRADIENT               */}
       {/* Frames 1-2: Silent Amidst the Passing Crowd 1           */}
       {/* Frames 3-5: Solitary Boy Amid the Moving Crowd 1         */}
       {/* -------------------------------------------------------- */}
@@ -292,14 +321,8 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
             <motion.div
               key="bg-silent-crowd"
               initial={{ opacity: 0 }}
-              animate={{
-                opacity: 1,
-                y: [0, -10, 0],
-                transition: {
-                  opacity: { duration: 0.8, ease: 'easeOut' },
-                  y: { duration: 12, repeat: Infinity, ease: 'easeInOut' },
-                },
-              }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, ease: 'easeOut' }}
               exit={{
                 opacity: 0,
                 filter: 'blur(10px)',
@@ -342,6 +365,14 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Bottom-to-top linear gradient overlay: 100% #000000 at bottom to 0% #000000 at 50vh max */}
+        <div
+          className="absolute bottom-0 inset-x-0 h-1/2 max-h-[50vh] pointer-events-none z-[5]"
+          style={{
+            background: 'linear-gradient(to top, #000000 0%, rgba(0, 0, 0, 0.82) 30%, rgba(0, 0, 0, 0) 100%)',
+          }}
+        />
       </div>
 
       {/* -------------------------------------------------------- */}
@@ -356,40 +387,46 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
             exit={{ opacity: 0, transition: { duration: 0.6 } }}
             className="absolute inset-0 w-full h-full pointer-events-none z-10"
           >
-            {/* "MEET" top-left */}
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.15, ease: 'easeOut' }}
-              className="absolute top-10 sm:top-14 md:top-16 left-7 sm:left-14 md:left-20 text-white font-galano text-4xl sm:text-6xl md:text-[64px] tracking-wide select-none leading-none"
-            >
-              MEET
-            </motion.div>
+            {/* "MEET" top-left: exactly aligned with left of D, y: 7.8% */}
+            {showMeet && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.65, ease: 'easeOut' }}
+                className="absolute top-[7.8%] left-[4.6%] text-white font-galano font-black text-3xl sm:text-4xl md:text-[42px] tracking-wide select-none leading-none"
+              >
+                MEET
+              </motion.div>
+            )}
 
-            {/* Giant "DURGA" bold red text spanning behind boy */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.9, delay: 0.55, ease: 'easeOut' }}
-              className="absolute top-[15%] sm:top-[16%] md:top-[17%] left-7 sm:left-14 md:left-20 text-[#ff0000] font-galano text-[26vw] sm:text-[22vw] leading-none tracking-tight select-none pointer-events-none"
-            >
-              DURGA
-            </motion.div>
+            {/* Giant "DURGA" bold red text spanning behind boy: top 15.8%, left 4.6%, width 91.4% */}
+            {showDurga && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.85, ease: 'easeOut' }}
+                className="absolute top-[15.8%] left-[4.6%] w-[91.4%] text-[#ff0000] font-galano font-black leading-[0.8] select-none pointer-events-none tracking-[-0.035em] whitespace-nowrap"
+                style={{ fontSize: 'min(21.8vw, 27vh)' }}
+              >
+                DURGA
+              </motion.div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* -------------------------------------------------------- */}
       {/* BOY CUTOUT LAYER (Frames 1 & 2): Sits over "DURGA" text   */}
+      {/* Renders after 100ms in Frame 1                            */}
       {/* -------------------------------------------------------- */}
       <AnimatePresence>
-        {frame <= 2 && (
+        {frame <= 2 && showBoy && (
           <motion.div
             key="boy-cutout-layer"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, transition: { duration: 0.8 } }}
-            transition={{ duration: 0.9, delay: 0.1, ease: 'easeOut' }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
             className="absolute inset-0 w-full h-full pointer-events-none z-20"
           >
             <picture className="w-full h-full block">
@@ -645,21 +682,22 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
 
       {/* -------------------------------------------------------- */}
       {/* BOTTOM CONTROLS: RESTART & SKIP (LEFT) + PLAY/PAUSE (RIGHT) */}
-      {/* Heights (48px) and insets (28px) match floating action buttons */}
+      {/* Smooth entrance from outward (left & right)              */}
       {/* -------------------------------------------------------- */}
       <AnimatePresence>
-        {frame < 5 && (
+        {frame < 5 && showControls && (
           <>
             {/* Left Controls: Restart Button + Skip Pill Button */}
             <motion.div
               key="left-journey-controls"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, x: -90 }}
+              animate={{ opacity: 1, x: 0 }}
               exit={{
                 opacity: 0,
                 scale: 0.3,
                 transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
               }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
               className="absolute bottom-6 sm:bottom-7 left-6 sm:left-7 z-50 flex items-center gap-3.5 pointer-events-auto"
             >
               {/* Restart / Replay Button */}
@@ -673,11 +711,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
                 <MaterialIcon name="refresh" size={22} />
               </button>
 
-              {/* Skip Pill Button: Exact 48px height matching participate button */}
+              {/* Skip Pill Button: In usual Google Sans font (font-sans) */}
               <button
                 type="button"
                 onClick={onSkip}
-                className="h-12 px-6 rounded-full bg-black/50 backdrop-blur-md border border-white/15 text-white/90 hover:text-white hover:bg-black/70 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 font-galano text-sm font-bold tracking-wider cursor-pointer shadow-xl uppercase"
+                className="h-12 px-6 rounded-full bg-black/50 backdrop-blur-md border border-white/15 text-white/90 hover:text-white hover:bg-black/70 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 font-sans text-sm font-semibold tracking-wider cursor-pointer shadow-xl uppercase"
                 aria-label="Skip welcome journey"
               >
                 <MaterialIcon name="fast_forward" size={18} />
@@ -688,13 +726,14 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({ onComplete, onSk
             {/* Right Controls: Play / Pause Button */}
             <motion.div
               key="right-journey-controls"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, x: 90 }}
+              animate={{ opacity: 1, x: 0 }}
               exit={{
                 opacity: 0,
                 scale: 0.3,
                 transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
               }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
               className="absolute bottom-6 sm:bottom-7 right-6 sm:right-7 z-50 flex items-center gap-3 pointer-events-auto"
             >
               <button

@@ -321,10 +321,10 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
       return
     }
 
-    const t1 = setTimeout(() => setShowBoy(true), 1000)
-    const t2 = setTimeout(() => setShowControls(true), 400)
-    const t3 = setTimeout(() => setShowMeet(true), 1900)
-    const t4 = setTimeout(() => setShowDurga(true), 2500)
+    const t1 = setTimeout(() => setShowBoy(true), 600)
+    const t2 = setTimeout(() => setShowControls(true), 300)
+    const t3 = setTimeout(() => setShowMeet(true), 1000)
+    const t4 = setTimeout(() => setShowDurga(true), 1500)
 
     return () => {
       clearTimeout(t1)
@@ -339,7 +339,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
     if (frame === 1 && isPlaying) {
       const t5 = setTimeout(() => {
         advanceFrame(2)
-      }, 6200)
+      }, 4600)
       return () => clearTimeout(t5)
     }
   }, [frame, isPlaying, advanceFrame])
@@ -357,17 +357,17 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
       return
     }
 
-    const t1 = setTimeout(() => setShowLine1(true), 300)
-    const t2 = setTimeout(() => setShowLine2(true), 1200)
-    const t3 = setTimeout(() => setShowLine3(true), 2100)
-    const t4 = setTimeout(() => setShowWitness(true), 3100)
-    const t5 = setTimeout(() => setShowBlesses(true), 3900)
+    const t1 = setTimeout(() => setShowLine1(true), 200)
+    const t2 = setTimeout(() => setShowLine2(true), 800)
+    const t3 = setTimeout(() => setShowLine3(true), 1400)
+    const t4 = setTimeout(() => setShowWitness(true), 2050)
+    const t5 = setTimeout(() => setShowBlesses(true), 2650)
 
     let tAuto: ReturnType<typeof setTimeout>
     if (isPlayingRef.current) {
       tAuto = setTimeout(() => {
         advanceFrameRef.current(3)
-      }, 6500)
+      }, 4600)
     }
 
     return () => {
@@ -385,7 +385,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
     if (frame === 2 && showBlesses && isPlaying) {
       const t = setTimeout(() => {
         advanceFrameRef.current(3)
-      }, 1800)
+      }, 1400)
       return () => clearTimeout(t)
     }
   }, [frame, showBlesses, isPlaying])
@@ -404,12 +404,12 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
       return
     }
 
-    const t1 = setTimeout(() => setShowCard1(true), 200)
-    const t2 = setTimeout(() => setShowCard2(true), 750)
-    const t3 = setTimeout(() => setShowCard3(true), 1300)
-    const t4 = setTimeout(() => setShowCard4(true), 1850)
-    const t5 = setTimeout(() => setShowCard5(true), 2400)
-    const t6 = setTimeout(() => setShowLogo(true), 2950)
+    const t1 = setTimeout(() => setShowCard1(true), 150)
+    const t2 = setTimeout(() => setShowCard2(true), 550)
+    const t3 = setTimeout(() => setShowCard3(true), 950)
+    const t4 = setTimeout(() => setShowCard4(true), 1350)
+    const t5 = setTimeout(() => setShowCard5(true), 1750)
+    const t6 = setTimeout(() => setShowLogo(true), 2150)
 
     return () => {
       clearTimeout(t1)
@@ -426,7 +426,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
     if (frame === 3 && isPlaying) {
       const t7 = setTimeout(() => {
         advanceFrame(4)
-      }, 4900)
+      }, 3800)
       return () => clearTimeout(t7)
     }
   }, [frame, isPlaying, advanceFrame])
@@ -499,10 +499,10 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
               initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
               animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
               exit={{ opacity: 0, transition: { duration: 0.8 } }}
-              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute inset-0 w-full h-full"
+              transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
+              className="absolute inset-0 w-full h-full overflow-hidden"
             >
-              <picture className="w-full h-full block relative z-0">
+              <picture className="w-full h-full block relative z-0 md:transform-none md:scale-100 md:translate-y-0 scale-[0.90] -translate-y-7 sm:-translate-y-9 origin-center">
                 <source
                   media="(max-width: 768px)"
                   srcSet={`${import.meta.env.BASE_URL}banners/Solitary%20Boy%20Amid%20the%20Moving%20Crowd%201%20-%20phone.png`}
@@ -510,7 +510,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                 <img
                   src={`${import.meta.env.BASE_URL}banners/Solitary%20Boy%20Amid%20the%20Moving%20Crowd%201.jpg`}
                   alt="Solitary Boy Amid the Moving Crowd"
-                  className="w-full h-full object-cover object-[50%_25%] md:object-center select-none"
+                  className="w-full h-full object-cover object-[50%_20%] md:object-center select-none"
                 />
               </picture>
             </motion.div>
@@ -627,38 +627,56 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
               )}
             </div>
 
-            {/* Mobile View (< md): Centered at bottom above controls (44px MEET, 86px DURGA on 402px base) */}
+            {/* Mobile View (< md): Centered at bottom above controls - fixed final positions */}
             <div className="md:hidden absolute bottom-24 sm:bottom-28 inset-x-0 flex flex-col items-center justify-center text-center px-4 z-20">
-              {showMeet && (
-                <BlurText
-                  text="MEET"
-                  effect="blur"
-                  animateBy="letters"
-                  direction="bottom"
-                  trigger="load"
-                  delay={90}
-                  stepDuration={0.32}
-                  blur={12}
-                  distance={20}
-                  className="text-white font-galano font-black uppercase tracking-wide leading-none text-[clamp(34px,10.95vw,44px)] justify-center"
-                />
-              )}
+              <div className="flex items-center justify-center">
+                {showMeet ? (
+                  <BlurText
+                    text="MEET"
+                    effect="blur"
+                    animateBy="letters"
+                    direction="bottom"
+                    trigger="load"
+                    delay={60}
+                    stepDuration={0.25}
+                    blur={12}
+                    distance={16}
+                    className="text-white font-galano font-black uppercase tracking-wide leading-none text-[clamp(34px,10.95vw,44px)] justify-center"
+                  />
+                ) : (
+                  <div
+                    className="invisible select-none pointer-events-none text-white font-galano font-black uppercase tracking-wide leading-none text-[clamp(34px,10.95vw,44px)] justify-center"
+                    aria-hidden="true"
+                  >
+                    MEET
+                  </div>
+                )}
+              </div>
 
-              {showDurga && (
-                <BlurText
-                  text="DURGA"
-                  effect="blur"
-                  animateBy="letters"
-                  direction="bottom"
-                  trigger="load"
-                  delay={90}
-                  stepDuration={0.35}
-                  blur={16}
-                  distance={25}
-                  color="#ff0000"
-                  className="font-galano font-black uppercase tracking-tight leading-none text-[clamp(66px,21.4vw,86px)] -mt-2 sm:-mt-2.5 drop-shadow-[0_2px_16px_rgba(0,0,0,0.9)] justify-center"
-                />
-              )}
+              <div className="flex items-center justify-center -mt-2 sm:-mt-2.5">
+                {showDurga ? (
+                  <BlurText
+                    text="DURGA"
+                    effect="blur"
+                    animateBy="letters"
+                    direction="bottom"
+                    trigger="load"
+                    delay={60}
+                    stepDuration={0.28}
+                    blur={16}
+                    distance={20}
+                    color="#ff0000"
+                    className="font-galano font-black uppercase tracking-tight leading-none text-[clamp(66px,21.4vw,86px)] drop-shadow-[0_2px_16px_rgba(0,0,0,0.9)] justify-center"
+                  />
+                ) : (
+                  <div
+                    className="invisible select-none pointer-events-none font-galano font-black uppercase tracking-tight leading-none text-[clamp(66px,21.4vw,86px)] drop-shadow-[0_2px_16px_rgba(0,0,0,0.9)] justify-center"
+                    aria-hidden="true"
+                  >
+                    DURGA
+                  </div>
+                )}
+              </div>
             </div>
           </motion.div>
         )}
@@ -754,15 +772,15 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
             exit={{ opacity: 0, transition: { duration: 0.5 } }}
             className="absolute inset-0 z-30 pointer-events-none"
           >
-            {/* Desktop View (>= md): Left-aligned inside standard 92% container */}
+            {/* Desktop View (>= md): Left-aligned inside standard 92% container - fixed final positions */}
             <div className="hidden md:block w-[92%] mx-auto h-full relative">
               <div className="absolute bottom-20 md:bottom-24 lg:bottom-28 left-0 select-none">
                 {/* Line 1: As a son, he tends the mother, */}
-                {showLine1 && (
+                {showLine1 ? (
                   <motion.div
-                    initial={{ opacity: 0, y: 14 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3, ease: 'easeOut' }}
                     className="flex items-baseline gap-x-2.5 sm:gap-x-3 text-[clamp(22px,2.5vw,38.5px)] leading-tight"
                   >
                     <BlurText
@@ -771,10 +789,10 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                       animateBy="words"
                       direction="bottom"
                       trigger="load"
-                      delay={60}
-                      stepDuration={0.3}
+                      delay={45}
+                      stepDuration={0.25}
                       blur={10}
-                      distance={14}
+                      distance={10}
                       color="rgba(255, 255, 255, 0.55)"
                       className="font-normal font-galano-alt"
                     />
@@ -784,22 +802,30 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                       animateBy="words"
                       direction="bottom"
                       trigger="load"
-                      delay={60}
-                      stepDuration={0.3}
+                      delay={45}
+                      stepDuration={0.25}
                       blur={10}
-                      distance={14}
+                      distance={10}
                       color="#ffffff"
                       className="font-bold font-galano-alt drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
                     />
                   </motion.div>
+                ) : (
+                  <div
+                    className="invisible select-none pointer-events-none flex items-baseline gap-x-2.5 sm:gap-x-3 text-[clamp(22px,2.5vw,38.5px)] leading-tight font-galano-alt"
+                    aria-hidden="true"
+                  >
+                    <span className="font-normal">{line1Prefix}</span>
+                    <span className="font-bold">{line1Suffix}</span>
+                  </div>
                 )}
 
                 {/* Line 2: As a father, he lulls the child, */}
-                {showLine2 && (
+                {showLine2 ? (
                   <motion.div
-                    initial={{ opacity: 0, y: 14 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3, ease: 'easeOut' }}
                     className="flex items-baseline gap-x-2.5 sm:gap-x-3 text-[clamp(22px,2.5vw,38.5px)] leading-tight pt-2 sm:pt-2.5 md:pt-3"
                   >
                     <BlurText
@@ -808,10 +834,10 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                       animateBy="words"
                       direction="bottom"
                       trigger="load"
-                      delay={60}
-                      stepDuration={0.3}
+                      delay={45}
+                      stepDuration={0.25}
                       blur={10}
-                      distance={14}
+                      distance={10}
                       color="rgba(255, 255, 255, 0.55)"
                       className="font-normal font-galano-alt"
                     />
@@ -821,22 +847,30 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                       animateBy="words"
                       direction="bottom"
                       trigger="load"
-                      delay={60}
-                      stepDuration={0.3}
+                      delay={45}
+                      stepDuration={0.25}
                       blur={10}
-                      distance={14}
+                      distance={10}
                       color="#ffffff"
                       className="font-bold font-galano-alt drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
                     />
                   </motion.div>
+                ) : (
+                  <div
+                    className="invisible select-none pointer-events-none flex items-baseline gap-x-2.5 sm:gap-x-3 text-[clamp(22px,2.5vw,38.5px)] leading-tight pt-2 sm:pt-2.5 md:pt-3 font-galano-alt"
+                    aria-hidden="true"
+                  >
+                    <span className="font-normal">{line2Prefix}</span>
+                    <span className="font-bold">{line2Suffix}</span>
+                  </div>
                 )}
 
                 {/* Line 3: As a brother, he shares the fret ... */}
-                {showLine3 && (
+                {showLine3 ? (
                   <motion.div
-                    initial={{ opacity: 0, y: 14 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3, ease: 'easeOut' }}
                     className="flex items-baseline gap-x-2.5 sm:gap-x-3 text-[clamp(22px,2.5vw,38.5px)] leading-tight pt-2 sm:pt-2.5 md:pt-3"
                   >
                     <BlurText
@@ -845,10 +879,10 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                       animateBy="words"
                       direction="bottom"
                       trigger="load"
-                      delay={60}
-                      stepDuration={0.3}
+                      delay={45}
+                      stepDuration={0.25}
                       blur={10}
-                      distance={14}
+                      distance={10}
                       color="rgba(255, 255, 255, 0.55)"
                       className="font-normal font-galano-alt"
                     />
@@ -858,22 +892,30 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                       animateBy="words"
                       direction="bottom"
                       trigger="load"
-                      delay={60}
-                      stepDuration={0.3}
+                      delay={45}
+                      stepDuration={0.25}
                       blur={10}
-                      distance={14}
+                      distance={10}
                       color="#ffffff"
                       className="font-bold font-galano-alt drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
                     />
                   </motion.div>
+                ) : (
+                  <div
+                    className="invisible select-none pointer-events-none flex items-baseline gap-x-2.5 sm:gap-x-3 text-[clamp(22px,2.5vw,38.5px)] leading-tight pt-2 sm:pt-2.5 md:pt-3 font-galano-alt"
+                    aria-hidden="true"
+                  >
+                    <span className="font-normal">{line3Prefix}</span>
+                    <span className="font-bold">{line3Suffix}</span>
+                  </div>
                 )}
 
                 {/* Line 4: BUT... AS A WITNESS, */}
-                {showWitness && (
+                {showWitness ? (
                   <motion.div
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.35, ease: 'easeOut' }}
                     className="flex items-baseline gap-x-3 sm:gap-x-4 pt-1 sm:pt-1.5 md:pt-2"
                   >
                     <BlurText
@@ -882,10 +924,10 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                       animateBy="letters"
                       direction="bottom"
                       trigger="load"
-                      delay={70}
-                      stepDuration={0.32}
+                      delay={50}
+                      stepDuration={0.25}
                       blur={12}
-                      distance={18}
+                      distance={12}
                       color="#ffffff"
                       className="font-galano font-black uppercase text-[clamp(38px,4.6vw,70.6px)] leading-none tracking-tight drop-shadow-[0_2px_16px_rgba(0,0,0,0.9)]"
                     />
@@ -895,22 +937,30 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                       animateBy="words"
                       direction="bottom"
                       trigger="load"
-                      delay={80}
-                      stepDuration={0.35}
+                      delay={50}
+                      stepDuration={0.28}
                       blur={14}
-                      distance={20}
+                      distance={14}
                       color="#ff0000"
                       className="font-galano font-black uppercase text-[clamp(38px,4.6vw,70.6px)] leading-none tracking-tight drop-shadow-[0_2px_16px_rgba(255,0,0,0.4)]"
                     />
                   </motion.div>
+                ) : (
+                  <div
+                    className="invisible select-none pointer-events-none flex items-baseline gap-x-3 sm:gap-x-4 pt-1 sm:pt-1.5 md:pt-2 font-galano font-black uppercase text-[clamp(38px,4.6vw,70.6px)] leading-none tracking-tight"
+                    aria-hidden="true"
+                  >
+                    <span>{line4Prefix}</span>
+                    <span>{line4Suffix}</span>
+                  </div>
                 )}
 
                 {/* Line 5: he blesses the world! */}
-                {showBlesses && (
+                {showBlesses ? (
                   <motion.div
-                    initial={{ opacity: 0, y: 14 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3, ease: 'easeOut' }}
                     className="pt-2 sm:pt-2.5 md:pt-3"
                   >
                     <BlurText
@@ -919,26 +969,33 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                       animateBy="words"
                       direction="bottom"
                       trigger="load"
-                      delay={60}
-                      stepDuration={0.32}
+                      delay={45}
+                      stepDuration={0.25}
                       blur={10}
-                      distance={16}
+                      distance={10}
                       color="#ffffff"
                       className="font-galano-alt font-bold text-white text-[clamp(22px,2.5vw,38.5px)] leading-tight tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
                     />
                   </motion.div>
+                ) : (
+                  <div
+                    className="invisible select-none pointer-events-none pt-2 sm:pt-2.5 md:pt-3 font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight tracking-tight"
+                    aria-hidden="true"
+                  >
+                    <span>{line5Text}</span>
+                  </div>
                 )}
               </div>
             </div>
 
-            {/* Mobile View (< md): Centered at bottom above controls */}
+            {/* Mobile View (< md): Centered at bottom above controls - all 5 lines in final positions from start */}
             <div className="md:hidden absolute bottom-[96px] sm:bottom-[108px] inset-x-0 px-4 flex flex-col items-center text-center z-20">
               {/* Line 1: As a son, he tends the mother, */}
-              {showLine1 && (
+              {showLine1 ? (
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3, ease: 'easeOut' }}
                   className="flex flex-row items-center justify-center gap-x-1.5 text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap"
                 >
                   <BlurText
@@ -947,10 +1004,10 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     animateBy="words"
                     direction="bottom"
                     trigger="load"
-                    delay={60}
-                    stepDuration={0.3}
+                    delay={45}
+                    stepDuration={0.24}
                     blur={8}
-                    distance={12}
+                    distance={8}
                     color="rgba(255, 255, 255, 0.55)"
                     className="font-normal font-galano-alt justify-center"
                   />
@@ -960,22 +1017,30 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     animateBy="words"
                     direction="bottom"
                     trigger="load"
-                    delay={60}
-                    stepDuration={0.3}
+                    delay={45}
+                    stepDuration={0.24}
                     blur={8}
-                    distance={12}
+                    distance={8}
                     color="#ffffff"
                     className="font-bold font-galano-alt justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
                   />
                 </motion.div>
+              ) : (
+                <div
+                  className="invisible select-none pointer-events-none flex flex-row items-center justify-center gap-x-1.5 text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap font-galano-alt"
+                  aria-hidden="true"
+                >
+                  <span className="font-normal">{line1Prefix}</span>
+                  <span className="font-bold">{line1Suffix}</span>
+                </div>
               )}
 
               {/* Line 2: As a father, he lulls the child, */}
-              {showLine2 && (
+              {showLine2 ? (
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3, ease: 'easeOut' }}
                   className="flex flex-row items-center justify-center gap-x-1.5 text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap pt-1.5 sm:pt-2"
                 >
                   <BlurText
@@ -984,10 +1049,10 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     animateBy="words"
                     direction="bottom"
                     trigger="load"
-                    delay={60}
-                    stepDuration={0.3}
+                    delay={45}
+                    stepDuration={0.24}
                     blur={8}
-                    distance={12}
+                    distance={8}
                     color="rgba(255, 255, 255, 0.55)"
                     className="font-normal font-galano-alt justify-center"
                   />
@@ -997,22 +1062,30 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     animateBy="words"
                     direction="bottom"
                     trigger="load"
-                    delay={60}
-                    stepDuration={0.3}
+                    delay={45}
+                    stepDuration={0.24}
                     blur={8}
-                    distance={12}
+                    distance={8}
                     color="#ffffff"
                     className="font-bold font-galano-alt justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
                   />
                 </motion.div>
+              ) : (
+                <div
+                  className="invisible select-none pointer-events-none flex flex-row items-center justify-center gap-x-1.5 text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap pt-1.5 sm:pt-2 font-galano-alt"
+                  aria-hidden="true"
+                >
+                  <span className="font-normal">{line2Prefix}</span>
+                  <span className="font-bold">{line2Suffix}</span>
+                </div>
               )}
 
               {/* Line 3: As a brother, he shares the fret ... */}
-              {showLine3 && (
+              {showLine3 ? (
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3, ease: 'easeOut' }}
                   className="flex flex-row items-center justify-center gap-x-1.5 text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap pt-1.5 sm:pt-2"
                 >
                   <BlurText
@@ -1021,10 +1094,10 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     animateBy="words"
                     direction="bottom"
                     trigger="load"
-                    delay={60}
-                    stepDuration={0.3}
+                    delay={45}
+                    stepDuration={0.24}
                     blur={8}
-                    distance={12}
+                    distance={8}
                     color="rgba(255, 255, 255, 0.55)"
                     className="font-normal font-galano-alt justify-center"
                   />
@@ -1034,22 +1107,30 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     animateBy="words"
                     direction="bottom"
                     trigger="load"
-                    delay={60}
-                    stepDuration={0.3}
+                    delay={45}
+                    stepDuration={0.24}
                     blur={8}
-                    distance={12}
+                    distance={8}
                     color="#ffffff"
                     className="font-bold font-galano-alt justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
                   />
                 </motion.div>
+              ) : (
+                <div
+                  className="invisible select-none pointer-events-none flex flex-row items-center justify-center gap-x-1.5 text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap pt-1.5 sm:pt-2 font-galano-alt"
+                  aria-hidden="true"
+                >
+                  <span className="font-normal">{line3Prefix}</span>
+                  <span className="font-bold">{line3Suffix}</span>
+                </div>
               )}
 
               {/* Line 4: BUT... AS A WITNESS, */}
-              {showWitness && (
+              {showWitness ? (
                 <motion.div
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3, ease: 'easeOut' }}
                   className="flex flex-row items-center justify-center gap-x-2 text-[clamp(24px,7.4vw,32px)] leading-none whitespace-nowrap pt-1 sm:pt-1.5"
                 >
                   <BlurText
@@ -1058,10 +1139,10 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     animateBy="letters"
                     direction="bottom"
                     trigger="load"
-                    delay={65}
-                    stepDuration={0.3}
+                    delay={50}
+                    stepDuration={0.25}
                     blur={10}
-                    distance={15}
+                    distance={10}
                     color="#ffffff"
                     className="font-galano font-black uppercase justify-center drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]"
                   />
@@ -1071,22 +1152,30 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     animateBy="words"
                     direction="bottom"
                     trigger="load"
-                    delay={70}
-                    stepDuration={0.32}
+                    delay={50}
+                    stepDuration={0.25}
                     blur={10}
-                    distance={15}
+                    distance={10}
                     color="#ff0000"
                     className="font-galano font-black uppercase justify-center drop-shadow-[0_2px_12px_rgba(255,0,0,0.4)]"
                   />
                 </motion.div>
+              ) : (
+                <div
+                  className="invisible select-none pointer-events-none flex flex-row items-center justify-center gap-x-2 text-[clamp(24px,7.4vw,32px)] leading-none whitespace-nowrap pt-1 sm:pt-1.5 font-galano font-black uppercase"
+                  aria-hidden="true"
+                >
+                  <span>{line4Prefix}</span>
+                  <span>{line4Suffix}</span>
+                </div>
               )}
 
               {/* Line 5: he blesses the world! */}
-              {showBlesses && (
+              {showBlesses ? (
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3, ease: 'easeOut' }}
                   className="pt-1.5 sm:pt-2"
                 >
                   <BlurText
@@ -1095,14 +1184,21 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     animateBy="words"
                     direction="bottom"
                     trigger="load"
-                    delay={60}
-                    stepDuration={0.3}
+                    delay={45}
+                    stepDuration={0.24}
                     blur={8}
-                    distance={12}
+                    distance={8}
                     color="#ffffff"
                     className="font-galano-alt font-bold text-[clamp(16px,4.9vw,21.5px)] leading-tight justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] whitespace-nowrap"
                   />
                 </motion.div>
+              ) : (
+                <div
+                  className="invisible select-none pointer-events-none pt-1.5 sm:pt-2 font-galano-alt font-bold text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap"
+                  aria-hidden="true"
+                >
+                  <span>{line5Text}</span>
+                </div>
               )}
             </div>
           </motion.div>

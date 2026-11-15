@@ -130,6 +130,9 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
   const isTransitioningRef = React.useRef(false)
   isTransitioningRef.current = isTransitioning
 
+  const frameRef = React.useRef(frame)
+  frameRef.current = frame
+
   const isPlayingRef = React.useRef(isPlaying)
   isPlayingRef.current = isPlaying
 
@@ -145,58 +148,99 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
     setIsTransitioning(true)
     isTransitioningRef.current = true
 
-    setFrame((prev) => {
-      const next = targetFrame !== undefined ? targetFrame : prev + 1
-      if (next >= 5) {
-        // Measure starting coordinates of Frame 4 logo (check both mobile and desktop elements)
-        const frame4Logo =
-          document.getElementById('journey-frame4-logo-mobile') ||
-          document.getElementById('journey-frame4-logo')
-        if (frame4Logo) {
-          const r = frame4Logo.getBoundingClientRect()
+    const currentFrame = frameRef.current
+    const next = targetFrame !== undefined ? targetFrame : currentFrame + 1
+
+    if (next >= 5) {
+      // Find visible Frame 4 logo by checking which element is actively rendered with positive layout dimensions (> 0)
+      const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 768
+      const primaryId = isDesktop ? 'journey-frame4-logo' : 'journey-frame4-logo-mobile'
+      const fallbackId = isDesktop ? 'journey-frame4-logo-mobile' : 'journey-frame4-logo'
+
+      const elPrimary = document.getElementById(primaryId)
+      const elFallback = document.getElementById(fallbackId)
+
+      let activeLogo: HTMLElement | null = null
+      if (elPrimary) {
+        const r = elPrimary.getBoundingClientRect()
+        if (r.width > 0 && r.height > 0) {
+          activeLogo = elPrimary
+        }
+      }
+      if (!activeLogo && elFallback) {
+        const r = elFallback.getBoundingClientRect()
+        if (r.width > 0 && r.height > 0) {
+          activeLogo = elFallback
+        }
+      }
+
+      if (activeLogo) {
+        const r = activeLogo.getBoundingClientRect()
+        setLogoStartCoords({
+          left: r.left,
+          top: r.top,
+          width: r.width,
+          height: r.height,
+        })
+      } else {
+        // High-precision viewport fallback so the flight never originates from (0, 0)
+        const w = typeof window !== 'undefined' ? window.innerWidth : 1024
+        const h = typeof window !== 'undefined' ? window.innerHeight : 768
+        if (isDesktop) {
+          const contentWidth = Math.min(w, h * 1.54)
+          const containerLeft = (w - contentWidth) / 2 + 32
           setLogoStartCoords({
+            left: Math.max(32, containerLeft),
+            top: h - 220,
+            width: 96,
+            height: 96,
+          })
+        } else {
+          setLogoStartCoords({
+            left: (w - 88) / 2,
+            top: h * 0.65,
+            width: 88,
+            height: 88,
+          })
+        }
+      }
+
+      // Re-measure navbar target
+      const navLogo = document.getElementById('navbar-srf-logo-container')
+      if (navLogo) {
+        const r = navLogo.getBoundingClientRect()
+        if (r.width > 0 && r.height > 0) {
+          setNavbarTarget({
             left: r.left,
             top: r.top,
             width: r.width,
             height: r.height,
           })
         }
-
-        // Re-measure navbar target
-        const navLogo = document.getElementById('navbar-srf-logo-container')
-        if (navLogo) {
-          const r = navLogo.getBoundingClientRect()
-          if (r.width > 0 && r.height > 0) {
-            setNavbarTarget({
-              left: r.left,
-              top: r.top,
-              width: r.width,
-              height: r.height,
-            })
-          }
-        }
-
-        setIsFlyingToNavbar(true)
-
-        // 1. Flight reaches the top navbar in 850ms
-        setTimeout(() => {
-          onLandedAtNavbarRef.current?.()
-        }, 850)
-
-        // 2. Navbar entry animation queue takes ~1250ms to finish all items
-        setTimeout(() => {
-          setIsDissolvingFlyingLogo(true)
-        }, 2100)
-
-        // 3. Complete journey and unmount
-        setTimeout(() => {
-          onCompleteRef.current()
-        }, 2600)
-
-        return 5
       }
-      return next
-    })
+
+      setIsFlyingToNavbar(true)
+      setFrame(5)
+
+      // 1. Flight reaches the top navbar in 850ms
+      setTimeout(() => {
+        onLandedAtNavbarRef.current?.()
+      }, 850)
+
+      // 2. Navbar entry animation queue takes ~1250ms to finish all items
+      setTimeout(() => {
+        setIsDissolvingFlyingLogo(true)
+      }, 2100)
+
+      // 3. Complete journey and unmount
+      setTimeout(() => {
+        onCompleteRef.current()
+      }, 2600)
+
+      return
+    }
+
+    setFrame(next)
 
     setTimeout(() => {
       setIsTransitioning(false)
@@ -969,7 +1013,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
               </div>
 
               {/* Bottom-Left: Large SRF Logo & ONE SPINE AT A TIME */}
-              <div className="absolute bottom-24 sm:bottom-28 md:bottom-32 left-0 flex flex-col items-start gap-3 sm:gap-4">
+              <div className="absolute bottom-24 sm:bottom-28 md:bottom-32 left-6 md:left-8 flex flex-col items-start gap-3 sm:gap-4">
                 <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28">
                   {showLogo && (
                     <motion.div

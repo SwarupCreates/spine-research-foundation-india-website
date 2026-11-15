@@ -181,10 +181,10 @@ body::-webkit-scrollbar,
 /* Mobile Welcome Journey Frame 1 & 2 background elevation */
 @media (max-width: 767px) {
   .journey-frame-1-shift {
-    transform: translateY(-18vh) !important;
+    transform: translateY(-22vh) !important;
   }
   .journey-frame-2-shift {
-    transform: translateY(-28vh) !important;
+    transform: translateY(-32vh) !important;
   }
 }
 @media (min-width: 768px) {

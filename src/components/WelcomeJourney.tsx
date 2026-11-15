@@ -259,8 +259,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
   }, [advanceFrame])
 
   // -------------------------------------------------------------
-  // Frame 1 Visual Reveal: Sequential slow reveals
-  // Base image + Gradient -> Boy (+100ms) -> Controls (+400ms) -> MEET (+700ms) -> DURGA (+1300ms)
+  // Frame 1 Visual Reveal: Sequential reveals
+  // 1. Background image begins dissolve with slight bottom-to-top motion (t = 0..1000ms)
+  // 2. Boy cutout layer dissolves in place after background finishes rendering (t = 1000ms..1800ms)
+  // 3. MEET text brings in after boy layer completely rendered (t = 1900ms)
+  // 4. DURGA text brings in behind the boy layer (t = 2500ms)
   // -------------------------------------------------------------
   useEffect(() => {
     if (frame !== 1) {
@@ -269,10 +272,10 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
       return
     }
 
-    const t1 = setTimeout(() => setShowBoy(true), 100)
+    const t1 = setTimeout(() => setShowBoy(true), 1000)
     const t2 = setTimeout(() => setShowControls(true), 400)
-    const t3 = setTimeout(() => setShowMeet(true), 700)
-    const t4 = setTimeout(() => setShowDurga(true), 1300)
+    const t3 = setTimeout(() => setShowMeet(true), 1900)
+    const t4 = setTimeout(() => setShowDurga(true), 2500)
 
     return () => {
       clearTimeout(t1)
@@ -287,7 +290,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
     if (frame === 1 && isPlaying) {
       const t5 = setTimeout(() => {
         advanceFrame(2)
-      }, 4800)
+      }, 6200)
       return () => clearTimeout(t5)
     }
   }, [frame, isPlaying, advanceFrame])
@@ -467,9 +470,9 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
           {frame <= 2 ? (
             <motion.div
               key="bg-silent-crowd"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, ease: 'easeOut' }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
               exit={{
                 opacity: 0,
                 filter: 'blur(10px)',
@@ -477,13 +480,24 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
               }}
               className="absolute inset-0 w-full h-full"
             >
-              {/* On mobile: Position background higher up in Frame 1 (-18vh) to avoid rug overlap with MEET, and climb +10vh further in Frame 2 (-28vh) */}
+              {/* Ambient blurred backdrop for desktop ultrawide / 16:9 displays */}
+              <div className="hidden md:block absolute inset-0 overflow-hidden pointer-events-none">
+                <img
+                  src={`${import.meta.env.BASE_URL}banners/Silent%20Amidst%20the%20Passing%20Crowd%201.png`}
+                  alt=""
+                  aria-hidden="true"
+                  className="w-full h-full object-cover blur-3xl opacity-35 scale-110 select-none"
+                />
+              </div>
+
+              {/* On mobile: Position background higher up in Frame 1 (-22vh) to avoid rug overlap with MEET, and climb +10vh further in Frame 2 (-32vh) */}
+              {/* On desktop: object-contain with ambient backdrop ensures boy and full scene are NOT zoomed in, matching Figma */}
               <div
-                className={`w-full h-[calc(100%+35vh)] md:h-full absolute top-0 inset-x-0 will-change-transform ${
+                className={`w-full h-full absolute top-0 inset-x-0 will-change-transform z-10 ${
                   frame === 2 ? 'journey-frame-2-shift' : 'journey-frame-1-shift'
                 }`}
                 style={{
-                  transition: 'transform 0.9s cubic-bezier(0.16, 1, 0.3, 1)',
+                  transition: frame === 2 ? 'transform 0.9s cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
                 }}
               >
                 <picture className="w-full h-full block">
@@ -494,7 +508,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   <img
                     src={`${import.meta.env.BASE_URL}banners/Silent%20Amidst%20the%20Passing%20Crowd%201.png`}
                     alt="Silent Amidst the Passing Crowd"
-                    className="w-full h-full object-cover object-[50%_40%] sm:object-center select-none"
+                    className="w-full h-full object-cover md:object-contain object-[50%_40%] md:object-center select-none"
                   />
                 </picture>
               </div>
@@ -502,13 +516,23 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
           ) : (
             <motion.div
               key="bg-solitary-boy"
-              initial={{ opacity: 0, filter: 'blur(8px)' }}
-              animate={{ opacity: 1, filter: 'blur(0px)' }}
+              initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
               exit={{ opacity: 0, transition: { duration: 0.8 } }}
-              transition={{ duration: 1.2, ease: 'easeInOut' }}
+              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
               className="absolute inset-0 w-full h-full"
             >
-              <picture className="w-full h-full block">
+              {/* Ambient blurred backdrop for desktop ultrawide / 16:9 displays */}
+              <div className="hidden md:block absolute inset-0 overflow-hidden pointer-events-none">
+                <img
+                  src={`${import.meta.env.BASE_URL}banners/Solitary%20Boy%20Amid%20the%20Moving%20Crowd%201.jpg`}
+                  alt=""
+                  aria-hidden="true"
+                  className="w-full h-full object-cover blur-3xl opacity-35 scale-110 select-none"
+                />
+              </div>
+
+              <picture className="w-full h-full block relative z-10">
                 <source
                   media="(max-width: 768px)"
                   srcSet={`${import.meta.env.BASE_URL}banners/Solitary%20Boy%20Amid%20the%20Moving%20Crowd%201%20-%20phone.png`}
@@ -516,7 +540,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                 <img
                   src={`${import.meta.env.BASE_URL}banners/Solitary%20Boy%20Amid%20the%20Moving%20Crowd%201.jpg`}
                   alt="Solitary Boy Amid the Moving Crowd"
-                  className="w-full h-full object-cover object-[50%_25%] sm:object-[50%_28%] select-none"
+                  className="w-full h-full object-cover md:object-contain object-[50%_25%] md:object-center select-none"
                 />
               </picture>
             </motion.div>
@@ -554,14 +578,14 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
             exit={{ opacity: 0, transition: { duration: 0.6 } }}
             className="absolute inset-0 w-full h-full pointer-events-none z-10"
           >
-            {/* Desktop View (>= md): 92% width centered, "MEET" top-left, "DURGA" 92% SVG behind boy cutout */}
-            <div className="hidden md:block w-[92%] mx-auto h-full relative">
+            {/* Desktop View (>= md): Match image frame on wide displays */}
+            <div className="hidden md:block w-full max-w-[calc(100vh*1.54)] mx-auto h-full relative px-6 md:px-8">
               {showMeet && (
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.65, ease: 'easeOut' }}
-                  className={`absolute top-[7.5%] left-0 text-white select-none ${sharedTextClass}`}
+                  className={`absolute top-[7.5%] left-6 md:left-8 text-white select-none ${sharedTextClass}`}
                 >
                   MEET
                 </motion.div>
@@ -572,7 +596,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   initial={{ opacity: 0, scale: 0.96 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.85, ease: 'easeOut' }}
-                  className="absolute top-[16%] left-0 w-full select-none pointer-events-none"
+                  className="absolute top-[16%] left-0 w-full select-none pointer-events-none px-6 md:px-8"
                 >
                   <svg
                     viewBox="0 0 720 152"
@@ -642,7 +666,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
             <img
               src={`${import.meta.env.BASE_URL}banners/boy.png`}
               alt="Boy with spinal deformity"
-              className="w-full h-full object-cover object-center select-none"
+              className="w-full h-full object-cover md:object-contain object-center select-none"
             />
           </motion.div>
         )}
@@ -662,9 +686,9 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
             exit={{ opacity: 0, transition: { duration: 0.5 } }}
             className="absolute inset-0 z-30 pointer-events-none"
           >
-            {/* Desktop View (>= md): Unified Container, 92% width, top-[58%] */}
-            <div className="hidden md:block w-[92%] mx-auto h-full relative">
-              <div className="absolute top-[58%] left-0 right-0 space-y-2.5">
+            {/* Desktop View (>= md): Unified Container matching image frame, top-[58%] */}
+            <div className="hidden md:block w-full max-w-[calc(100vh*1.54)] mx-auto h-full relative px-6 md:px-8">
+              <div className="absolute top-[58%] left-6 md:left-8 right-6 md:right-8 space-y-2.5">
                 {/* Line 1 */}
                 <div className={`${sharedTextClass} min-h-[1.25em]`}>
                   <span
@@ -787,7 +811,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
             className="absolute inset-0 z-30 pointer-events-none"
           >
             {/* Desktop View (>= md): Classic left-aligned top statement and bottom statement */}
-            <div className="hidden md:flex flex-col justify-between h-full w-[92%] mx-auto pb-28 sm:pb-32 md:pb-36">
+            <div className="hidden md:flex flex-col justify-between h-full w-full max-w-[calc(100vh*1.54)] mx-auto px-6 md:px-8 pb-28 sm:pb-32 md:pb-36">
               <div className="pt-10 sm:pt-14 md:pt-16">
                 <div className="space-y-0.5 sm:space-y-1 md:space-y-1.5">
                   <motion.div
@@ -885,7 +909,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
             className="absolute inset-0 z-30 pointer-events-none"
           >
             {/* Desktop View (>= md): Fixed 2-column layout - all boxes in final positions from start */}
-            <div className="hidden md:block absolute inset-0 w-[92%] mx-auto pointer-events-none">
+            <div className="hidden md:block absolute inset-0 w-full max-w-[calc(100vh*1.54)] mx-auto px-6 md:px-8 pointer-events-none">
               {/* Top Row: Two Decades & A Family */}
               <div className="absolute top-[10%] lg:top-[12%] inset-x-0 flex flex-row justify-between items-start gap-4">
                 <div className="w-[45%] min-h-[3.5em]">

@@ -132,19 +132,34 @@ a:hover .material-symbols-outlined,
   transform: translate3d(0, 0, 0);
 }
 
-/* Floating Action: Contact Button SRF Blue Hover */
+/* Floating Action: Contact Button SRF Blue Hover on PC & Default on Mobile */
 .contact-btn-srf {
   transition: all 0.25s ease;
 }
-.contact-btn-srf:hover {
-  background-color: #1B9AF7 !important;
-  border-color: #1B9AF7 !important;
-  box-shadow: 0 0 24px rgba(27, 154, 247, 0.5) !important;
-  color: #ffffff !important;
+
+@media (max-width: 767.98px) {
+  .contact-btn-srf:not(.contact-btn-open) {
+    background-color: #1B9AF7 !important;
+    border-color: #1B9AF7 !important;
+    box-shadow: 0 0 24px rgba(27, 154, 247, 0.45) !important;
+    color: #ffffff !important;
+  }
+  .contact-btn-srf:not(.contact-btn-open) .material-symbols-outlined {
+    color: #ffffff !important;
+  }
 }
-.contact-btn-srf:hover .material-symbols-outlined {
-  color: #ffffff !important;
-  transform: scale(1.1);
+
+@media (min-width: 768px) {
+  .contact-btn-srf:hover {
+    background-color: #1B9AF7 !important;
+    border-color: #1B9AF7 !important;
+    box-shadow: 0 0 24px rgba(27, 154, 247, 0.5) !important;
+    color: #ffffff !important;
+  }
+  .contact-btn-srf:hover .material-symbols-outlined {
+    color: #ffffff !important;
+    transform: scale(1.1);
+  }
 }
 
 /* Shell-level and component-level scrollbar removal */

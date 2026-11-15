@@ -136,8 +136,8 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
         onMouseLeave={() => setShowTooltip(false)}
         className={`group relative h-12 w-12 rounded-full aspect-square transition-all duration-300 cursor-pointer flex items-center justify-center focus:outline-none focus-visible:ring-2 flex-shrink-0 active:scale-95 ${
           isFeedbackOpen
-            ? 'bg-[#c92a2a] hover:bg-[#b02222] text-white border border-red-400/30 shadow-xl shadow-red-950/60 focus-visible:ring-red-400'
-            : 'contact-btn-srf bg-[#1c1d22]/85 hover:bg-[#1B9AF7] hover:border-[#1B9AF7] hover:shadow-[0_0_24px_rgba(27,154,247,0.45)] text-gray-200 hover:text-white border border-white/[0.12] backdrop-blur-xl shadow-xl focus-visible:ring-[#1B9AF7]'
+            ? 'contact-btn-open bg-[#c92a2a] hover:bg-[#b02222] text-white border border-red-400/30 shadow-xl shadow-red-950/60 focus-visible:ring-red-400'
+            : 'contact-btn-srf bg-[#1B9AF7] border-[#1B9AF7] shadow-[0_0_24px_rgba(27,154,247,0.45)] text-white active:bg-[#1582d1] md:bg-[#1c1d22]/85 md:text-gray-200 md:border-white/[0.12] md:backdrop-blur-xl md:shadow-xl md:hover:bg-[#1B9AF7] md:hover:border-[#1B9AF7] md:hover:shadow-[0_0_24px_rgba(27,154,247,0.45)] md:hover:text-white focus-visible:ring-[#1B9AF7]'
         }`}
         aria-label={isFeedbackOpen ? 'Close contact dialog' : 'Feedback and inquiries'}
       >

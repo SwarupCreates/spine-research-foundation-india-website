@@ -114,6 +114,18 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
     }
   }, [])
 
+  const [isMobileViewport, setIsMobileViewport] = useState(
+    () => (typeof window !== 'undefined' ? window.innerWidth < 768 : false)
+  )
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileViewport(window.innerWidth < 768)
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   // Full texts for Frame 2
   const line1Prefix = 'AS A SON, '
   const line1Suffix = 'HE TENDS THE MOTHER,'
@@ -477,17 +489,26 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
               }}
               className="absolute inset-0 w-full h-full"
             >
-              <picture className="w-full h-full block">
-                <source
-                  media="(max-width: 768px)"
-                  srcSet={`${import.meta.env.BASE_URL}banners/Silent%20Amidst%20the%20Passing%20Crowd%201%20-%20phone.png`}
-                />
-                <img
-                  src={`${import.meta.env.BASE_URL}banners/Silent%20Amidst%20the%20Passing%20Crowd%201.png`}
-                  alt="Silent Amidst the Passing Crowd"
-                  className="w-full h-full object-cover object-[50%_40%] sm:object-center select-none"
-                />
-              </picture>
+              {/* On mobile: Shift background up by 10% of viewport height in Frame 2 */}
+              <motion.div
+                animate={{
+                  y: frame === 2 && isMobileViewport ? '-10vh' : '0vh',
+                }}
+                transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                className="w-full h-[calc(100%+14vh)] md:h-full absolute top-0 inset-x-0 will-change-transform"
+              >
+                <picture className="w-full h-full block">
+                  <source
+                    media="(max-width: 768px)"
+                    srcSet={`${import.meta.env.BASE_URL}banners/Silent%20Amidst%20the%20Passing%20Crowd%201%20-%20phone.png`}
+                  />
+                  <img
+                    src={`${import.meta.env.BASE_URL}banners/Silent%20Amidst%20the%20Passing%20Crowd%201.png`}
+                    alt="Silent Amidst the Passing Crowd"
+                    className="w-full h-full object-cover object-[50%_40%] sm:object-center select-none"
+                  />
+                </picture>
+              </motion.div>
             </motion.div>
           ) : (
             <motion.div
@@ -705,55 +726,55 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
               </div>
             </div>
 
-            {/* Mobile View (< md): Centered at bottom above controls (27px on 402px base, stacked prefix/suffix) */}
-            <div className="md:hidden absolute bottom-24 sm:bottom-28 inset-x-0 flex flex-col items-center justify-center text-center px-6 z-20">
-              <div className="w-full text-center text-[clamp(19px,6.72vw,27px)] font-galano font-black uppercase leading-tight space-y-3 sm:space-y-3.5">
-                {/* Line 1 */}
-                <div className="text-center">
+            {/* Mobile View (< md): Centered at bottom above controls (27px on 402px base, fixed in-place sequential slots) */}
+            <div className="md:hidden absolute bottom-[92px] sm:bottom-[104px] inset-x-0 h-[216px] sm:h-[228px] flex flex-col justify-between items-center text-center px-6 z-20">
+              <div className="w-full h-full flex flex-col justify-between text-center text-[clamp(19px,6.72vw,27px)] font-galano font-black uppercase leading-tight">
+                {/* Slot 1: AS A SON, HE TENDS THE MOTHER, */}
+                <div className="h-[60px] sm:h-[64px] flex flex-col items-center justify-center text-center">
                   <span
-                    className={`block transition-opacity duration-700 ${
+                    className={`block min-h-[1.15em] transition-opacity duration-700 ${
                       isElevated ? 'opacity-65 text-white/65' : 'text-white'
                     }`}
                   >
                     {line1Prefix.slice(0, Math.min(charCount1, line1Prefix.length))}
                   </span>
-                  {charCount1 > line1Prefix.length && (
-                    <span className="block text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
-                      {line1Suffix.slice(0, charCount1 - line1Prefix.length)}
-                    </span>
-                  )}
+                  <span className="block min-h-[1.15em] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
+                    {charCount1 > line1Prefix.length
+                      ? line1Suffix.slice(0, charCount1 - line1Prefix.length)
+                      : ''}
+                  </span>
                 </div>
 
-                {/* Line 2 */}
-                <div className="text-center">
+                {/* Slot 2: AS A FATHER, HE LULLS THE CHILD, */}
+                <div className="h-[60px] sm:h-[64px] flex flex-col items-center justify-center text-center">
                   <span
-                    className={`block transition-opacity duration-700 ${
+                    className={`block min-h-[1.15em] transition-opacity duration-700 ${
                       isElevated ? 'opacity-65 text-white/65' : 'text-white'
                     }`}
                   >
                     {line2Prefix.slice(0, Math.min(charCount2, line2Prefix.length))}
                   </span>
-                  {charCount2 > line2Prefix.length && (
-                    <span className="block text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
-                      {line2Suffix.slice(0, charCount2 - line2Prefix.length)}
-                    </span>
-                  )}
+                  <span className="block min-h-[1.15em] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
+                    {charCount2 > line2Prefix.length
+                      ? line2Suffix.slice(0, charCount2 - line2Prefix.length)
+                      : ''}
+                  </span>
                 </div>
 
-                {/* Line 3 */}
-                <div className="text-center">
+                {/* Slot 3: AS A BROTHER, HE SHARES THE FRET ... */}
+                <div className="h-[60px] sm:h-[64px] flex flex-col items-center justify-center text-center">
                   <span
-                    className={`block transition-opacity duration-700 ${
+                    className={`block min-h-[1.15em] transition-opacity duration-700 ${
                       isElevated ? 'opacity-65 text-white/65' : 'text-white'
                     }`}
                   >
                     {line3Prefix.slice(0, Math.min(charCount3, line3Prefix.length))}
                   </span>
-                  {charCount3 > line3Prefix.length && (
-                    <span className="block text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
-                      {line3Suffix.slice(0, charCount3 - line3Prefix.length)}
-                    </span>
-                  )}
+                  <span className="block min-h-[1.15em] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
+                    {charCount3 > line3Prefix.length
+                      ? line3Suffix.slice(0, charCount3 - line3Prefix.length)
+                      : ''}
+                  </span>
                 </div>
               </div>
             </div>

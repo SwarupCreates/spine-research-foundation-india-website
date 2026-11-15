@@ -14,6 +14,7 @@ import {
   MisconceptionsModal,
 } from './components/ActionModals'
 import { SrfLogo } from './components/icons'
+import { WelcomeJourney } from './components/WelcomeJourney'
 import { HomePage, WorkInProgressPage, NotFoundPage } from './pages'
 
 export const App: React.FC = () => {
@@ -76,24 +77,70 @@ export const App: React.FC = () => {
   const [isEducationOpen, setIsEducationOpen] = useState(false)
   const [isMisconceptionsOpen, setIsMisconceptionsOpen] = useState(false)
 
+  // Welcome Journey animation state on landing
+  const [isJourneyActive, setIsJourneyActive] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const p = window.location.pathname.replace(/^\//, '').split('/')[0].toLowerCase()
+      if (p && p !== 'home') return false
+    }
+    return true
+  })
+  const [isEnteringFromJourney, setIsEnteringFromJourney] = useState(false)
+
+  const handleJourneyComplete = () => {
+    setIsJourneyActive(false)
+    setIsEnteringFromJourney(true)
+    setTimeout(() => {
+      setIsEnteringFromJourney(false)
+    }, 2500)
+  }
+
+  const handleJourneySkip = () => {
+    setIsJourneyActive(false)
+    setIsEnteringFromJourney(false)
+  }
+
+  // Lock manual scrolling while the cinematic journey is playing
+  useEffect(() => {
+    if (isJourneyActive) {
+      document.body.style.overflow = 'hidden'
+      window.scrollTo(0, 0)
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isJourneyActive])
+
   return (
     <div className="min-h-screen bg-[#0b0c0e] text-slate-100 flex flex-col relative selection:bg-emerald-500 selection:text-white font-medium">
+      {/* Welcome Journey Overlay Experience on Initial Landing */}
+      {isJourneyActive && (
+        <WelcomeJourney
+          onComplete={handleJourneyComplete}
+          onSkip={handleJourneySkip}
+        />
+      )}
+
       {/* Top Page-level Gradual Blur: dynamically rolls all the way down (100vh) on mobile menu open */}
-      <GradualBlur
-        position="top"
-        target="page"
-        height={isMobileMenuOpen ? '100vh' : '10rem'}
-        strength={isMobileMenuOpen ? 4.5 : 2.8}
-        layers={8}
-        curve="linear"
-        exponential
-        tint={isMobileMenuOpen ? 'rgba(11, 12, 14, 0.94)' : 'rgba(11, 12, 14, 0.82)'}
-        autoHide={!isMobileMenuOpen}
-        zIndex={isMobileMenuOpen ? 80 : 30}
-        style={{
-          transition: 'height 0.38s cubic-bezier(0.16, 1, 0.3, 1), background 0.38s ease',
-        }}
-      />
+      {!isJourneyActive && (
+        <GradualBlur
+          position="top"
+          target="page"
+          height={isMobileMenuOpen ? '100vh' : '10rem'}
+          strength={isMobileMenuOpen ? 4.5 : 2.8}
+          layers={8}
+          curve="linear"
+          exponential
+          tint={isMobileMenuOpen ? 'rgba(11, 12, 14, 0.94)' : 'rgba(11, 12, 14, 0.82)'}
+          autoHide={!isMobileMenuOpen}
+          zIndex={isMobileMenuOpen ? 80 : 30}
+          style={{
+            transition: 'height 0.38s cubic-bezier(0.16, 1, 0.3, 1), background 0.38s ease',
+          }}
+        />
+      )}
 
       {/* Floating Navbar at z-50: Sits ON TOP of GradualBlur (z-30), staying 100% sharp and unblurred */}
       <Navbar
@@ -101,6 +148,8 @@ export const App: React.FC = () => {
         onTabChange={handleTabChange}
         isMobileMenuOpen={isMobileMenuOpen}
         onMobileMenuOpenChange={setIsMobileMenuOpen}
+        isJourneyActive={isJourneyActive}
+        isEnteringFromJourney={isEnteringFromJourney}
       />
 
       {/* Main Content Container at relative z-10 */}
@@ -113,6 +162,7 @@ export const App: React.FC = () => {
               path="/"
               element={
                 <HomePage
+                  key={isJourneyActive ? 'during-journey' : 'after-journey'}
                   onReadMore={() => navigate('/about')}
                   onOpenPromise={() => navigate('/care')}
                   onOpenEducation={() => navigate('/discover')}
@@ -373,20 +423,23 @@ export const App: React.FC = () => {
       <CustomScrollbar />
 
       {/* Floating Action Buttons (z-[70]) */}
-      <FloatingActions
-        isParticipateOpen={isParticipateOpen}
-        isFeedbackOpen={isFeedbackOpen}
-        onOpenParticipate={() => {
-          setIsFeedbackOpen(false)
-          setIsParticipateOpen(true)
-        }}
-        onOpenFeedback={() => {
-          setIsParticipateOpen(false)
-          setIsFeedbackOpen(true)
-        }}
-        onCloseParticipate={() => setIsParticipateOpen(false)}
-        onCloseFeedback={() => setIsFeedbackOpen(false)}
-      />
+      {!isJourneyActive && (
+        <FloatingActions
+          isParticipateOpen={isParticipateOpen}
+          isFeedbackOpen={isFeedbackOpen}
+          isEnteringFromJourney={isEnteringFromJourney}
+          onOpenParticipate={() => {
+            setIsFeedbackOpen(false)
+            setIsParticipateOpen(true)
+          }}
+          onOpenFeedback={() => {
+            setIsParticipateOpen(false)
+            setIsFeedbackOpen(true)
+          }}
+          onCloseParticipate={() => setIsParticipateOpen(false)}
+          onCloseFeedback={() => setIsFeedbackOpen(false)}
+        />
+      )}
 
       {/* Interactive Modals */}
       <ParticipateModal

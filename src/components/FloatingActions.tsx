@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
 import { MaterialIcon } from './icons'
 
 interface FloatingActionsProps {
@@ -8,6 +9,7 @@ interface FloatingActionsProps {
   isFeedbackOpen?: boolean
   onCloseParticipate?: () => void
   onCloseFeedback?: () => void
+  isEnteringFromJourney?: boolean
 }
 
 export const FloatingActions: React.FC<FloatingActionsProps> = ({
@@ -17,6 +19,7 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
   isFeedbackOpen = false,
   onCloseParticipate,
   onCloseFeedback,
+  isEnteringFromJourney = false,
 }) => {
   const [showTooltip, setShowTooltip] = useState(false)
   const [bottomSpacing, setBottomSpacing] = useState<number | null>(null)
@@ -85,9 +88,16 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
   }, [])
 
   return (
-    <aside 
+    <motion.aside 
       id="floating-actions"
       data-testid="floating-actions"
+      initial={isEnteringFromJourney ? { opacity: 0, scale: 0.3 } : false}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={
+        isEnteringFromJourney
+          ? { type: 'spring', stiffness: 260, damping: 18, delay: 0.35 }
+          : undefined
+      }
       className={`fixed left-1/2 -translate-x-1/2 sm:left-auto sm:right-6 sm:translate-x-0 lg:right-7 z-[70] flex items-center gap-3.5 transition-[bottom] duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] ${
         bottomSpacing === null ? 'bottom-6 sm:bottom-6 lg:bottom-7' : ''
       }`}
@@ -144,7 +154,7 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
           </span>
         )}
       </button>
-    </aside>
+    </motion.aside>
   )
 }
 

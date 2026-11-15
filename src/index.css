@@ -18,8 +18,31 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'Galano Grotesque Alt Semi Bold';
+  src: url('/customFonts/Galano%20Grotesque%20Alt%20Semi%20Bold.otf') format('opentype'),
+       url('/customFonts/Galano Grotesque Alt Semi Bold.otf') format('opentype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Galano Grotesque Alt';
+  src: url('/customFonts/Galano%20Grotesque%20Alt%20Semi%20Bold.otf') format('opentype'),
+       url('/customFonts/Galano Grotesque Alt Semi Bold.otf') format('opentype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 .font-galano {
   font-family: 'Galano Grotesque Black', 'Galano Grotesque', sans-serif !important;
+}
+
+.font-galano-alt {
+  font-family: 'Galano Grotesque Alt Semi Bold', 'Galano Grotesque Alt', sans-serif !important;
+  font-synthesis: none;
 }
 
 @layer base {

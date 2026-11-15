@@ -776,7 +776,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                       blur={10}
                       distance={14}
                       color="rgba(255, 255, 255, 0.55)"
-                      className="font-normal font-galano"
+                      className="font-normal font-galano-alt"
                     />
                     <BlurText
                       text={line1Suffix}
@@ -789,7 +789,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                       blur={10}
                       distance={14}
                       color="#ffffff"
-                      className="font-bold font-galano drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
+                      className="font-bold font-galano-alt drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
                     />
                   </motion.div>
                 )}
@@ -813,7 +813,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                       blur={10}
                       distance={14}
                       color="rgba(255, 255, 255, 0.55)"
-                      className="font-normal font-galano"
+                      className="font-normal font-galano-alt"
                     />
                     <BlurText
                       text={line2Suffix}
@@ -826,7 +826,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                       blur={10}
                       distance={14}
                       color="#ffffff"
-                      className="font-bold font-galano drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
+                      className="font-bold font-galano-alt drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
                     />
                   </motion.div>
                 )}
@@ -850,7 +850,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                       blur={10}
                       distance={14}
                       color="rgba(255, 255, 255, 0.55)"
-                      className="font-normal font-galano"
+                      className="font-normal font-galano-alt"
                     />
                     <BlurText
                       text={line3Suffix}
@@ -863,7 +863,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                       blur={10}
                       distance={14}
                       color="#ffffff"
-                      className="font-bold font-galano drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
+                      className="font-bold font-galano-alt drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
                     />
                   </motion.div>
                 )}
@@ -924,7 +924,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                       blur={10}
                       distance={16}
                       color="#ffffff"
-                      className="font-galano font-bold text-white text-2xl sm:text-3xl md:text-[28px] lg:text-[34px] xl:text-[38px] tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
+                      className="font-galano-alt font-bold text-white text-2xl sm:text-3xl md:text-[28px] lg:text-[34px] xl:text-[38px] tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
                     />
                   </motion.div>
                 )}
@@ -952,7 +952,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     blur={8}
                     distance={12}
                     color="rgba(255, 255, 255, 0.55)"
-                    className="font-normal font-galano justify-center"
+                    className="font-normal font-galano-alt justify-center"
                   />
                   <BlurText
                     text={line1Suffix}
@@ -965,7 +965,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     blur={8}
                     distance={12}
                     color="#ffffff"
-                    className="font-bold font-galano justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
+                    className="font-bold font-galano-alt justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
                   />
                 </motion.div>
               )}
@@ -989,7 +989,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     blur={8}
                     distance={12}
                     color="rgba(255, 255, 255, 0.55)"
-                    className="font-normal font-galano justify-center"
+                    className="font-normal font-galano-alt justify-center"
                   />
                   <BlurText
                     text={line2Suffix}
@@ -1002,7 +1002,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     blur={8}
                     distance={12}
                     color="#ffffff"
-                    className="font-bold font-galano justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
+                    className="font-bold font-galano-alt justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
                   />
                 </motion.div>
               )}
@@ -1026,7 +1026,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     blur={8}
                     distance={12}
                     color="rgba(255, 255, 255, 0.55)"
-                    className="font-normal font-galano justify-center"
+                    className="font-normal font-galano-alt justify-center"
                   />
                   <BlurText
                     text={line3Suffix}
@@ -1039,7 +1039,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     blur={8}
                     distance={12}
                     color="#ffffff"
-                    className="font-bold font-galano justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
+                    className="font-bold font-galano-alt justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
                   />
                 </motion.div>
               )}
@@ -1100,7 +1100,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     blur={8}
                     distance={12}
                     color="#ffffff"
-                    className="font-galano font-bold text-[clamp(16.5px,4.6vw,20px)] leading-tight justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] whitespace-nowrap"
+                    className="font-galano-alt font-bold text-[clamp(16.5px,4.6vw,20px)] leading-tight justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] whitespace-nowrap"
                   />
                 </motion.div>
               )}

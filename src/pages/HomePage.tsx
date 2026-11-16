@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Hero from '../components/Hero'
 import GlassCard from '../components/GlassCard'
@@ -8,7 +8,6 @@ import EducationCard from '../components/EducationCard'
 import TrusteeMessage from '../components/TrusteeMessage'
 import ImpactMetrics from '../components/ImpactMetrics'
 import MisconceptionsCard from '../components/MisconceptionsCard'
-import GradualBlur from '../components/GradualBlur'
 
 interface HomePageProps {
   onReadMore?: () => void
@@ -28,7 +27,6 @@ export const HomePage: React.FC<HomePageProps> = ({
   isEnteringFromJourney,
 }) => {
   const navigate = useNavigate()
-  const bannerImgRef = useRef<HTMLImageElement>(null)
   const [isMobileCollapsed, setIsMobileCollapsed] = useState(false)
   const [mobileScrollProgress, setMobileScrollProgress] = useState(0)
 
@@ -52,25 +50,13 @@ export const HomePage: React.FC<HomePageProps> = ({
     }
   }, [isEnteringFromJourney])
 
-  // Fluid delayed parallax scroll effect with magnetic top snapping
+  // Continuous scroll-linked collapse on mobile (220px range)
   useEffect(() => {
-    let targetY = 0
-    let currentY = 0
-    let rafId: number
-    let isRunning = false
-
-    // Magnetic snap threshold: when within the top landing zone (scrollY <= 70px),
-    // the background is magnetically locked at resting position (0px) so no parallax starts
-    // until the user deliberately scrolls down from the home page.
-    const MAGNETIC_SNAP_THRESHOLD = 70
-
     const handleScroll = () => {
       const scrollY = window.scrollY || window.pageYOffset
       const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
-      const parallaxFactor = isMobile ? 0.24 : 0.20
 
       if (isMobile) {
-        // Continuous scroll-linked collapse over 220px of scroll range
         const COLLAPSE_RANGE = 220
         const p = Math.min(1, Math.max(0, scrollY / COLLAPSE_RANGE))
         setMobileScrollProgress(p)
@@ -78,41 +64,6 @@ export const HomePage: React.FC<HomePageProps> = ({
       } else {
         setIsMobileCollapsed(false)
         setMobileScrollProgress(0)
-      }
-
-      if (scrollY <= MAGNETIC_SNAP_THRESHOLD) {
-        // Magnetically snap to resting position at top of home page
-        targetY = 0
-      } else {
-        // Parallax smoothly engages once scrolled past the magnetic snap zone
-        // Background image scrolls ~20% slower on desktop / 24% on mobile than foreground content
-        targetY = (scrollY - MAGNETIC_SNAP_THRESHOLD) * parallaxFactor
-      }
-
-      if (!isRunning) {
-        isRunning = true
-        rafId = requestAnimationFrame(animate)
-      }
-    }
-
-    const animate = () => {
-      const scaleStr = 'scale(1)'
-
-      // Lerp with 0.08 damping factor creates luxurious delayed inertia
-      currentY += (targetY - currentY) * 0.08
-
-      if (bannerImgRef.current) {
-        bannerImgRef.current.style.transform = `translate3d(0, ${currentY.toFixed(2)}px, 0) ${scaleStr}`
-      }
-
-      if (Math.abs(targetY - currentY) > 0.05) {
-        rafId = requestAnimationFrame(animate)
-      } else {
-        currentY = targetY
-        if (bannerImgRef.current) {
-          bannerImgRef.current.style.transform = `translate3d(0, ${currentY.toFixed(2)}px, 0) ${scaleStr}`
-        }
-        isRunning = false
       }
     }
 
@@ -123,84 +74,11 @@ export const HomePage: React.FC<HomePageProps> = ({
 
     return () => {
       window.removeEventListener('scroll', handleScroll)
-      cancelAnimationFrame(rafId)
     }
-  }, [isMobileCollapsed])
+  }, [])
 
   return (
     <>
-      {/* Landing Scroll Level Hero Background Banner with Delayed Parallax & Magnetic Snap */}
-      {/* On mobile: Render with full 100dvh height in intermediate state matching Frame 4 */}
-      <div 
-        className="absolute -top-[86px] sm:-top-[90px] left-0 right-0 h-[100dvh] sm:h-[calc(100vh+90px)] pointer-events-none z-0 overflow-hidden"
-        aria-hidden="true"
-      >
-        {/* Background Image with Delayed Parallax Scroll: full high-res source image with rich crowd details */}
-        <div className="w-full h-full block">
-          <img
-            ref={bannerImgRef}
-            src={`${import.meta.env.BASE_URL}banners/Solitary%20Boy%20Amid%20the%20Moving%20Crowd%201.jpg`}
-            alt="Spine Research Foundation India patient banner"
-            className="w-full h-full object-cover object-[48%_25%] md:object-center select-none opacity-100 will-change-transform"
-            style={{
-              transform: 'translate3d(0, 0px, 0) scale(1)',
-              transformOrigin: 'center center',
-            }}
-          />
-        </div>
-
-        {/* Gradual blur softening as we move up to the overlay: adjusted for 100dvh height on mobile */}
-        <div className="block sm:hidden">
-          <GradualBlur
-            position="bottom"
-            target="parent"
-            height="55%"
-            strength={2.2}
-            layers={8}
-            curve="linear"
-            exponential
-            zIndex={2}
-          />
-        </div>
-        <div className="hidden sm:block">
-          <GradualBlur
-            position="bottom"
-            target="parent"
-            height="60%"
-            strength={2.4}
-            layers={8}
-            curve="linear"
-            exponential
-            zIndex={2}
-          />
-        </div>
-
-        {/* Top-to-bottom subtle gradient overlay on mobile for soft header blending (#0b0c0e 100% to 0%) */}
-        <div
-          className="sm:hidden absolute top-0 inset-x-0 h-36 pointer-events-none"
-          style={{
-            background: 'linear-gradient(to bottom, #0b0c0e 0%, rgba(11, 12, 14, 0.72) 40%, rgba(11, 12, 14, 0) 100%)',
-            zIndex: 4,
-          }}
-        />
-
-        {/* Vertical bottom-to-top linear gradient overlay: Smoothly merges into #0b0c0e with soft transition on mobile */}
-        <div 
-          className="sm:hidden absolute inset-0 pointer-events-none"
-          style={{
-            background: 'linear-gradient(to top, #0b0c0e 0%, rgba(11, 12, 14, 0.98) 25%, rgba(11, 12, 14, 0.6) 55%, rgba(11, 12, 14, 0) 100%)',
-            zIndex: 3,
-          }}
-        />
-        <div 
-          className="hidden sm:block absolute inset-0 pointer-events-none"
-          style={{
-            background: 'linear-gradient(to top, #0b0c0e 0%, rgba(11, 12, 14, 0.96) 28%, rgba(11, 12, 14, 0.52) 58%, rgba(11, 12, 14, 0) 100%)',
-            zIndex: 3,
-          }}
-        />
-      </div>
-
       <Hero
         onReplayJourney={onReplayJourney}
         isEnteringFromJourney={isEnteringFromJourney}

@@ -8,6 +8,7 @@ interface WelcomeJourneyProps {
   onComplete: () => void
   onSkip: () => void
   onLandedAtNavbar?: () => void
+  onFrameChange?: (frame: number) => void
 }
 
 const frameMotionVariants: Variants = {
@@ -34,9 +35,14 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
   onComplete,
   onSkip,
   onLandedAtNavbar,
+  onFrameChange,
 }) => {
   // Current journey frame: 1 through 3, then 4 for landing transition
   const [frame, setFrame] = useState<number>(1)
+
+  useEffect(() => {
+    onFrameChange?.(frame)
+  }, [frame, onFrameChange])
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false)
   const [transitionDirection, setTransitionDirection] = useState<'forward' | 'backward'>('forward')
 
@@ -521,123 +527,10 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
     <div className="fixed inset-0 z-[100] w-full h-full pointer-events-none overflow-hidden select-none font-galano">
       {/* Background dark backdrop & story frames (smoothly dissolves to 0 on landing flight) */}
       <div
-        className={`absolute inset-0 w-full h-full bg-[#0b0c0e] transition-opacity duration-700 ${
+        className={`absolute inset-0 w-full h-full bg-transparent transition-opacity duration-700 ${
           frame === 4 ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto'
         }`}
       >
-        {/* -------------------------------------------------------- */}
-        {/* BACKGROUND IMAGE LAYER 1 & BOTTOM GRADIENT               */}
-        {/* Frames 1-2: Silent Amidst the Passing Crowd 1           */}
-        {/* Frames 3-5: Solitary Boy Amid the Moving Crowd 1         */}
-        {/* -------------------------------------------------------- */}
-        <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
-          <AnimatePresence mode="sync">
-            {frame <= 2 ? (
-              <motion.div
-                key="bg-silent-crowd"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
-                exit={{
-                  opacity: 0,
-                  filter: 'blur(10px)',
-                  transition: { duration: 1.0, ease: 'easeInOut' },
-                }}
-                className="absolute inset-0 w-full h-full"
-              >
-                {/* On mobile: h-[calc(100%+35vh)] ensures the image extends well below the bottom of the viewport even when shifted */}
-                {/* On desktop: full-bleed object-cover covers 100% of the display edge-to-edge with ZERO grey bars */}
-                <div
-                  className={`w-full h-[calc(100%+35vh)] md:h-full absolute top-0 inset-x-0 will-change-transform z-0 ${
-                    frame === 2 ? 'journey-frame-2-shift' : 'journey-frame-1-shift'
-                  }`}
-                  style={{
-                    transition: frame === 2 ? 'transform 0.9s cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
-                  }}
-                >
-                  <picture className="w-full h-full block">
-                    <source
-                      media="(max-width: 768px)"
-                      srcSet={`${import.meta.env.BASE_URL}banners/Silent%20Amidst%20the%20Passing%20Crowd%201%20-%20phone.png`}
-                    />
-                    <img
-                      src={`${import.meta.env.BASE_URL}banners/Silent%20Amidst%20the%20Passing%20Crowd%201.png`}
-                      alt="Silent Amidst the Passing Crowd"
-                      className="w-full h-full object-cover object-[50%_35%] md:object-center select-none"
-                    />
-                  </picture>
-                </div>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="bg-solitary-boy"
-                initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
-                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                exit={{ opacity: 0, transition: { duration: 0.8 } }}
-                transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute inset-0 w-full h-full overflow-hidden"
-              >
-                <div className="w-full h-full block relative z-0">
-                  <img
-                    src={`${import.meta.env.BASE_URL}banners/Solitary%20Boy%20Amid%20the%20Moving%20Crowd%201.jpg`}
-                    alt="Solitary Boy Amid the Moving Crowd"
-                    className="w-full h-full object-cover object-[48%_25%] md:object-center select-none"
-                  />
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Gradual blur softening as we move up from the bottom */}
-          <div className="block sm:hidden pointer-events-none z-[6]">
-            <GradualBlur
-              position="bottom"
-              target="parent"
-              height="55%"
-              strength={2.2}
-              layers={8}
-              curve="linear"
-              exponential
-              zIndex={6}
-            />
-          </div>
-          <div className="hidden sm:block pointer-events-none z-[6]">
-            <GradualBlur
-              position="bottom"
-              target="parent"
-              height="60%"
-              strength={2.4}
-              layers={8}
-              curve="linear"
-              exponential
-              zIndex={6}
-            />
-          </div>
-
-          {/* Top-to-bottom subtle gradient overlay on mobile for soft header blending */}
-          <div
-            className="sm:hidden absolute top-0 inset-x-0 h-36 sm:h-44 pointer-events-none z-[8]"
-            style={{
-              background: 'linear-gradient(to bottom, #0b0c0e 0%, rgba(11, 12, 14, 0.72) 40%, rgba(11, 12, 14, 0) 100%)',
-            }}
-          />
-
-          {/* Vertical bottom-to-top linear gradient overlay: Smoothly merges into #0b0c0e on mobile */}
-          <div 
-            className="sm:hidden absolute inset-0 pointer-events-none z-[7]"
-            style={{
-              background: 'linear-gradient(to top, #0b0c0e 0%, rgba(11, 12, 14, 0.98) 25%, rgba(11, 12, 14, 0.6) 55%, rgba(11, 12, 14, 0) 100%)',
-            }}
-          />
-          {/* Vertical bottom-to-top linear gradient overlay: Smoothly merges into #0b0c0e on desktop */}
-          <div 
-            className="hidden sm:block absolute inset-0 pointer-events-none z-[7]"
-            style={{
-              background: 'linear-gradient(to top, #0b0c0e 0%, rgba(11, 12, 14, 0.96) 20%, rgba(11, 12, 14, 0.5) 45%, rgba(11, 12, 14, 0) 75%)',
-            }}
-          />
-        </div>
-
         {/* -------------------------------------------------------- */}
         {/* FRAME 1: Text                                            */}
         {/* Desktop (>= md): 3D Depth text behind boy cutout          */}
@@ -657,7 +550,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
               {/* Desktop View (>= md): Full-width 92% container */}
               <div className="hidden md:block w-[92%] mx-auto h-full relative">
                 {showMeet && (
-                  <div className="absolute top-[1.6%] sm:top-[2.0%] lg:top-[2.4%] left-0 text-white select-none">
+                  <div className="absolute top-[3.2%] sm:top-[3.6%] lg:top-[4.0%] left-0 text-white select-none">
                     <BlurText
                       text="MEET"
                       effect="blur"
@@ -1444,128 +1337,129 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                 </div>
               </div>
 
-              {/* Mobile View (< md): Unified compact sequential flow matching Figma design */}
-              <div className="md:hidden absolute top-[18%] sm:top-[19.5%] inset-x-0 flex flex-col items-center text-center px-4 pointer-events-none z-20">
-                <div className="w-full max-w-[320px] sm:max-w-sm flex flex-col items-center space-y-3 sm:space-y-3.5">
-                  {/* Line 1: Two decades of commitment & counting ... */}
-                  <div className="w-full flex items-center justify-center text-center">
-                    {showCard1 ? (
-                      <BlurText
-                        text="Two decades of commitment & counting ..."
-                        effect="blur"
-                        animateBy="words"
-                        direction="bottom"
-                        trigger="load"
-                        delay={50}
-                        stepDuration={0.3}
-                        blur={10}
-                        distance={14}
-                        className="font-galano-alt font-bold text-white text-[clamp(17px,5.2vw,22.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center"
-                      />
-                    ) : (
-                      <div
-                        className="invisible select-none pointer-events-none font-galano-alt font-bold text-white text-[clamp(17px,5.2vw,22.5px)] leading-[1.22] text-center mx-auto"
-                        aria-hidden="true"
-                      >
-                        Two decades of commitment &amp; counting ...
-                      </div>
-                    )}
-                  </div>
+              {/* Mobile View (< md): Unified vertical flow distributed to match Figma design */}
+              <div className="md:hidden absolute top-[11%] sm:top-[12%] bottom-[108px] sm:bottom-[116px] inset-x-0 flex flex-col items-center justify-between text-center px-4 pointer-events-none z-20">
+                {/* Line 1: Two decades of commitment & counting ... */}
+                <div className="w-full max-w-[270px] sm:max-w-[290px] flex items-center justify-center text-center">
+                  {showCard1 ? (
+                    <BlurText
+                      text="Two decades of commitment & counting ..."
+                      effect="blur"
+                      animateBy="words"
+                      direction="bottom"
+                      trigger="load"
+                      delay={50}
+                      stepDuration={0.3}
+                      blur={10}
+                      distance={14}
+                      className="font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.28] text-center drop-shadow-md mx-auto justify-center"
+                    />
+                  ) : (
+                    <div
+                      className="invisible select-none pointer-events-none font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.28] text-center mx-auto"
+                      aria-hidden="true"
+                    >
+                      Two decades of commitment &amp; counting ...
+                    </div>
+                  )}
+                </div>
 
-                  {/* Line 2: A family to work with – A family to work for */}
-                  <div className="w-full flex items-center justify-center text-center">
-                    {showCard2 ? (
-                      <BlurText
-                        text="A family to work with – A family to work for"
-                        effect="blur"
-                        animateBy="words"
-                        direction="bottom"
-                        trigger="load"
-                        delay={50}
-                        stepDuration={0.3}
-                        blur={10}
-                        distance={14}
-                        className="font-galano-alt font-bold text-white text-[clamp(17px,5.2vw,22.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center"
-                      />
-                    ) : (
-                      <div
-                        className="invisible select-none pointer-events-none font-galano-alt font-bold text-white text-[clamp(17px,5.2vw,22.5px)] leading-[1.22] text-center mx-auto"
-                        aria-hidden="true"
-                      >
-                        A family to work with – A family to work for
-                      </div>
-                    )}
-                  </div>
+                {/* Line 2: A family to work with – A family to work for */}
+                <div className="w-full max-w-[270px] sm:max-w-[290px] flex items-center justify-center text-center">
+                  {showCard2 ? (
+                    <BlurText
+                      text="A family to work with – A family to work for"
+                      effect="blur"
+                      animateBy="words"
+                      direction="bottom"
+                      trigger="load"
+                      delay={50}
+                      stepDuration={0.3}
+                      blur={10}
+                      distance={14}
+                      className="font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.28] text-center drop-shadow-md mx-auto justify-center"
+                    />
+                  ) : (
+                    <div
+                      className="invisible select-none pointer-events-none font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.28] text-center mx-auto"
+                      aria-hidden="true"
+                    >
+                      A family to work with – A family to work for
+                    </div>
+                  )}
+                </div>
 
-                  {/* Line 3: A bounty of love, A legacy to uphold */}
-                  <div className="w-full flex items-center justify-center text-center">
-                    {showCard3 ? (
-                      <BlurText
-                        text="A bounty of love, A legacy to uphold"
-                        effect="blur"
-                        animateBy="words"
-                        direction="bottom"
-                        trigger="load"
-                        delay={50}
-                        stepDuration={0.3}
-                        blur={10}
-                        distance={14}
-                        className="font-galano-alt font-bold text-white text-[clamp(17px,5.2vw,22.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center"
-                      />
-                    ) : (
-                      <div
-                        className="invisible select-none pointer-events-none font-galano-alt font-bold text-white text-[clamp(17px,5.2vw,22.5px)] leading-[1.22] text-center mx-auto"
-                        aria-hidden="true"
-                      >
-                        A bounty of love, A legacy to uphold
-                      </div>
-                    )}
-                  </div>
+                {/* Line 3: A bounty of love, A legacy to uphold */}
+                <div className="w-full max-w-[270px] sm:max-w-[290px] flex items-center justify-center text-center">
+                  {showCard3 ? (
+                    <BlurText
+                      text="A bounty of love, A legacy to uphold"
+                      effect="blur"
+                      animateBy="words"
+                      direction="bottom"
+                      trigger="load"
+                      delay={50}
+                      stepDuration={0.3}
+                      blur={10}
+                      distance={14}
+                      className="font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.28] text-center drop-shadow-md mx-auto justify-center"
+                    />
+                  ) : (
+                    <div
+                      className="invisible select-none pointer-events-none font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.28] text-center mx-auto"
+                      aria-hidden="true"
+                    >
+                      A bounty of love, A legacy to uphold
+                    </div>
+                  )}
+                </div>
 
-                  {/* Line 4: A promise spoken in silence – fulfilled with glory */}
-                  <div className="w-full flex items-center justify-center text-center">
-                    {showCard4 ? (
-                      <BlurText
-                        text="A promise spoken in silence – fulfilled with glory"
-                        effect="blur"
-                        animateBy="words"
-                        direction="bottom"
-                        trigger="load"
-                        delay={50}
-                        stepDuration={0.3}
-                        blur={10}
-                        distance={14}
-                        className="font-galano-alt font-bold text-white text-[clamp(17px,5.2vw,22.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center"
-                      />
-                    ) : (
-                      <div
-                        className="invisible select-none pointer-events-none font-galano-alt font-bold text-white text-[clamp(17px,5.2vw,22.5px)] leading-[1.22] text-center mx-auto"
-                        aria-hidden="true"
-                      >
-                        A promise spoken in silence – fulfilled with glory
-                      </div>
-                    )}
-                  </div>
+                {/* Line 4: A promise spoken in silence – fulfilled with glory */}
+                <div className="w-full max-w-[270px] sm:max-w-[290px] flex items-center justify-center text-center">
+                  {showCard4 ? (
+                    <BlurText
+                      text="A promise spoken in silence – fulfilled with glory"
+                      effect="blur"
+                      animateBy="words"
+                      direction="bottom"
+                      trigger="load"
+                      delay={50}
+                      stepDuration={0.3}
+                      blur={10}
+                      distance={14}
+                      className="font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.28] text-center drop-shadow-md mx-auto justify-center"
+                    />
+                  ) : (
+                    <div
+                      className="invisible select-none pointer-events-none font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.28] text-center mx-auto"
+                      aria-hidden="true"
+                    >
+                      A promise spoken in silence – fulfilled with glory
+                    </div>
+                  )}
+                </div>
 
-                  {/* Prominent SRF Logo: positioned directly below line 4 matching Figma */}
-                  <div className="w-18 h-18 sm:w-20 sm:h-20 pt-1.5 sm:pt-2 flex items-center justify-center">
+                {/* Logo + One spine at a time block */}
+                <div className="flex flex-col items-center shrink-0">
+                  {/* Prominent SRF Logo matching Figma */}
+                  <div className="w-[72px] h-[72px] sm:w-[76px] sm:h-[76px] flex items-center justify-center">
                     {showLogo ? (
                       <motion.div
                         id="journey-frame4-logo-mobile"
                         initial={{ opacity: 0, scale: 0.75, filter: 'blur(8px)' }}
                         animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
                         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                        className="w-18 h-18 sm:w-20 sm:h-20 mx-auto text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.4)]"
+                        className="w-full h-full mx-auto text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.4)]"
                       >
                         <SrfLogo className="w-full h-full text-white" />
                       </motion.div>
                     ) : (
-                      <div className="w-18 h-18 sm:w-20 sm:h-20 invisible" aria-hidden="true" />
+                      <div className="w-full h-full invisible" aria-hidden="true" />
                     )}
                   </div>
 
-                  {/* One spine at a time: positioned directly below logo matching Figma */}
-                  <div className="w-full pt-1 flex items-center justify-center text-center">
+                  {/* One spine at a time: directly below logo matching Figma */}
+                  <div className="pt-2 flex items-center justify-center text-center">
                     {showCard5 ? (
                       <BlurText
                         text="One spine at a time"
@@ -1578,11 +1472,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                         blur={12}
                         distance={16}
                         color="#ff0000"
-                        className="font-galano-alt font-bold tracking-wide text-[#ff0000] text-[clamp(19px,5.8vw,25px)] leading-tight text-center drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] justify-center"
+                        className="font-galano font-bold tracking-normal text-[#ff0000] text-[clamp(20px,6.0vw,25px)] leading-tight text-center drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] justify-center"
                       />
                     ) : (
                       <div
-                        className="invisible select-none pointer-events-none font-galano-alt font-bold tracking-wide text-[#ff0000] text-[clamp(19px,5.8vw,25px)] leading-tight text-center justify-center"
+                        className="invisible select-none pointer-events-none font-galano font-bold tracking-normal text-[#ff0000] text-[clamp(20px,6.0vw,25px)] leading-tight text-center justify-center"
                         aria-hidden="true"
                       >
                         One spine at a time

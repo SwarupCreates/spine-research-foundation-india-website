@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Navbar from './components/Navbar'
 import FloatingActions from './components/FloatingActions'
@@ -110,6 +111,7 @@ export const App: React.FC = () => {
   const [isJourneyActive, setIsJourneyActive] = useState(() => {
     return activeTab === 'home'
   })
+  const [journeyFrame, setJourneyFrame] = useState<number>(1)
   const [isEnteringFromJourney, setIsEnteringFromJourney] = useState(false)
 
   const handleLandedAtNavbar = React.useCallback(() => {
@@ -130,6 +132,7 @@ export const App: React.FC = () => {
   }, [])
 
   const handleJourneySkip = () => {
+    setJourneyFrame(4)
     setIsJourneyActive(false)
     setIsEnteringFromJourney(false)
     window.scrollTo(0, 0)
@@ -150,12 +153,125 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#0b0c0e] text-slate-100 flex flex-col relative selection:bg-emerald-500 selection:text-white font-medium">
+      {/* Persistent App Shell Background Banner for Home View */}
+      {activeTab === 'home' && (
+        <div 
+          className="absolute top-0 inset-x-0 h-[100dvh] sm:h-[100vh] pointer-events-none z-0 overflow-hidden select-none"
+          aria-hidden="true"
+        >
+          <AnimatePresence initial={false}>
+            {isJourneyActive && journeyFrame <= 2 ? (
+              <motion.div
+                key="bg-silent-crowd"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0, transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] } }}
+                transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                className="absolute inset-0 w-full h-full overflow-hidden"
+              >
+                <div
+                  className={`w-full h-[calc(100%+35vh)] md:h-full absolute top-0 inset-x-0 will-change-transform z-0 ${
+                    journeyFrame === 2 ? 'journey-frame-2-shift' : 'journey-frame-1-shift'
+                  }`}
+                  style={{
+                    transition: journeyFrame === 2 ? 'transform 0.9s cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
+                  }}
+                >
+                  <picture className="w-full h-full block">
+                    <source
+                      media="(max-width: 768px)"
+                      srcSet={`${import.meta.env.BASE_URL}banners/Silent%20Amidst%20the%20Passing%20Crowd%201%20-%20phone.png`}
+                    />
+                    <img
+                      src={`${import.meta.env.BASE_URL}banners/Silent%20Amidst%20the%20Passing%20Crowd%201.png`}
+                      alt="Silent Amidst the Passing Crowd"
+                      className="w-full h-full object-cover object-[50%_35%] md:object-center select-none"
+                    />
+                  </picture>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="bg-solitary-boy"
+                initial={{ opacity: 0, filter: 'blur(8px)' }}
+                animate={{ opacity: 1, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, transition: { duration: 0.8 } }}
+                transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
+                className="absolute inset-0 w-full h-full overflow-hidden"
+              >
+                <picture className="w-full h-full block">
+                  <source
+                    media="(max-width: 768px)"
+                    srcSet={`${import.meta.env.BASE_URL}banners/Solitary%20Boy%20Amid%20the%20Moving%20Crowd%201%20-%20phone.png`}
+                  />
+                  <img
+                    src={`${import.meta.env.BASE_URL}banners/Solitary%20Boy%20Amid%20the%20Moving%20Crowd%201.jpg`}
+                    alt="Solitary Boy Amid the Moving Crowd"
+                    className="w-full h-full object-cover object-[48%_25%] md:object-center select-none"
+                  />
+                </picture>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Gradual blur softening as we move up from the bottom */}
+          <div className="block sm:hidden pointer-events-none z-[2]">
+            <GradualBlur
+              position="bottom"
+              target="parent"
+              height="55%"
+              strength={2.2}
+              layers={8}
+              curve="linear"
+              exponential
+              zIndex={2}
+            />
+          </div>
+          <div className="hidden sm:block pointer-events-none z-[2]">
+            <GradualBlur
+              position="bottom"
+              target="parent"
+              height="60%"
+              strength={2.4}
+              layers={8}
+              curve="linear"
+              exponential
+              zIndex={2}
+            />
+          </div>
+
+          {/* Top-to-bottom subtle gradient overlay on mobile for soft header blending */}
+          <div
+            className="sm:hidden absolute top-0 inset-x-0 h-36 sm:h-44 pointer-events-none z-[4]"
+            style={{
+              background: 'linear-gradient(to bottom, #0b0c0e 0%, rgba(11, 12, 14, 0.72) 40%, rgba(11, 12, 14, 0) 100%)',
+            }}
+          />
+
+          {/* Vertical bottom-to-top linear gradient overlay: Smoothly merges into #0b0c0e on mobile */}
+          <div 
+            className="sm:hidden absolute inset-0 pointer-events-none z-[3]"
+            style={{
+              background: 'linear-gradient(to top, #0b0c0e 0%, rgba(11, 12, 14, 0.98) 25%, rgba(11, 12, 14, 0.6) 55%, rgba(11, 12, 14, 0) 100%)',
+            }}
+          />
+          {/* Vertical bottom-to-top linear gradient overlay: Smoothly merges into #0b0c0e on desktop */}
+          <div 
+            className="hidden sm:block absolute inset-0 pointer-events-none z-[3]"
+            style={{
+              background: 'linear-gradient(to top, #0b0c0e 0%, rgba(11, 12, 14, 0.96) 28%, rgba(11, 12, 14, 0.52) 58%, rgba(11, 12, 14, 0) 100%)',
+            }}
+          />
+        </div>
+      )}
+
       {/* Welcome Journey Overlay Experience on Initial Landing */}
       {isJourneyActive && (
         <WelcomeJourney
           onComplete={handleJourneyComplete}
           onSkip={handleJourneySkip}
           onLandedAtNavbar={handleLandedAtNavbar}
+          onFrameChange={setJourneyFrame}
         />
       )}
 
@@ -198,12 +314,12 @@ export const App: React.FC = () => {
               path="/"
               element={
                 <HomePage
-                  key={isJourneyActive ? 'during-journey' : 'after-journey'}
                   onReadMore={() => navigate('/about')}
                   onOpenPromise={() => navigate('/care')}
                   onOpenEducation={() => navigate('/discover')}
                   onOpenMisconceptions={() => navigate('/treatments')}
                   onReplayJourney={() => {
+                    setJourneyFrame(1)
                     setIsEnteringFromJourney(false)
                     setIsJourneyActive(true)
                     window.scrollTo(0, 0)

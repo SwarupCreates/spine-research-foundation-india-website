@@ -132,7 +132,7 @@ export const App: React.FC = () => {
   }, [])
 
   const handleJourneySkip = () => {
-    setJourneyFrame(4)
+    setJourneyFrame(3)
     setIsJourneyActive(false)
     setIsEnteringFromJourney(false)
     window.scrollTo(0, 0)
@@ -272,6 +272,7 @@ export const App: React.FC = () => {
           onSkip={handleJourneySkip}
           onLandedAtNavbar={handleLandedAtNavbar}
           onFrameChange={setJourneyFrame}
+          initialFrame={journeyFrame}
         />
       )}
 
@@ -324,8 +325,8 @@ export const App: React.FC = () => {
                   onOpenPromise={() => navigate('/care')}
                   onOpenEducation={() => navigate('/discover')}
                   onOpenMisconceptions={() => navigate('/treatments')}
-                  onReplayJourney={() => {
-                    setJourneyFrame(1)
+                  onReplayJourney={(startFrame: number = 1) => {
+                    setJourneyFrame(startFrame)
                     setIsEnteringFromJourney(false)
                     setIsJourneyActive(true)
                     window.scrollTo(0, 0)

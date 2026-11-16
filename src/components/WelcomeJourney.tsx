@@ -9,6 +9,7 @@ interface WelcomeJourneyProps {
   onSkip: () => void
   onLandedAtNavbar?: () => void
   onFrameChange?: (frame: number) => void
+  initialFrame?: number
 }
 
 const frameMotionVariants: Variants = {
@@ -36,15 +37,19 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
   onSkip,
   onLandedAtNavbar,
   onFrameChange,
+  initialFrame = 1,
 }) => {
-  // Current journey frame: 1 through 3, then 4 for landing transition
-  const [frame, setFrame] = useState<number>(1)
+  // Current journey frame: 1 and 2, then 3 for landing transition
+  const [frame, setFrame] = useState<number>(initialFrame)
 
   useEffect(() => {
     onFrameChange?.(frame)
   }, [frame, onFrameChange])
+
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false)
-  const [transitionDirection, setTransitionDirection] = useState<'forward' | 'backward'>('forward')
+  const [transitionDirection, setTransitionDirection] = useState<'forward' | 'backward'>(
+    initialFrame === 2 ? 'backward' : 'forward'
+  )
 
   // Auto-play state: false = manual scrolling by default; true = auto-advances
   const [isPlaying, setIsPlaying] = useState<boolean>(false)
@@ -61,26 +66,19 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
   }, [])
 
   // Frame 1 slow sequential reveal states (BlurText)
-  const [showMeet, setShowMeet] = useState<boolean>(false)
-  const [showDurga, setShowDurga] = useState<boolean>(false)
-  const [showControls, setShowControls] = useState<boolean>(false)
+  const [showMeet, setShowMeet] = useState<boolean>(initialFrame === 2)
+  const [showDurga, setShowDurga] = useState<boolean>(initialFrame === 2)
+  const [showControls, setShowControls] = useState<boolean>(true)
 
-  // Frame 2 progressive reveals (5 combined storytelling lines)
-  const [showLine1, setShowLine1] = useState<boolean>(false)
-  const [showLine2, setShowLine2] = useState<boolean>(false)
-  const [showLine3, setShowLine3] = useState<boolean>(false)
-  const [showWitness, setShowWitness] = useState<boolean>(false)
-  const [showBlesses, setShowBlesses] = useState<boolean>(false)
+  // Frame 2 progressive reveals (circular SRF logo + 5 storytelling lines)
+  const [showFrame2Logo, setShowFrame2Logo] = useState<boolean>(initialFrame === 2)
+  const [showLine1, setShowLine1] = useState<boolean>(initialFrame === 2)
+  const [showLine2, setShowLine2] = useState<boolean>(initialFrame === 2)
+  const [showLine3, setShowLine3] = useState<boolean>(initialFrame === 2)
+  const [showWitness, setShowWitness] = useState<boolean>(initialFrame === 2)
+  const [showBlesses, setShowBlesses] = useState<boolean>(initialFrame === 2)
 
-  // Frame 3 sequenced reveals (4 narrative items + SRF Logo + red title)
-  const [showCard1, setShowCard1] = useState<boolean>(false)
-  const [showCard2, setShowCard2] = useState<boolean>(false)
-  const [showCard3, setShowCard3] = useState<boolean>(false)
-  const [showCard4, setShowCard4] = useState<boolean>(false)
-  const [showLogo, setShowLogo] = useState<boolean>(false)
-  const [showCard5, setShowCard5] = useState<boolean>(false)
-
-  // Frame 4 flight to navbar & seamless dissolve
+  // Flight to navbar & seamless dissolve
   const [isFlyingToNavbar, setIsFlyingToNavbar] = useState<boolean>(false)
   const [isDissolvingFlyingLogo, setIsDissolvingFlyingLogo] = useState<boolean>(false)
 
@@ -104,13 +102,13 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
     return { left, top, width: size, height: size }
   })
 
-  // Start coordinates for Frame 4 logo flight
+  // Start coordinates for logo flight
   const [logoStartCoords, setLogoStartCoords] = useState<{
     left: number
     top: number
     width: number
     height: number
-  }>({ left: 60, top: 700, width: 112, height: 112 })
+  }>({ left: 60, top: 500, width: 88, height: 88 })
 
   // Ensure viewport starts at the top
   useEffect(() => {
@@ -194,11 +192,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
     const currentFrame = frameRef.current
     const next = targetFrame !== undefined ? targetFrame : currentFrame + 1
 
-    if (next >= 4) {
-      // Find visible logo from Frame 3
+    if (next >= 3) {
+      // Advance from Frame 2 triggers flight to navbar directly
       const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 768
-      const primaryId = isDesktop ? 'journey-frame4-logo' : 'journey-frame4-logo-mobile'
-      const fallbackId = isDesktop ? 'journey-frame4-logo-mobile' : 'journey-frame4-logo'
+      const primaryId = isDesktop ? 'journey-frame2-logo' : 'journey-frame2-logo-mobile'
+      const fallbackId = isDesktop ? 'journey-frame2-logo-mobile' : 'journey-frame2-logo'
 
       const elPrimary = document.getElementById(primaryId)
       const elFallback = document.getElementById(fallbackId)
@@ -234,16 +232,16 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
           const containerLeft = (w - contentWidth) / 2
           setLogoStartCoords({
             left: Math.max(32, containerLeft),
-            top: h - 220,
-            width: 96,
-            height: 96,
+            top: h - 380,
+            width: 88,
+            height: 88,
           })
         } else {
           setLogoStartCoords({
-            left: (w - 88) / 2,
-            top: h * 0.65,
-            width: 88,
-            height: 88,
+            left: (w - 76) / 2,
+            top: h * 0.52,
+            width: 76,
+            height: 76,
           })
         }
       }
@@ -263,14 +261,14 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
       }
 
       setIsFlyingToNavbar(true)
-      setFrame(4)
+      setFrame(3)
 
       // 1. Flight reaches the top navbar in 850ms
       setTimeout(() => {
         onLandedAtNavbarRef.current?.()
       }, 850)
 
-      // 2. Navbar entry animation takes ~1250ms to finish all items
+      // 2. Navbar entry animation completes
       setTimeout(() => {
         setIsDissolvingFlyingLogo(true)
       }, 2100)
@@ -278,7 +276,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
       // 3. Complete journey and unmount
       setTimeout(() => {
         onCompleteRef.current()
-      }, 2600)
+      }, 2500)
 
       return
     }
@@ -344,10 +342,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
   }, [frame])
 
   // -------------------------------------------------------------
-  // Frame 2 Reveal: Stagger 5 BlurText lines chronologically in one combined story frame
+  // Frame 2 Reveal: Stagger circular SRF logo & 5 BlurText lines chronologically
   // -------------------------------------------------------------
   useEffect(() => {
     if (frame !== 2) {
+      setShowFrame2Logo(false)
       setShowLine1(false)
       setShowLine2(false)
       setShowLine3(false)
@@ -357,6 +356,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
     }
 
     if (transitionDirection === 'backward') {
+      setShowFrame2Logo(true)
       setShowLine1(true)
       setShowLine2(true)
       setShowLine3(true)
@@ -365,73 +365,26 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
       return
     }
 
-    const t1 = setTimeout(() => setShowLine1(true), 200)
-    const t2 = setTimeout(() => setShowLine2(true), 750)
-    const t3 = setTimeout(() => setShowLine3(true), 1300)
-    const t4 = setTimeout(() => setShowWitness(true), 1900)
+    const tLogo = setTimeout(() => setShowFrame2Logo(true), 150)
+    const t1 = setTimeout(() => setShowLine1(true), 400)
+    const t2 = setTimeout(() => setShowLine2(true), 900)
+    const t3 = setTimeout(() => setShowLine3(true), 1400)
+    const t4 = setTimeout(() => setShowWitness(true), 1950)
     const t5 = setTimeout(() => setShowBlesses(true), 2450)
 
     let tAuto: ReturnType<typeof setTimeout>
     if (isPlayingRef.current) {
       tAuto = setTimeout(() => {
         advanceFrameRef.current(3)
-      }, 4400)
+      }, 4500)
     }
 
     return () => {
-      clearTimeout(t1)
-      clearTimeout(t2)
-      clearTimeout(t3)
-      clearTimeout(t4)
-      clearTimeout(t5)
-      if (tAuto) clearTimeout(tAuto)
-    }
-  }, [frame, transitionDirection])
-
-  // -------------------------------------------------------------
-  // Frame 3 Reveal: Stagger narrative items, prominent SRF logo, and red title
-  // -------------------------------------------------------------
-  useEffect(() => {
-    if (frame !== 3) {
-      setShowCard1(false)
-      setShowCard2(false)
-      setShowCard3(false)
-      setShowCard4(false)
-      setShowLogo(false)
-      setShowCard5(false)
-      return
-    }
-
-    if (transitionDirection === 'backward') {
-      setShowCard1(true)
-      setShowCard2(true)
-      setShowCard3(true)
-      setShowCard4(true)
-      setShowLogo(true)
-      setShowCard5(true)
-      return
-    }
-
-    const t1 = setTimeout(() => setShowCard1(true), 200)
-    const t2 = setTimeout(() => setShowCard2(true), 700)
-    const t3 = setTimeout(() => setShowCard3(true), 1200)
-    const t4 = setTimeout(() => setShowCard4(true), 1700)
-    const tLogo = setTimeout(() => setShowLogo(true), 2150)
-    const t5 = setTimeout(() => setShowCard5(true), 2550)
-
-    let tAuto: ReturnType<typeof setTimeout>
-    if (isPlayingRef.current) {
-      tAuto = setTimeout(() => {
-        advanceFrameRef.current(4)
-      }, 4700)
-    }
-
-    return () => {
-      clearTimeout(t1)
-      clearTimeout(t2)
-      clearTimeout(t3)
-      clearTimeout(t4)
       clearTimeout(tLogo)
+      clearTimeout(t1)
+      clearTimeout(t2)
+      clearTimeout(t3)
+      clearTimeout(t4)
       clearTimeout(t5)
       if (tAuto) clearTimeout(tAuto)
     }
@@ -439,7 +392,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
 
   // -------------------------------------------------------------
   // Single-Scroll Section Gestures (Wheel, Touch, and Keyboard)
-  // Exactly 3 forward scrolls from Frame 1 to Home page content state
+  // Exactly 2 forward scrolls from Frame 1 to Home page content state
   // -------------------------------------------------------------
   useEffect(() => {
     let lastGestureTime = 0
@@ -528,7 +481,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
       {/* Background dark backdrop & story frames (smoothly dissolves to 0 on landing flight) */}
       <div
         className={`absolute inset-0 w-full h-full bg-transparent transition-opacity duration-700 ${
-          frame === 4 ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto'
+          frame === 3 ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto'
         }`}
       >
         {/* -------------------------------------------------------- */}
@@ -559,43 +512,34 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                       trigger="load"
                       delay={80}
                       stepDuration={0.3}
-                      blur={12}
-                      distance={20}
-                      className="text-white font-galano font-black uppercase tracking-wide leading-none text-3xl sm:text-4xl md:text-5xl lg:text-[56px] xl:text-[64px] 2xl:text-[70px]"
+                      blur={10}
+                      distance={16}
+                      className="font-galano font-black uppercase tracking-tight text-[clamp(44px,5.7vw,88px)] leading-none select-none pointer-events-none drop-shadow-md"
                     />
                   </div>
                 )}
 
                 {showDurga && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.96, filter: 'blur(16px)' }}
-                    animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-                    transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute top-[14%] lg:top-[14.5%] left-0 w-full select-none pointer-events-none"
-                  >
-                    <svg
-                      viewBox="0 0 720 152"
-                      className="w-full h-auto overflow-hidden select-none pointer-events-none"
-                      aria-label="DURGA"
-                    >
-                      <text
-                        x="360"
-                        y="146"
-                        textAnchor="middle"
-                        fill="#ff0000"
-                        fontFamily="'Galano Grotesque Black', 'Galano Grotesque', sans-serif"
-                        fontWeight="900"
-                        fontSize="200"
-                      >
-                        DURGA
-                      </text>
-                    </svg>
-                  </motion.div>
+                  <div className="absolute top-[14%] lg:top-[14.5%] left-0 w-full select-none pointer-events-none">
+                    <BlurText
+                      text="DURGA"
+                      effect="blur"
+                      animateBy="letters"
+                      direction="bottom"
+                      trigger="load"
+                      delay={90}
+                      stepDuration={0.32}
+                      blur={14}
+                      distance={20}
+                      color="#ff0000"
+                      className="w-full text-center font-galano font-black uppercase tracking-tight text-[clamp(90px,18.5vw,284px)] leading-none select-none pointer-events-none drop-shadow-[0_2px_24px_rgba(255,0,0,0.4)]"
+                    />
+                  </div>
                 )}
               </div>
 
-              {/* Mobile View (< md): Centered at bottom above controls */}
-              <div className="md:hidden absolute bottom-[108px] sm:bottom-[116px] inset-x-0 flex flex-col items-center justify-center text-center px-4 z-20">
+              {/* Mobile View (< md): Stacked vertically and centered at bottom above controls */}
+              <div className="md:hidden absolute bottom-[108px] sm:bottom-[116px] inset-x-0 px-4 flex flex-col items-center justify-center text-center select-none pointer-events-none z-10">
                 {showMeet && (
                   <div className="flex items-center justify-center">
                     <BlurText
@@ -666,7 +610,6 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
         {/* -------------------------------------------------------- */}
         {/* DURGA OUTLINE LAYER (Frame 1): Superimposed over boy layer */}
         {/* Desktop only (>= md): z-[25], 0 fill with red border      */}
-        {/* Outlines the text so 'R' is visible across boy's body     */}
         {/* -------------------------------------------------------- */}
         <AnimatePresence>
           {frame === 1 && (
@@ -715,9 +658,9 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
         </AnimatePresence>
 
         {/* -------------------------------------------------------- */}
-        {/* FRAME 2: COMBINED 5-LINE STORYTELLING STANZA             */}
-        {/* Desktop (>= md): Left-aligned at lower left              */}
-        {/* Mobile (< md): Centered at bottom above controls         */}
+        {/* FRAME 2: COMBINED 5-LINE STORYTELLING STANZA + SRF LOGO  */}
+        {/* Desktop (>= md): SRF logo directly above text at left     */}
+        {/* Mobile (< md): Centered SRF logo directly above text     */}
         {/* -------------------------------------------------------- */}
         <AnimatePresence>
           {frame === 2 && (
@@ -732,7 +675,24 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
             >
               {/* Desktop View (>= md): Left-aligned inside standard 92% container */}
               <div className="hidden md:block w-[92%] mx-auto h-full relative">
-                <div className="absolute bottom-[116px] md:bottom-[124px] lg:bottom-[132px] left-0 select-none">
+                <div className="absolute bottom-[116px] md:bottom-[124px] lg:bottom-[132px] left-0 select-none flex flex-col items-start">
+                  {/* Circular SRF Logo: directly above text block (Matches 5a9549f9.jpg) */}
+                  <div className="mb-5 md:mb-6 flex items-center">
+                    {showFrame2Logo ? (
+                      <motion.div
+                        id="journey-frame2-logo"
+                        initial={{ opacity: 0, scale: 0.8, filter: 'blur(8px)' }}
+                        animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                        className="w-20 h-20 md:w-22 md:h-22 lg:w-24 lg:h-24 text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.4)]"
+                      >
+                        <SrfLogo className="w-full h-full text-white" />
+                      </motion.div>
+                    ) : (
+                      <div className="w-20 h-20 md:w-22 md:h-22 lg:w-24 lg:h-24 invisible pointer-events-none select-none" aria-hidden="true" />
+                    )}
+                  </div>
+
                   {/* Line 1: As a son, he tends the mother, */}
                   {showLine1 ? (
                     <motion.div
@@ -946,8 +906,25 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                 </div>
               </div>
 
-              {/* Mobile View (< md): Centered at bottom above controls */}
+              {/* Mobile View (< md): Centered at bottom above controls (Matches 61658664.jpg) */}
               <div className="md:hidden absolute bottom-[108px] sm:bottom-[116px] inset-x-0 px-4 flex flex-col items-center text-center z-20">
+                {/* Circular SRF Logo: centered horizontally directly above text block */}
+                <div className="mb-4 sm:mb-5 flex items-center justify-center">
+                  {showFrame2Logo ? (
+                    <motion.div
+                      id="journey-frame2-logo-mobile"
+                      initial={{ opacity: 0, scale: 0.8, filter: 'blur(8px)' }}
+                      animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                      className="w-18 h-18 sm:w-20 sm:h-20 text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.4)]"
+                    >
+                      <SrfLogo className="w-full h-full text-white" />
+                    </motion.div>
+                  ) : (
+                    <div className="w-18 h-18 sm:w-20 sm:h-20 invisible pointer-events-none select-none" aria-hidden="true" />
+                  )}
+                </div>
+
                 {/* Line 1: As a son, he tends the mother, */}
                 {showLine1 ? (
                   <motion.div
@@ -1164,336 +1141,10 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
         </AnimatePresence>
 
         {/* -------------------------------------------------------- */}
-        {/* FRAME 3: 5 NARRATIVE BLOCKS & LARGE SRF LOGO             */}
-        {/* Desktop (>= md): Single left column with space-between     */}
-        {/* Mobile (< md): Centered vertical column matching Figma    */}
-        {/* -------------------------------------------------------- */}
-        <AnimatePresence>
-          {frame === 3 && (
-            <motion.div
-              key="frame-3-content"
-              custom={transitionDirection}
-              variants={frameMotionVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              className="absolute inset-0 z-30 pointer-events-none"
-            >
-              {/* Desktop Fade Gradient Overlay behind text: Dissolves in smoothly */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.8, ease: 'easeOut' }}
-                className="hidden md:block absolute inset-y-0 left-0 w-[55%] pointer-events-none z-10"
-                style={{
-                  background:
-                    'linear-gradient(to right, rgba(11, 12, 14, 0.94) 0%, rgba(11, 12, 14, 0.82) 35%, rgba(11, 12, 14, 0.45) 65%, rgba(11, 12, 14, 0) 100%)',
-                }}
-              />
-
-              {/* Desktop View (>= md): Single left-aligned vertical column distributed with space-between */}
-              <div className="hidden md:flex absolute top-[7.5%] lg:top-[8%] bottom-[124px] lg:bottom-[132px] left-[4%] xl:left-[5%] w-[68%] md:max-lg:w-[68%] lg:w-[44%] max-w-xl flex-col justify-between items-start pointer-events-none z-20">
-                {/* Item 1: Two decades of commitment & counting ... */}
-                <div className="w-full flex items-start">
-                  {showCard1 ? (
-                    <BlurText
-                      text="Two decades of commitment & counting ..."
-                      effect="blur"
-                      animateBy="words"
-                      direction="bottom"
-                      trigger="load"
-                      delay={50}
-                      stepDuration={0.3}
-                      blur={10}
-                      distance={14}
-                      className="text-white font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
-                    />
-                  ) : (
-                    <div
-                      className="invisible select-none pointer-events-none font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight"
-                      aria-hidden="true"
-                    >
-                      Two decades of commitment &amp; counting ...
-                    </div>
-                  )}
-                </div>
-
-                {/* Item 2: A family to work with – A family to work for */}
-                <div className="w-full flex items-start">
-                  {showCard2 ? (
-                    <BlurText
-                      text="A family to work with – A family to work for"
-                      effect="blur"
-                      animateBy="words"
-                      direction="bottom"
-                      trigger="load"
-                      delay={50}
-                      stepDuration={0.3}
-                      blur={10}
-                      distance={14}
-                      className="text-white font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
-                    />
-                  ) : (
-                    <div
-                      className="invisible select-none pointer-events-none font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight"
-                      aria-hidden="true"
-                    >
-                      A family to work with – A family to work for
-                    </div>
-                  )}
-                </div>
-
-                {/* Item 3: A bounty of love, A legacy to uphold */}
-                <div className="w-full flex items-start">
-                  {showCard3 ? (
-                    <BlurText
-                      text="A bounty of love, A legacy to uphold"
-                      effect="blur"
-                      animateBy="words"
-                      direction="bottom"
-                      trigger="load"
-                      delay={50}
-                      stepDuration={0.3}
-                      blur={10}
-                      distance={14}
-                      className="text-white font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
-                    />
-                  ) : (
-                    <div
-                      className="invisible select-none pointer-events-none font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight"
-                      aria-hidden="true"
-                    >
-                      A bounty of love, A legacy to uphold
-                    </div>
-                  )}
-                </div>
-
-                {/* Item 4: A promise spoken in silence – fulfilled with glory */}
-                <div className="w-full flex items-start">
-                  {showCard4 ? (
-                    <BlurText
-                      text="A promise spoken in silence – fulfilled with glory"
-                      effect="blur"
-                      animateBy="words"
-                      direction="bottom"
-                      trigger="load"
-                      delay={50}
-                      stepDuration={0.3}
-                      blur={10}
-                      distance={14}
-                      className="text-white font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
-                    />
-                  ) : (
-                    <div
-                      className="invisible select-none pointer-events-none font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight"
-                      aria-hidden="true"
-                    >
-                      A promise spoken in silence – fulfilled with glory
-                    </div>
-                  )}
-                </div>
-
-                {/* Item 5: Prominent SRF Logo */}
-                <div className="w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 lg:w-22 lg:h-22 flex items-center">
-                  {showLogo ? (
-                    <motion.div
-                      id="journey-frame4-logo"
-                      initial={{ opacity: 0, scale: 0.75, filter: 'blur(8px)' }}
-                      animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-                      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                      className="w-full h-full text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.35)]"
-                    >
-                      <SrfLogo className="w-full h-full text-white" />
-                    </motion.div>
-                  ) : (
-                    <div className="w-full h-full invisible select-none pointer-events-none" aria-hidden="true" />
-                  )}
-                </div>
-
-                {/* Item 6: One spine at a time */}
-                <div className="w-full flex items-start">
-                  {showCard5 ? (
-                    <BlurText
-                      text="One spine at a time"
-                      effect="blur"
-                      animateBy="words"
-                      direction="bottom"
-                      trigger="load"
-                      delay={60}
-                      stepDuration={0.32}
-                      blur={12}
-                      distance={16}
-                      color="#ff0000"
-                      className="font-galano-alt font-bold text-[#ff0000] text-[clamp(22px,2.5vw,38.5px)] leading-tight drop-shadow-[0_2px_16px_rgba(255,0,0,0.35)]"
-                    />
-                  ) : (
-                    <div
-                      className="invisible select-none pointer-events-none font-galano-alt font-bold text-[clamp(22px,2.5vw,38.5px)] leading-tight"
-                      aria-hidden="true"
-                    >
-                      One spine at a time
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Mobile View (< md): Unified vertical flow distributed to match Figma design */}
-              <div className="md:hidden absolute top-[12%] sm:top-[13%] bottom-[114px] sm:bottom-[120px] inset-x-0 flex flex-col items-center justify-between text-center px-4 pointer-events-none z-20">
-                {/* Line 1: Two decades of commitment & counting ... */}
-                <div className="w-full max-w-[270px] sm:max-w-[290px] flex items-center justify-center text-center">
-                  {showCard1 ? (
-                    <BlurText
-                      text="Two decades of commitment & counting ..."
-                      effect="blur"
-                      animateBy="words"
-                      direction="bottom"
-                      trigger="load"
-                      delay={50}
-                      stepDuration={0.3}
-                      blur={10}
-                      distance={14}
-                      className="font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.16] text-center drop-shadow-md mx-auto justify-center"
-                    />
-                  ) : (
-                    <div
-                      className="invisible select-none pointer-events-none font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.16] text-center mx-auto"
-                      aria-hidden="true"
-                    >
-                      Two decades of commitment &amp; counting ...
-                    </div>
-                  )}
-                </div>
-
-                {/* Line 2: A family to work with – A family to work for */}
-                <div className="w-full max-w-[270px] sm:max-w-[290px] flex items-center justify-center text-center">
-                  {showCard2 ? (
-                    <BlurText
-                      text="A family to work with – A family to work for"
-                      effect="blur"
-                      animateBy="words"
-                      direction="bottom"
-                      trigger="load"
-                      delay={50}
-                      stepDuration={0.3}
-                      blur={10}
-                      distance={14}
-                      className="font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.16] text-center drop-shadow-md mx-auto justify-center"
-                    />
-                  ) : (
-                    <div
-                      className="invisible select-none pointer-events-none font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.16] text-center mx-auto"
-                      aria-hidden="true"
-                    >
-                      A family to work with – A family to work for
-                    </div>
-                  )}
-                </div>
-
-                {/* Line 3: A bounty of love, A legacy to uphold */}
-                <div className="w-full max-w-[270px] sm:max-w-[290px] flex items-center justify-center text-center">
-                  {showCard3 ? (
-                    <BlurText
-                      text="A bounty of love, A legacy to uphold"
-                      effect="blur"
-                      animateBy="words"
-                      direction="bottom"
-                      trigger="load"
-                      delay={50}
-                      stepDuration={0.3}
-                      blur={10}
-                      distance={14}
-                      className="font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.16] text-center drop-shadow-md mx-auto justify-center"
-                    />
-                  ) : (
-                    <div
-                      className="invisible select-none pointer-events-none font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.16] text-center mx-auto"
-                      aria-hidden="true"
-                    >
-                      A bounty of love, A legacy to uphold
-                    </div>
-                  )}
-                </div>
-
-                {/* Line 4: A promise spoken in silence – fulfilled with glory */}
-                <div className="w-full max-w-[270px] sm:max-w-[290px] flex items-center justify-center text-center">
-                  {showCard4 ? (
-                    <BlurText
-                      text="A promise spoken in silence – fulfilled with glory"
-                      effect="blur"
-                      animateBy="words"
-                      direction="bottom"
-                      trigger="load"
-                      delay={50}
-                      stepDuration={0.3}
-                      blur={10}
-                      distance={14}
-                      className="font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.16] text-center drop-shadow-md mx-auto justify-center"
-                    />
-                  ) : (
-                    <div
-                      className="invisible select-none pointer-events-none font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.16] text-center mx-auto"
-                      aria-hidden="true"
-                    >
-                      A promise spoken in silence – fulfilled with glory
-                    </div>
-                  )}
-                </div>
-
-                {/* Logo + One spine at a time block */}
-                <div className="flex flex-col items-center shrink-0">
-                  {/* Prominent SRF Logo matching Figma */}
-                  <div className="w-[72px] h-[72px] sm:w-[76px] sm:h-[76px] flex items-center justify-center">
-                    {showLogo ? (
-                      <motion.div
-                        id="journey-frame4-logo-mobile"
-                        initial={{ opacity: 0, scale: 0.75, filter: 'blur(8px)' }}
-                        animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-                        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                        className="w-full h-full mx-auto text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.4)]"
-                      >
-                        <SrfLogo className="w-full h-full text-white" />
-                      </motion.div>
-                    ) : (
-                      <div className="w-full h-full invisible" aria-hidden="true" />
-                    )}
-                  </div>
-
-                  {/* One spine at a time: directly below logo matching Figma */}
-                  <div className="pt-2 flex items-center justify-center text-center">
-                    {showCard5 ? (
-                      <BlurText
-                        text="One spine at a time"
-                        effect="blur"
-                        animateBy="words"
-                        direction="bottom"
-                        trigger="load"
-                        delay={60}
-                        stepDuration={0.32}
-                        blur={12}
-                        distance={16}
-                        color="#ff0000"
-                        className="font-galano font-bold tracking-normal text-[#ff0000] text-[clamp(20px,6.0vw,25px)] leading-tight text-center drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] justify-center"
-                      />
-                    ) : (
-                      <div
-                        className="invisible select-none pointer-events-none font-galano font-bold tracking-normal text-[#ff0000] text-[clamp(20px,6.0vw,25px)] leading-tight text-center justify-center"
-                        aria-hidden="true"
-                      >
-                        One spine at a time
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* -------------------------------------------------------- */}
-        {/* BOTTOM EDGE GRADUAL BLUR OVERLAY (Frames 1-3)            */}
+        {/* BOTTOM EDGE GRADUAL BLUR OVERLAY (Frames 1-2)            */}
         {/* Sits at z-[45] above text (z-30) and below controls (z-50) */}
         {/* -------------------------------------------------------- */}
-        {frame < 4 && (
+        {frame < 3 && (
           <div className="fixed bottom-0 inset-x-0 pointer-events-none z-[45]">
             <GradualBlur
               position="bottom"
@@ -1513,7 +1164,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
         {/* BOTTOM INTRO CONTROLS: DOWN ARROW & SKIP (LEFT/CENTER) + PLAY/PAUSE (TOP-RIGHT MOBILE / BOTTOM-RIGHT DESKTOP) */}
         {/* -------------------------------------------------------- */}
         <AnimatePresence>
-          {frame < 4 && showControls && (
+          {frame < 3 && showControls && (
             <>
               {/* Left/Center Controls: Previous/Next Frame Buttons + Skip Pill Button */}
               <motion.div
@@ -1601,7 +1252,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
       </div>
 
       {/* -------------------------------------------------------- */}
-      {/* FRAME 4: LOGO FLIGHT TO NAVBAR & SEAMLESS DISSOLVE       */}
+      {/* FRAME 3: LOGO FLIGHT TO NAVBAR & SEAMLESS DISSOLVE       */}
       {/* -------------------------------------------------------- */}
       {isFlyingToNavbar && (
         <motion.div

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useLayoutEffect } from 'react'
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -115,6 +115,47 @@ export const App: React.FC = () => {
   const [isJourneyBaseImageLoaded, setIsJourneyBaseImageLoaded] = useState(false)
   const [isEnteringFromJourney, setIsEnteringFromJourney] = useState(false)
 
+  // Keep the top fade mounted above the viewport until page scroll brings it into view.
+  useLayoutEffect(() => {
+    const topBlur = document.querySelector<HTMLElement>('.homepage-top-gradual-blur')
+    if (!topBlur) return
+
+    const applyScrollPosition = () => {
+      if (isMobileMenuOpen) {
+        topBlur.style.transform = 'translate3d(0, 0, 0)'
+        return
+      }
+
+      if (isJourneyActive && !isEnteringFromJourney) {
+        topBlur.style.transform = 'translate3d(0, -100%, 0)'
+        return
+      }
+
+      const revealDistance = Math.max(topBlur.getBoundingClientRect().height, 1)
+      const progress = Math.min(Math.max(window.scrollY / revealDistance, 0), 1)
+      topBlur.style.transform = `translate3d(0, ${(progress - 1) * 100}%, 0)`
+    }
+
+    let frame = 0
+    const handleScroll = () => {
+      if (frame) return
+      frame = window.requestAnimationFrame(() => {
+        frame = 0
+        applyScrollPosition()
+      })
+    }
+
+    applyScrollPosition()
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('resize', applyScrollPosition)
+
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame)
+      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', applyScrollPosition)
+    }
+  }, [isJourneyActive, isEnteringFromJourney, isMobileMenuOpen])
+
   const handleLandedAtNavbar = React.useCallback(() => {
     setIsEnteringFromJourney(true)
     if (window.scrollY > 0) {
@@ -124,9 +165,6 @@ export const App: React.FC = () => {
 
   const handleJourneyComplete = React.useCallback(() => {
     setIsJourneyActive(false)
-    if (window.scrollY > 0) {
-      window.scrollTo(0, 0)
-    }
     setTimeout(() => {
       setIsEnteringFromJourney(false)
     }, 2000)
@@ -280,24 +318,25 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* Top Page-level Gradual Blur: dynamically rolls all the way down (100vh) on mobile menu open */}
-      {!isJourneyActive && (
-        <GradualBlur
-          position="top"
-          target="page"
-          height={isMobileMenuOpen ? '100vh' : '10rem'}
-          strength={2.8}
-          layers={8}
-          curve="linear"
-          exponential
-          tint="rgba(11, 12, 14, 0.88)"
-          autoHide={!isMobileMenuOpen}
-          zIndex={isMobileMenuOpen ? 80 : 30}
-          style={{
-            transition: 'height 0.38s cubic-bezier(0.16, 1, 0.3, 1)',
-          }}
-        />
-      )}
+      {/* Pre-render above the viewport; scroll progressively brings the top fade into view. */}
+      <GradualBlur
+        position="top"
+        target="page"
+        height={isMobileMenuOpen ? '100vh' : '10rem'}
+        strength={2.8}
+        layers={8}
+        curve="linear"
+        exponential
+        tint="rgba(11, 12, 14, 0.88)"
+        autoHide={!isMobileMenuOpen}
+        zIndex={isMobileMenuOpen ? 80 : 30}
+        className="homepage-top-gradual-blur"
+        style={{
+          transform: 'translate3d(0, -100%, 0)',
+          willChange: 'transform',
+          transition: 'height 0.38s cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
+      />
 
       {/* Floating Navbar at z-50: Sits ON TOP of GradualBlur (z-30), staying 100% sharp and unblurred */}
       <Navbar

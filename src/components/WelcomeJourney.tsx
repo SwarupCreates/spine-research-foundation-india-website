@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence, type Variants } from 'framer-motion'
 import { SrfLogo, MaterialIcon } from './icons'
 import { BlurText } from './BlurText'
@@ -9,7 +9,7 @@ interface WelcomeJourneyProps {
   onSkip: () => void
   onLandedAtNavbar?: () => void
   onFrameChange?: (frame: number) => void
-  initialFrame?: number
+  frame: number
   isBaseImageLoaded?: boolean
 }
 
@@ -38,22 +38,21 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
   onSkip,
   onLandedAtNavbar,
   onFrameChange,
-  initialFrame = 1,
+  frame,
   isBaseImageLoaded = false,
 }) => {
-  // Current journey frame: 1 and 2, then 3 for landing transition
-  const [frame, setFrame] = useState<number>(initialFrame)
+  const onFrameChangeRef = useRef(onFrameChange)
+  onFrameChangeRef.current = onFrameChange
 
-  // Keep the parent background layer in the same frame before paint. Its transform
-  // mirrors the phone cutout's frame shift, so an effect after paint can briefly
-  // leave the two copies of the boy at different vertical positions on reverse scroll.
-  useLayoutEffect(() => {
-    onFrameChange?.(frame)
-  }, [frame, onFrameChange])
+  // App owns the frame state so the background, cutout, and story content always
+  // render from the same value.
+  const updateFrame = useCallback((nextFrame: number) => {
+    onFrameChangeRef.current?.(nextFrame)
+  }, [])
 
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false)
   const [transitionDirection, setTransitionDirection] = useState<'forward' | 'backward'>(
-    initialFrame === 2 ? 'backward' : 'forward'
+    frame === 2 ? 'backward' : 'forward'
   )
 
   // Mobile detection for responsive offsets
@@ -68,17 +67,17 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
   }, [])
 
   // Frame 1 slow sequential reveal states (BlurText)
-  const [showMeet, setShowMeet] = useState<boolean>(initialFrame === 2)
-  const [showDurga, setShowDurga] = useState<boolean>(initialFrame === 2)
+  const [showMeet, setShowMeet] = useState<boolean>(frame === 2)
+  const [showDurga, setShowDurga] = useState<boolean>(frame === 2)
   const [showControls, setShowControls] = useState<boolean>(true)
 
   // Frame 2 progressive reveals (circular SRF logo + 5 storytelling lines)
-  const [showFrame2Logo, setShowFrame2Logo] = useState<boolean>(initialFrame === 2)
-  const [showLine1, setShowLine1] = useState<boolean>(initialFrame === 2)
-  const [showLine2, setShowLine2] = useState<boolean>(initialFrame === 2)
-  const [showLine3, setShowLine3] = useState<boolean>(initialFrame === 2)
-  const [showWitness, setShowWitness] = useState<boolean>(initialFrame === 2)
-  const [showBlesses, setShowBlesses] = useState<boolean>(initialFrame === 2)
+  const [showFrame2Logo, setShowFrame2Logo] = useState<boolean>(frame === 2)
+  const [showLine1, setShowLine1] = useState<boolean>(frame === 2)
+  const [showLine2, setShowLine2] = useState<boolean>(frame === 2)
+  const [showLine3, setShowLine3] = useState<boolean>(frame === 2)
+  const [showWitness, setShowWitness] = useState<boolean>(frame === 2)
+  const [showBlesses, setShowBlesses] = useState<boolean>(frame === 2)
 
   // Flight to navbar & seamless dissolve
   const [isFlyingToNavbar, setIsFlyingToNavbar] = useState<boolean>(false)
@@ -260,7 +259,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
       }
 
       setIsFlyingToNavbar(true)
-      setFrame(3)
+      updateFrame(3)
 
       // 1. Flight reaches the top navbar in 850ms
       setTimeout(() => {
@@ -280,12 +279,12 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
       return
     }
 
-    setFrame(next)
+    updateFrame(next)
     setTimeout(() => {
       setIsTransitioning(false)
       isTransitioningRef.current = false
     }, 600)
-  }, [])
+  }, [updateFrame])
 
   const advanceFrameRef = useRef(advanceFrame)
   advanceFrameRef.current = advanceFrame
@@ -300,13 +299,13 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
     setTransitionDirection('backward')
 
     const prev = frameRef.current - 1
-    setFrame(prev)
+    updateFrame(prev)
 
     setTimeout(() => {
       setIsTransitioning(false)
       isTransitioningRef.current = false
     }, 600)
-  }, [])
+  }, [updateFrame])
 
   const previousFrameRef = useRef(previousFrame)
   previousFrameRef.current = previousFrame
@@ -577,33 +576,6 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   )}
                 </div>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Mobile boy cutout stays aligned with the shifted base image and above its fade overlay. */}
-        <AnimatePresence>
-          {isMobile && frame <= 2 && (
-            <motion.div
-              key="mobile-boy-cutout"
-              initial={{ opacity: 0 }}
-              animate={{
-                opacity: isBaseImageLoaded && frame === 1 ? 1 : 0,
-                transition: { opacity: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
-              }}
-              exit={{ opacity: 0, transition: { duration: 0.5, ease: 'easeInOut' } }}
-              className={`absolute inset-0 z-[5] pointer-events-none journey-frame-${frame === 2 ? '2' : '1'}-shift`}
-              style={{
-                transition: frame === 2 ? 'transform 0.9s cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
-              }}
-            >
-              <img
-                src={`${import.meta.env.BASE_URL}banners/boy-phone.png`}
-                alt=""
-                aria-hidden="true"
-                draggable={false}
-                className="w-full h-full object-cover object-[50%_35%] select-none"
-              />
             </motion.div>
           )}
         </AnimatePresence>

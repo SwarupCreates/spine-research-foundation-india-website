@@ -209,11 +209,9 @@ export const App: React.FC = () => {
                 className="absolute inset-0 w-full h-full overflow-hidden"
               >
                 <div
-                  className={`w-full h-full absolute top-0 inset-x-0 will-change-transform z-0 ${
-                    journeyFrame === 2 ? 'journey-frame-2-shift' : 'journey-frame-1-shift'
-                  }`}
+                  className={`w-full h-full absolute top-0 inset-x-0 will-change-transform z-0 journey-frame-${journeyFrame === 2 ? '2' : '1'}-shift`}
                   style={{
-                    transition: journeyFrame === 2 ? 'transform 0.9s cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
+                    transition: journeyFrame <= 2 ? 'transform 0.9s cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
                   }}
                 >
                   <picture className="relative z-0 w-full h-full block">
@@ -228,7 +226,6 @@ export const App: React.FC = () => {
                       onLoad={() => setIsJourneyBaseImageLoaded(true)}
                     />
                   </picture>
-
                 </div>
               </motion.div>
             ) : (
@@ -254,6 +251,26 @@ export const App: React.FC = () => {
               </motion.div>
             )}
           </AnimatePresence>
+
+          {isJourneyActive && journeyFrame <= 2 && isJourneyBaseImageLoaded && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: journeyFrame === 1 ? 1 : 0 }}
+              transition={{ opacity: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } }}
+              className={`absolute inset-0 z-[5] pointer-events-none overflow-hidden md:hidden journey-frame-${journeyFrame === 2 ? '2' : '1'}-shift`}
+              style={{
+                transition: journeyFrame <= 2 ? 'transform 0.9s cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
+              }}
+            >
+              <img
+                src={`${import.meta.env.BASE_URL}banners/boy-phone.png`}
+                alt=""
+                aria-hidden="true"
+                draggable={false}
+                className="w-full h-full object-cover object-[50%_35%] select-none"
+              />
+            </motion.div>
+          )}
 
           {/* Gradual blur softening as we move up from the bottom */}
           <div className="block sm:hidden pointer-events-none z-[2]">
@@ -313,7 +330,7 @@ export const App: React.FC = () => {
           onSkip={handleJourneySkip}
           onLandedAtNavbar={handleLandedAtNavbar}
           onFrameChange={setJourneyFrame}
-          initialFrame={journeyFrame}
+          frame={journeyFrame}
           isBaseImageLoaded={isJourneyBaseImageLoaded}
         />
       )}

@@ -26,7 +26,7 @@ const paneFadeVariants = {
 }
 
 const SLIDE_INTERVAL = 6000 // ms between slides
-const ENTRANCE_SETTLE_TIME = 2800 // ms to wait for entrance animation before starting rotation
+const ENTRANCE_SETTLE_TIME = 6800 // entrance animation plus a 4-second pause before rotation
 
 export const Hero: React.FC<HeroProps> = ({
   onReplayJourney,
@@ -40,6 +40,7 @@ export const Hero: React.FC<HeroProps> = ({
   const visibleSlide = isEnteringFromJourney ? 0 : currentSlide
   const [slideshowReady, setSlideshowReady] = useState(!isEnteringFromJourney)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const entranceReadyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Staggered reveal states when entering from journey (only for pane 0 initial entrance)
   const [showItem1, setShowItem1] = useState(!isEnteringFromJourney)
@@ -67,7 +68,13 @@ export const Hero: React.FC<HeroProps> = ({
       const t4 = setTimeout(() => setShowItem4(true), 1350)
       const t5 = setTimeout(() => setShowItem5(true), 1750)
       const tBtn = setTimeout(() => setShowButton(true), 2150)
-      const tReady = setTimeout(() => setSlideshowReady(true), ENTRANCE_SETTLE_TIME)
+      if (entranceReadyTimeoutRef.current) {
+        clearTimeout(entranceReadyTimeoutRef.current)
+      }
+      entranceReadyTimeoutRef.current = setTimeout(() => {
+        entranceReadyTimeoutRef.current = null
+        setSlideshowReady(true)
+      }, ENTRANCE_SETTLE_TIME)
 
       return () => {
         clearTimeout(t1)
@@ -76,7 +83,6 @@ export const Hero: React.FC<HeroProps> = ({
         clearTimeout(t4)
         clearTimeout(t5)
         clearTimeout(tBtn)
-        clearTimeout(tReady)
       }
     } else {
       setShowItem1(true)
@@ -85,9 +91,18 @@ export const Hero: React.FC<HeroProps> = ({
       setShowItem4(true)
       setShowItem5(true)
       setShowButton(true)
-      setSlideshowReady(true)
+      // Keep the first pane in place if the journey flight ends before its settle delay.
+      if (!entranceReadyTimeoutRef.current) {
+        setSlideshowReady(true)
+      }
     }
   }, [isEnteringFromJourney])
+
+  useEffect(() => () => {
+    if (entranceReadyTimeoutRef.current) {
+      clearTimeout(entranceReadyTimeoutRef.current)
+    }
+  }, [])
 
   // Auto-rotate slides once ready
   useEffect(() => {

@@ -53,9 +53,6 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
     initialFrame === 2 ? 'backward' : 'forward'
   )
 
-  // Auto-play state: false = manual scrolling by default; true = auto-advances
-  const [isPlaying, setIsPlaying] = useState<boolean>(false)
-
   // Mobile detection for responsive offsets
   const [isMobile, setIsMobile] = useState(() =>
     typeof window !== 'undefined' ? window.innerWidth < 768 : false
@@ -174,9 +171,6 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
 
   const frameRef = useRef(frame)
   frameRef.current = frame
-
-  const isPlayingRef = useRef(isPlaying)
-  isPlayingRef.current = isPlaying
 
   const onCompleteRef = useRef(onComplete)
   onCompleteRef.current = onComplete
@@ -323,18 +317,10 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
       const tDurga = setTimeout(() => setShowDurga(true), 850)
       const tControls = setTimeout(() => setShowControls(true), 1250)
 
-      let tAuto: ReturnType<typeof setTimeout>
-      if (isPlayingRef.current) {
-        tAuto = setTimeout(() => {
-          advanceFrameRef.current(2)
-        }, 3200)
-      }
-
       return () => {
         clearTimeout(tMeet)
         clearTimeout(tDurga)
         clearTimeout(tControls)
-        if (tAuto) clearTimeout(tAuto)
       }
     } else {
       setShowMeet(true)
@@ -374,13 +360,6 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
     const t4 = setTimeout(() => setShowWitness(true), 1950)
     const t5 = setTimeout(() => setShowBlesses(true), 2450)
 
-    let tAuto: ReturnType<typeof setTimeout>
-    if (isPlayingRef.current) {
-      tAuto = setTimeout(() => {
-        advanceFrameRef.current(3)
-      }, 4500)
-    }
-
     return () => {
       clearTimeout(tLogo)
       clearTimeout(t1)
@@ -388,7 +367,6 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
       clearTimeout(t3)
       clearTimeout(t4)
       clearTimeout(t5)
-      if (tAuto) clearTimeout(tAuto)
     }
   }, [frame, transitionDirection])
 
@@ -402,7 +380,6 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
     let touchStartX = 0
 
     const handleWheel = (e: WheelEvent) => {
-      setIsPlaying(false)
       if (isTransitioningRef.current) return
       const now = Date.now()
       if (now - lastGestureTime < 800) return
@@ -427,7 +404,6 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
     }
 
     const handleTouchEnd = (e: TouchEvent) => {
-      setIsPlaying(false)
       if (isTransitioningRef.current) return
       if (e.changedTouches.length === 0) return
       const now = Date.now()
@@ -454,12 +430,10 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
 
       if (['ArrowDown', 'PageDown', 'Space'].includes(e.code)) {
         e.preventDefault()
-        setIsPlaying(false)
         lastGestureTime = now
         advanceFrameRef.current()
       } else if (['ArrowUp', 'PageUp'].includes(e.code)) {
         e.preventDefault()
-        setIsPlaying(false)
         lastGestureTime = now
         previousFrameRef.current()
       }
@@ -551,8 +525,8 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
 
               {/* Mobile View (< md): Stacked vertically and centered at bottom above controls */}
               <div className="md:hidden absolute bottom-[108px] sm:bottom-[116px] inset-x-0 px-4 flex flex-col items-center justify-center text-center select-none pointer-events-none z-10">
-                {showMeet && (
-                  <div className="flex items-center justify-center">
+                <div className="flex items-center justify-center">
+                  {showMeet ? (
                     <BlurText
                       text="MEET"
                       effect="blur"
@@ -565,11 +539,18 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                       distance={16}
                       className="text-white font-galano font-black uppercase tracking-wide leading-none text-[clamp(34px,10.95vw,44px)] justify-center text-center"
                     />
-                  </div>
-                )}
+                  ) : (
+                    <span
+                      className="invisible text-white font-galano font-black uppercase tracking-wide leading-none text-[clamp(34px,10.95vw,44px)]"
+                      aria-hidden="true"
+                    >
+                      MEET
+                    </span>
+                  )}
+                </div>
 
-                {showDurga && (
-                  <div className="flex items-center justify-center mt-1 sm:mt-1.5">
+                <div className="flex items-center justify-center mt-1 sm:mt-1.5">
+                  {showDurga ? (
                     <BlurText
                       text="DURGA"
                       effect="blur"
@@ -583,9 +564,43 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                       color="#ff0000"
                       className="font-galano font-black uppercase tracking-tight leading-none text-[clamp(66px,21.4vw,86px)] drop-shadow-[0_2px_16px_rgba(255,0,0,0.4)] justify-center text-center"
                     />
-                  </div>
-                )}
+                  ) : (
+                    <span
+                      className="invisible font-galano font-black uppercase tracking-tight leading-none text-[clamp(66px,21.4vw,86px)]"
+                      aria-hidden="true"
+                    >
+                      DURGA
+                    </span>
+                  )}
+                </div>
               </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Mobile boy cutout stays aligned with the shifted base image and above its fade overlay. */}
+        <AnimatePresence>
+          {isMobile && frame <= 2 && (
+            <motion.div
+              key="mobile-boy-cutout"
+              initial={{ opacity: 0 }}
+              animate={{
+                opacity: isBaseImageLoaded && frame === 1 ? 1 : 0,
+                transition: { opacity: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
+              }}
+              exit={{ opacity: 0, transition: { duration: 0.5, ease: 'easeInOut' } }}
+              className={`absolute inset-0 z-[5] pointer-events-none journey-frame-${frame === 2 ? '2' : '1'}-shift`}
+              style={{
+                transition: frame === 2 ? 'transform 0.9s cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
+              }}
+            >
+              <img
+                src={`${import.meta.env.BASE_URL}banners/boy-phone.png`}
+                alt=""
+                aria-hidden="true"
+                draggable={false}
+                className="w-full h-full object-cover object-[50%_35%] select-none"
+              />
             </motion.div>
           )}
         </AnimatePresence>
@@ -1170,12 +1185,12 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
         )}
 
         {/* -------------------------------------------------------- */}
-        {/* BOTTOM INTRO CONTROLS: DOWN ARROW & SKIP (LEFT/CENTER) + PLAY/PAUSE (TOP-RIGHT MOBILE / BOTTOM-RIGHT DESKTOP) */}
+        {/* BOTTOM INTRO CONTROLS: FRAME NAVIGATION + SKIP */}
         {/* -------------------------------------------------------- */}
         <AnimatePresence>
           {frame < 3 && showControls && (
             <>
-              {/* Left/Center Controls: Previous/Next Frame Buttons + Skip Pill Button */}
+              {/* Previous/Next Frame Buttons; Skip stays inline on mobile. */}
               <motion.div
                 key="left-journey-controls"
                 initial={{ opacity: 0, y: 30 }}
@@ -1193,10 +1208,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   {frame > 1 && (
                     <button
                       type="button"
-                      onClick={() => {
-                        setIsPlaying(false)
-                        previousFrame()
-                      }}
+                      onClick={previousFrame}
                       className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/50 backdrop-blur-md border border-white/15 text-white/90 hover:text-white hover:bg-black/70 hover:scale-105 active:scale-95 transition-all flex items-center justify-center cursor-pointer shadow-xl rotate-180"
                       aria-label="Previous frame"
                       title="Previous frame"
@@ -1208,10 +1220,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   {/* Next Frame Down Button with arrow_cool_down icon */}
                   <button
                     type="button"
-                    onClick={() => {
-                      setIsPlaying(false)
-                      advanceFrame()
-                    }}
+                    onClick={() => advanceFrame()}
                     className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/50 backdrop-blur-md border border-white/15 text-white/90 hover:text-white hover:bg-black/70 hover:scale-105 active:scale-95 transition-all flex items-center justify-center cursor-pointer shadow-xl"
                     aria-label="Next frame"
                     title="Next frame"
@@ -1223,7 +1232,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   <button
                     type="button"
                     onClick={onSkip}
-                    className="h-11 sm:h-12 px-5 sm:px-6 rounded-full bg-black/50 backdrop-blur-md border border-white/15 text-white/90 hover:text-white hover:bg-black/70 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 font-sans text-xs sm:text-sm font-semibold tracking-normal cursor-pointer shadow-xl uppercase"
+                    className="md:hidden h-11 sm:h-12 px-5 sm:px-6 rounded-full bg-black/50 backdrop-blur-md border border-white/15 text-white/90 hover:text-white hover:bg-black/70 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 font-sans text-xs sm:text-sm font-semibold tracking-normal cursor-pointer shadow-xl uppercase"
                     aria-label="Skip welcome journey"
                   >
                     <MaterialIcon name="fast_forward" size={17} />
@@ -1232,27 +1241,27 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                 </div>
               </motion.div>
 
-              {/* Play / Pause Button: Top-Right on Mobile (< md), Bottom-Right on Desktop (>= md) */}
+              {/* Desktop Skip takes the former play/pause position. */}
               <motion.div
-                key="right-journey-controls"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
+                key="desktop-skip-control"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
                 exit={{
                   opacity: 0,
                   scale: 0.3,
                   transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
                 }}
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute top-5 right-5 sm:top-6 sm:right-6 md:top-auto md:bottom-7 md:right-7 z-50 flex items-center pointer-events-auto"
+                className="hidden md:flex absolute bottom-6 sm:bottom-7 right-7 z-50 items-center pointer-events-none"
               >
                 <button
                   type="button"
-                  onClick={() => setIsPlaying((p) => !p)}
-                  className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full bg-black/50 backdrop-blur-md border border-white/15 text-white/90 hover:text-white hover:bg-black/70 transition-all flex items-center justify-center cursor-pointer shadow-xl hover:scale-105 active:scale-95"
-                  aria-label={isPlaying ? 'Pause auto-play' : 'Start auto-play'}
-                  title={isPlaying ? 'Pause auto-play (switch to manual scroll)' : 'Start auto-play'}
+                  onClick={onSkip}
+                  className="pointer-events-auto h-11 sm:h-12 px-5 sm:px-6 rounded-full bg-black/50 backdrop-blur-md border border-white/15 text-white/90 hover:text-white hover:bg-black/70 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 font-sans text-xs sm:text-sm font-semibold tracking-normal cursor-pointer shadow-xl uppercase"
+                  aria-label="Skip welcome journey"
                 >
-                  <MaterialIcon name={isPlaying ? 'pause' : 'play_arrow'} size={20} className="md:text-[22px]" />
+                  <MaterialIcon name="fast_forward" size={17} />
+                  <span>Skip</span>
                 </button>
               </motion.div>
             </>

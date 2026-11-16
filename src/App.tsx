@@ -171,14 +171,14 @@ export const App: React.FC = () => {
                 className="absolute inset-0 w-full h-full overflow-hidden"
               >
                 <div
-                  className={`w-full h-[calc(100%+35vh)] md:h-full absolute top-0 inset-x-0 will-change-transform z-0 ${
+                  className={`w-full h-full absolute top-0 inset-x-0 will-change-transform z-0 ${
                     journeyFrame === 2 ? 'journey-frame-2-shift' : 'journey-frame-1-shift'
                   }`}
                   style={{
                     transition: journeyFrame === 2 ? 'transform 0.9s cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
                   }}
                 >
-                  <picture className="w-full h-full block">
+                  <picture className="relative z-0 w-full h-full block">
                     <source
                       media="(max-width: 768px)"
                       srcSet={`${import.meta.env.BASE_URL}banners/Silent%20Amidst%20the%20Passing%20Crowd%201%20-%20phone.png`}
@@ -190,6 +190,7 @@ export const App: React.FC = () => {
                       onLoad={() => setIsJourneyBaseImageLoaded(true)}
                     />
                   </picture>
+
                 </div>
               </motion.div>
             ) : (

@@ -119,7 +119,7 @@ export const Hero: React.FC<HeroProps> = ({
           <div className="w-full flex items-center justify-center text-center min-h-[36px]">
             {showItem1 ? (
               <BlurText
-                text="Two decades of commitment & counting ..."
+                text="Two decades of commitment & counting"
                 effect="blur"
                 animateBy="words"
                 direction="bottom"
@@ -132,7 +132,7 @@ export const Hero: React.FC<HeroProps> = ({
               />
             ) : (
               <div className="invisible font-galano-alt font-semibold text-[clamp(20px,2.2vw,32px)] leading-tight" aria-hidden="true">
-                Two decades of commitment &amp; counting ...
+                Two decades of commitment &amp; counting
               </div>
             )}
           </div>
@@ -266,7 +266,7 @@ export const Hero: React.FC<HeroProps> = ({
             <div className="w-full flex items-center justify-center text-center">
               {showItem1 ? (
                 <BlurText
-                  text="Two decades of commitment & counting ..."
+                  text="Two decades of commitment & counting"
                   effect="blur"
                   animateBy="words"
                   direction="bottom"
@@ -279,7 +279,7 @@ export const Hero: React.FC<HeroProps> = ({
                 />
               ) : (
                 <div className="invisible font-galano-alt font-semibold text-white text-[clamp(21px,6.2vw,25.5px)] leading-[1.22] text-center mx-auto" aria-hidden="true">
-                  Two decades of commitment &amp; counting ...
+                  Two decades of commitment &amp; counting
                 </div>
               )}
             </div>

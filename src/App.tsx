@@ -305,7 +305,13 @@ export const App: React.FC = () => {
       />
 
       {/* Main Content Container at relative z-10 */}
-      <div className="relative z-10 flex flex-col flex-1">
+      <div
+        className={`relative z-10 flex flex-col flex-1 transition-opacity duration-700 ${
+          isJourneyActive && !isEnteringFromJourney
+            ? 'opacity-0 pointer-events-none invisible'
+            : 'opacity-100 pointer-events-auto visible'
+        }`}
+      >
         {/* Spacing between last card and footer calibrated to exact OuterEdgeGutter + participateButtonHeight */}
         <main className="flex-1 pb-[80px] sm:pb-[88px] lg:pb-[96px]">
           <Routes>
@@ -564,20 +570,22 @@ export const App: React.FC = () => {
       </div>
 
       {/* Bottom Page-level Gradual Blur (renders on both mobile and PC with responsive calibration) */}
-      <GradualBlur
-        position="bottom"
-        target="page"
-        height={isMobile ? '6.5rem' : '7.5rem'}
-        strength={2.5}
-        layers={8}
-        curve="linear"
-        exponential
-        tint="rgba(11, 12, 14, 0.7)"
-        zIndex={30}
-      />
+      {(!isJourneyActive || isEnteringFromJourney) && (
+        <GradualBlur
+          position="bottom"
+          target="page"
+          height={isMobile ? '6.5rem' : '7.5rem'}
+          strength={2.5}
+          layers={8}
+          curve="linear"
+          exponential
+          tint="rgba(11, 12, 14, 0.7)"
+          zIndex={30}
+        />
+      )}
 
       {/* Minimal Custom Pill-Shaped Page Scroller */}
-      <CustomScrollbar />
+      {(!isJourneyActive || isEnteringFromJourney) && <CustomScrollbar />}
 
       {/* Floating Action Buttons (z-[70]) */}
       {(!isJourneyActive || isEnteringFromJourney) && (

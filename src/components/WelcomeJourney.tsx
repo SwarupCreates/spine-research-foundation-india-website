@@ -520,21 +520,30 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                 )}
 
                 {showDurga && (
-                  <div className="absolute top-[14%] lg:top-[14.5%] left-0 w-full select-none pointer-events-none">
-                    <BlurText
-                      text="DURGA"
-                      effect="blur"
-                      animateBy="letters"
-                      direction="bottom"
-                      trigger="load"
-                      delay={90}
-                      stepDuration={0.32}
-                      blur={14}
-                      distance={20}
-                      color="#ff0000"
-                      className="w-full text-center font-galano font-black uppercase tracking-tight text-[clamp(90px,18.5vw,284px)] leading-none select-none pointer-events-none drop-shadow-[0_2px_24px_rgba(255,0,0,0.4)]"
-                    />
-                  </div>
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.96, filter: 'blur(16px)' }}
+                    animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                    transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
+                    className="absolute top-[14%] lg:top-[14.5%] left-0 w-full select-none pointer-events-none"
+                  >
+                    <svg
+                      viewBox="0 0 720 152"
+                      className="w-full h-auto overflow-hidden select-none pointer-events-none drop-shadow-[0_2px_24px_rgba(255,0,0,0.4)]"
+                      aria-label="DURGA"
+                    >
+                      <text
+                        x="360"
+                        y="146"
+                        textAnchor="middle"
+                        fill="#ff0000"
+                        fontFamily="'Galano Grotesque Black', 'Galano Grotesque', sans-serif"
+                        fontWeight="900"
+                        fontSize="200"
+                      >
+                        DURGA
+                      </text>
+                    </svg>
+                  </motion.div>
                 )}
               </div>
 

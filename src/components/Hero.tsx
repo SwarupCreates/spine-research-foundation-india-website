@@ -76,7 +76,7 @@ export const Hero: React.FC<HeroProps> = ({
   }
 
   return (
-    <section className="relative overflow-hidden font-galano">
+    <section className="relative overflow-hidden font-galano-alt">
       {/* Mobile-only Silent Journey Replay Button */}
       {onReplayJourney && (
         <motion.div
@@ -111,10 +111,10 @@ export const Hero: React.FC<HeroProps> = ({
 
       {/* ------------------------------------------------------------- */}
       {/* DESKTOP VIEW (>= md): Matches Figma Design (ca5f66ee.jpg)      */}
-      {/* Centered narrative block + "One spine at a time" + Read Button */}
+      {/* Centered narrative block + Semibold Red Title + Button         */}
       {/* ------------------------------------------------------------- */}
       <div className="hidden md:flex flex-col items-center justify-center text-center max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 pt-32 lg:pt-36 xl:pt-40 pb-16 lg:pb-24 relative z-10">
-        <div className="max-w-2xl mx-auto flex flex-col items-center text-center space-y-3 lg:space-y-3.5 select-none">
+        <div className="max-w-2xl mx-auto flex flex-col items-center text-center space-y-3.5 lg:space-y-4 select-none">
           {/* Line 1 */}
           <div className="w-full flex items-center justify-center text-center min-h-[36px]">
             {showItem1 ? (
@@ -128,10 +128,10 @@ export const Hero: React.FC<HeroProps> = ({
                 stepDuration={0.25}
                 blur={10}
                 distance={12}
-                className="text-white font-galano-alt font-bold text-[clamp(20px,2.2vw,32px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] text-center justify-center"
+                className="text-white font-galano-alt font-semibold text-[clamp(20px,2.2vw,32px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] text-center justify-center"
               />
             ) : (
-              <div className="invisible font-galano-alt font-bold text-[clamp(20px,2.2vw,32px)] leading-tight" aria-hidden="true">
+              <div className="invisible font-galano-alt font-semibold text-[clamp(20px,2.2vw,32px)] leading-tight" aria-hidden="true">
                 Two decades of commitment &amp; counting ...
               </div>
             )}
@@ -150,10 +150,10 @@ export const Hero: React.FC<HeroProps> = ({
                 stepDuration={0.25}
                 blur={10}
                 distance={12}
-                className="text-white font-galano-alt font-bold text-[clamp(20px,2.2vw,32px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] text-center justify-center"
+                className="text-white font-galano-alt font-semibold text-[clamp(20px,2.2vw,32px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] text-center justify-center"
               />
             ) : (
-              <div className="invisible font-galano-alt font-bold text-[clamp(20px,2.2vw,32px)] leading-tight" aria-hidden="true">
+              <div className="invisible font-galano-alt font-semibold text-[clamp(20px,2.2vw,32px)] leading-tight" aria-hidden="true">
                 A family to work with – A family to work for
               </div>
             )}
@@ -172,10 +172,10 @@ export const Hero: React.FC<HeroProps> = ({
                 stepDuration={0.25}
                 blur={10}
                 distance={12}
-                className="text-white font-galano-alt font-bold text-[clamp(20px,2.2vw,32px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] text-center justify-center"
+                className="text-white font-galano-alt font-semibold text-[clamp(20px,2.2vw,32px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] text-center justify-center"
               />
             ) : (
-              <div className="invisible font-galano-alt font-bold text-[clamp(20px,2.2vw,32px)] leading-tight" aria-hidden="true">
+              <div className="invisible font-galano-alt font-semibold text-[clamp(20px,2.2vw,32px)] leading-tight" aria-hidden="true">
                 A bounty of love, A legacy to uphold
               </div>
             )}
@@ -194,16 +194,16 @@ export const Hero: React.FC<HeroProps> = ({
                 stepDuration={0.25}
                 blur={10}
                 distance={12}
-                className="text-white font-galano-alt font-bold text-[clamp(20px,2.2vw,32px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] text-center justify-center"
+                className="text-white font-galano-alt font-semibold text-[clamp(20px,2.2vw,32px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] text-center justify-center"
               />
             ) : (
-              <div className="invisible font-galano-alt font-bold text-[clamp(20px,2.2vw,32px)] leading-tight" aria-hidden="true">
+              <div className="invisible font-galano-alt font-semibold text-[clamp(20px,2.2vw,32px)] leading-tight" aria-hidden="true">
                 A promise spoken in silence – fulfilled with glory
               </div>
             )}
           </div>
 
-          {/* Line 5: One spine at a time */}
+          {/* Line 5: One spine at a time (Semibold Galano Grotesque Alt matching white texts above) */}
           <div className="w-full flex items-center justify-center text-center pt-1 min-h-[40px]">
             {showItem5 ? (
               <BlurText
@@ -217,16 +217,16 @@ export const Hero: React.FC<HeroProps> = ({
                 blur={12}
                 distance={14}
                 color="#ff0000"
-                className="font-galano font-bold text-[#ff0000] text-[clamp(22px,2.5vw,36px)] leading-tight drop-shadow-[0_2px_16px_rgba(255,0,0,0.4)] text-center justify-center"
+                className="font-galano-alt font-semibold text-[#ff0000] text-[clamp(20px,2.2vw,32px)] leading-tight drop-shadow-[0_2px_16px_rgba(255,0,0,0.4)] text-center justify-center"
               />
             ) : (
-              <div className="invisible font-galano font-bold text-[clamp(22px,2.5vw,36px)] leading-tight" aria-hidden="true">
+              <div className="invisible font-galano-alt font-semibold text-[#ff0000] text-[clamp(20px,2.2vw,32px)] leading-tight" aria-hidden="true">
                 One spine at a time
               </div>
             )}
           </div>
 
-          {/* Primary CTA Button: [📖 Read About SRF] */}
+          {/* Primary CTA Button: [📖 Read About SRF] - Google Sans font and icon sizing matching cards */}
           <div className="pt-3 min-h-[50px] flex items-center justify-center">
             {showButton ? (
               <motion.button
@@ -235,30 +235,31 @@ export const Hero: React.FC<HeroProps> = ({
                 initial={{ opacity: 0, y: 15, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="h-10 sm:h-11 px-6 rounded-full bg-white/[0.08] hover:bg-white/[0.14] border border-white/20 hover:border-white/40 text-white font-medium text-sm sm:text-base backdrop-blur-md transition-all shadow-lg active:scale-95 flex items-center gap-2 cursor-pointer"
+                className="group inline-flex items-center gap-2 px-6 py-2.5 sm:px-7 sm:py-3 rounded-full bg-black/40 hover:bg-black/60 border border-white/20 hover:border-white/40 text-white font-sans font-medium text-sm sm:text-base backdrop-blur-md transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 cursor-pointer"
                 aria-label="Read About SRF"
               >
-                <MaterialIcon name="menu_book" size={17} className="text-white/80" />
-                <span>Read About SRF</span>
+                <MaterialIcon name="menu_book" size={18} className="text-white/85 shrink-0" />
+                <span className="font-medium whitespace-nowrap">Read About SRF</span>
               </motion.button>
             ) : (
-              <div className="invisible h-11 px-6" aria-hidden="true" />
+              <div className="invisible h-11 px-7" aria-hidden="true" />
             )}
           </div>
         </div>
       </div>
 
       {/* ------------------------------------------------------------- */}
-      {/* MOBILE VIEW (< md): Matches Figma Design (d4a37f41.jpg)        */}
-      {/* Full-height stretched hero + 4 narrative lines + down arrow + */}
-      {/* "One spine at a time" + Primary CTA button                     */}
+      {/* MOBILE VIEW (< md): Matches Figma Design (2e7cb40e.png)        */}
+      {/* Full-height stretched hero + larger font + refined spacing +  */}
+      {/* dotted scroll arrow + semibold red text + Google Sans button  */}
+      {/* + ample bottom gutter above floating action buttons            */}
       {/* ------------------------------------------------------------- */}
       <div className="md:hidden relative z-10 flex flex-col items-center justify-between text-center px-6 min-h-[calc(100dvh-86px)]">
         {/* Top Spacer: gives breathing space below header/navbar */}
-        <div className="h-[8vh] min-h-[24px] shrink-0 pointer-events-none" aria-hidden="true" />
+        <div className="h-[5vh] min-h-[16px] shrink-0 pointer-events-none" aria-hidden="true" />
 
-        {/* Narrative Stanzas Block */}
-        <div className="flex flex-col items-center text-center space-y-4 sm:space-y-4.5 max-w-[280px] sm:max-w-[310px] mx-auto select-none shrink-0">
+        {/* Narrative Stanzas Block: slightly enlarged font & line-height matching Figma */}
+        <div className="flex flex-col items-center text-center space-y-5 sm:space-y-6 max-w-[295px] sm:max-w-[325px] mx-auto select-none shrink-0">
           {/* Line 1 */}
           <div className="w-full flex items-center justify-center text-center">
             {showItem1 ? (
@@ -272,10 +273,10 @@ export const Hero: React.FC<HeroProps> = ({
                 stepDuration={0.24}
                 blur={8}
                 distance={10}
-                className="font-galano-alt font-bold text-white text-[clamp(17px,5.1vw,21px)] leading-[1.18] text-center drop-shadow-md mx-auto justify-center"
+                className="font-galano-alt font-semibold text-white text-[clamp(19.5px,5.7vw,23.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center"
               />
             ) : (
-              <div className="invisible font-galano-alt font-bold text-white text-[clamp(17px,5.1vw,21px)] leading-[1.18] text-center mx-auto" aria-hidden="true">
+              <div className="invisible font-galano-alt font-semibold text-white text-[clamp(19.5px,5.7vw,23.5px)] leading-[1.22] text-center mx-auto" aria-hidden="true">
                 Two decades of commitment &amp; counting ...
               </div>
             )}
@@ -294,10 +295,10 @@ export const Hero: React.FC<HeroProps> = ({
                 stepDuration={0.24}
                 blur={8}
                 distance={10}
-                className="font-galano-alt font-bold text-white text-[clamp(17px,5.1vw,21px)] leading-[1.18] text-center drop-shadow-md mx-auto justify-center"
+                className="font-galano-alt font-semibold text-white text-[clamp(19.5px,5.7vw,23.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center"
               />
             ) : (
-              <div className="invisible font-galano-alt font-bold text-white text-[clamp(17px,5.1vw,21px)] leading-[1.18] text-center mx-auto" aria-hidden="true">
+              <div className="invisible font-galano-alt font-semibold text-white text-[clamp(19.5px,5.7vw,23.5px)] leading-[1.22] text-center mx-auto" aria-hidden="true">
                 A family to work with – A family to work for
               </div>
             )}
@@ -316,10 +317,10 @@ export const Hero: React.FC<HeroProps> = ({
                 stepDuration={0.24}
                 blur={8}
                 distance={10}
-                className="font-galano-alt font-bold text-white text-[clamp(17px,5.1vw,21px)] leading-[1.18] text-center drop-shadow-md mx-auto justify-center"
+                className="font-galano-alt font-semibold text-white text-[clamp(19.5px,5.7vw,23.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center"
               />
             ) : (
-              <div className="invisible font-galano-alt font-bold text-white text-[clamp(17px,5.1vw,21px)] leading-[1.18] text-center mx-auto" aria-hidden="true">
+              <div className="invisible font-galano-alt font-semibold text-white text-[clamp(19.5px,5.7vw,23.5px)] leading-[1.22] text-center mx-auto" aria-hidden="true">
                 A bounty of love, A legacy to uphold
               </div>
             )}
@@ -338,34 +339,35 @@ export const Hero: React.FC<HeroProps> = ({
                 stepDuration={0.24}
                 blur={8}
                 distance={10}
-                className="font-galano-alt font-bold text-white text-[clamp(17px,5.1vw,21px)] leading-[1.18] text-center drop-shadow-md mx-auto justify-center"
+                className="font-galano-alt font-semibold text-white text-[clamp(19.5px,5.7vw,23.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center"
               />
             ) : (
-              <div className="invisible font-galano-alt font-bold text-white text-[clamp(17px,5.1vw,21px)] leading-[1.18] text-center mx-auto" aria-hidden="true">
+              <div className="invisible font-galano-alt font-semibold text-white text-[clamp(19.5px,5.7vw,23.5px)] leading-[1.22] text-center mx-auto" aria-hidden="true">
                 A promise spoken in silence – fulfilled with glory
               </div>
             )}
           </div>
         </div>
 
-        {/* Down Arrow Scroll Indicator */}
-        <div className="flex flex-col items-center justify-center py-1 shrink-0">
+        {/* Dotted Down Arrow Scroll Indicator (matching Figma Image 2) */}
+        <div className="flex flex-col items-center justify-center py-2 shrink-0">
           <motion.button
             type="button"
             onClick={handleScrollDown}
-            animate={{ y: [0, 6, 0] }}
+            animate={{ y: [0, 5, 0] }}
             transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
-            className="text-white/60 hover:text-white active:scale-90 transition-all p-2 cursor-pointer"
+            className="text-white/40 hover:text-white active:scale-90 transition-all p-1.5 cursor-pointer flex flex-col items-center gap-0.5"
             aria-label="Scroll down to reveal cards"
             title="Scroll down to reveal cards"
           >
-            <MaterialIcon name="arrow_cool_down" size={26} />
+            <span className="w-[1.5px] h-3.5 border-l-2 border-dashed border-white/40" />
+            <MaterialIcon name="keyboard_arrow_down" size={20} className="text-white/50 -mt-1.5" />
           </motion.button>
         </div>
 
-        {/* Bottom Section: "One spine at a time" + Primary CTA button with calibrated clearance */}
-        <div className="shrink-0 flex flex-col items-center text-center pb-[84px] sm:pb-[100px] select-none">
-          {/* Line 5: One spine at a time */}
+        {/* Bottom Section: "One spine at a time" + Primary CTA button with ample gutter above floating buttons */}
+        <div className="shrink-0 flex flex-col items-center text-center pb-[118px] sm:pb-[132px] select-none">
+          {/* Line 5: One spine at a time in Semibold Galano Grotesque Alt (matching white text weight) */}
           <div className="flex items-center justify-center text-center min-h-[34px]">
             {showItem5 ? (
               <BlurText
@@ -379,17 +381,17 @@ export const Hero: React.FC<HeroProps> = ({
                 blur={10}
                 distance={12}
                 color="#ff0000"
-                className="font-galano font-bold text-[#ff0000] text-[clamp(21px,6.2vw,26px)] leading-tight text-center drop-shadow-[0_2px_12px_rgba(255,0,0,0.4)] justify-center"
+                className="font-galano-alt font-semibold text-[#ff0000] text-[clamp(21px,5.8vw,25px)] leading-tight text-center drop-shadow-[0_2px_12px_rgba(255,0,0,0.35)] justify-center"
               />
             ) : (
-              <div className="invisible font-galano font-bold text-[#ff0000] text-[clamp(21px,6.2vw,26px)] leading-tight text-center justify-center" aria-hidden="true">
+              <div className="invisible font-galano-alt font-semibold text-[#ff0000] text-[clamp(21px,5.8vw,25px)] leading-tight text-center justify-center" aria-hidden="true">
                 One spine at a time
               </div>
             )}
           </div>
 
-          {/* CTA Button: [📖 Read About SRF] */}
-          <div className="pt-3 flex items-center justify-center min-h-[46px]">
+          {/* CTA Button: [📖 Read About SRF] - Styled with Google Sans & icon sizing matching card buttons */}
+          <div className="pt-3.5 sm:pt-4 flex items-center justify-center min-h-[46px]">
             {showButton ? (
               <motion.button
                 type="button"
@@ -397,14 +399,14 @@ export const Hero: React.FC<HeroProps> = ({
                 initial={{ opacity: 0, y: 12, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="h-10 px-5 rounded-full bg-white/[0.08] active:bg-white/[0.16] border border-white/20 text-white font-medium text-sm backdrop-blur-md transition-all shadow-lg active:scale-95 flex items-center gap-2 cursor-pointer"
+                className="group inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-black/40 active:bg-black/60 border border-white/20 active:border-white/40 text-white font-sans font-medium text-sm backdrop-blur-md transition-all shadow-lg active:scale-95 cursor-pointer"
                 aria-label="Read About SRF"
               >
-                <MaterialIcon name="menu_book" size={16} className="text-white/80" />
-                <span>Read About SRF</span>
+                <MaterialIcon name="menu_book" size={18} className="text-white/85 shrink-0" />
+                <span className="font-medium whitespace-nowrap">Read About SRF</span>
               </motion.button>
             ) : (
-              <div className="invisible h-10 px-5" aria-hidden="true" />
+              <div className="invisible h-10 px-6" aria-hidden="true" />
             )}
           </div>
         </div>

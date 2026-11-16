@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react'
+import React, { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence, type Variants } from 'framer-motion'
 import { SrfLogo, MaterialIcon } from './icons'
 import { BlurText } from './BlurText'
@@ -44,7 +44,10 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
   // Current journey frame: 1 and 2, then 3 for landing transition
   const [frame, setFrame] = useState<number>(initialFrame)
 
-  useEffect(() => {
+  // Keep the parent background layer in the same frame before paint. Its transform
+  // mirrors the phone cutout's frame shift, so an effect after paint can briefly
+  // leave the two copies of the boy at different vertical positions on reverse scroll.
+  useLayoutEffect(() => {
     onFrameChange?.(frame)
   }, [frame, onFrameChange])
 

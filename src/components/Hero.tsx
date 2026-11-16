@@ -138,11 +138,11 @@ export const Hero: React.FC<HeroProps> = ({
       onClick={handleScrollDown}
       animate={{ y: [0, 5, 0] }}
       transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
-      className={`text-white/60 hover:text-white active:scale-90 transition-all p-1.5 cursor-pointer flex items-center justify-center ${className}`}
+      className={`text-white/40 hover:text-white/75 active:scale-90 transition-all p-1.5 cursor-pointer flex items-center justify-center ${className}`}
       aria-label="Scroll down to reveal cards"
       title="Scroll down to reveal cards"
     >
-      <MaterialIcon name="arrow_cool_down" size={28} className="text-white/65" />
+      <MaterialIcon name="arrow_cool_down" size={28} className="text-white/40" />
     </motion.button>
   )
 
@@ -166,7 +166,7 @@ export const Hero: React.FC<HeroProps> = ({
   /*  PANE 0: Narrative Content (existing)                            */
   /* ================================================================ */
   const blurCommonDesktop = "text-white font-galano-alt font-semibold text-[clamp(20px,2vw,30px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] text-center justify-center"
-  const blurCommonMobile = "font-galano-alt font-semibold text-white text-[clamp(21px,6.2vw,25.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center"
+  const blurCommonMobile = "font-galano-alt font-semibold text-white text-[clamp(24px,6.7vw,28px)] leading-[1.16] text-center drop-shadow-md mx-auto justify-center"
 
   const narrativeLines = [
     { text: "Two decades of commitment & counting", show: showItem1 },
@@ -222,7 +222,7 @@ export const Hero: React.FC<HeroProps> = ({
   const renderMobilePane0 = () => (
     <div className="flex flex-col items-center text-center shrink-0 select-none w-full">
       {/* 4 Narrative Stanzas */}
-      <div className="flex flex-col items-center text-center space-y-4 sm:space-y-4.5 max-w-[310px] sm:max-w-[340px] mx-auto select-none">
+      <div className="flex flex-col items-center text-center space-y-5 sm:space-y-[22px] max-w-[310px] sm:max-w-[340px] mx-auto select-none">
         {narrativeLines.map((line, i) => (
           <div key={i} className="w-full flex items-center justify-center text-center">
             {line.show ? (
@@ -233,7 +233,7 @@ export const Hero: React.FC<HeroProps> = ({
                 className={blurCommonMobile}
               />
             ) : (
-              <div className="invisible font-galano-alt font-semibold text-white text-[clamp(21px,6.2vw,25.5px)] leading-[1.22] text-center mx-auto" aria-hidden="true">
+              <div className="invisible font-galano-alt font-semibold text-white text-[clamp(24px,6.7vw,28px)] leading-[1.16] text-center mx-auto" aria-hidden="true">
                 {line.text}
               </div>
             )}
@@ -242,7 +242,7 @@ export const Hero: React.FC<HeroProps> = ({
       </div>
 
       {/* Scroll Arrow */}
-      <div className="flex flex-col items-center justify-center pt-3.5 sm:pt-4 pb-2 sm:pb-2.5 shrink-0">
+      <div className="flex flex-col items-center justify-center pt-[18px] pb-[18px] shrink-0">
         {renderScrollArrow()}
       </div>
 
@@ -254,16 +254,16 @@ export const Hero: React.FC<HeroProps> = ({
               text="One spine at a time"
               effect="blur" animateBy="words" direction="bottom" trigger="load"
               delay={45} stepDuration={0.26} blur={10} distance={12} color="#ff0000"
-              className="font-galano-alt font-semibold text-[#ff0000] text-[clamp(21.5px,6.2vw,26px)] leading-tight text-center drop-shadow-[0_2px_12px_rgba(255,0,0,0.35)] justify-center"
+              className="font-galano-alt font-semibold text-[#ff0000] text-[clamp(24px,6.7vw,28px)] leading-tight text-center drop-shadow-[0_2px_12px_rgba(255,0,0,0.35)] justify-center"
             />
           ) : (
-            <div className="invisible font-galano-alt font-semibold text-[#ff0000] text-[clamp(21.5px,6.2vw,26px)] leading-tight text-center justify-center" aria-hidden="true">
+            <div className="invisible font-galano-alt font-semibold text-[#ff0000] text-[clamp(24px,6.7vw,28px)] leading-tight text-center justify-center" aria-hidden="true">
               One spine at a time
             </div>
           )}
         </div>
 
-        <div className="pt-3 sm:pt-3.5 flex items-center justify-center min-h-[46px]">
+        <div className="pt-4 flex items-center justify-center min-h-[46px]">
           {showButton ? renderCTAButton({ animate: true, mobile: true }) : <div className="invisible h-10 px-6" aria-hidden="true" />}
         </div>
       </div>
@@ -346,14 +346,14 @@ export const Hero: React.FC<HeroProps> = ({
   const renderMobilePane1 = () => (
     <div className="flex flex-col items-center text-center shrink-0 select-none w-full">
       {/* "Meet Durga" + Poetic lines */}
-      <div className="flex flex-col items-center text-center space-y-4 sm:space-y-[18px] max-w-[310px] sm:max-w-[340px] mx-auto select-none">
+      <div className="flex flex-col items-center text-center space-y-5 sm:space-y-[22px] max-w-[310px] sm:max-w-[340px] mx-auto select-none">
         {/* Meet Durga title */}
         <div className="w-full flex items-center justify-center text-center">
           <BlurText
             text="Meet Durga"
             effect="blur" animateBy="words" direction="bottom" trigger="load"
             delay={50} stepDuration={0.28} blur={10} distance={12}
-            className="font-galano-alt font-semibold text-white text-[clamp(21px,6.2vw,25.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center"
+            className="font-galano-alt font-semibold text-white text-[clamp(24px,6.7vw,28px)] leading-[1.16] text-center drop-shadow-md mx-auto justify-center"
           />
         </div>
 
@@ -364,20 +364,20 @@ export const Hero: React.FC<HeroProps> = ({
               text={line.prefix}
               effect="blur" animateBy="words" direction="bottom" trigger="load"
               delay={40} stepDuration={0.24} blur={8} distance={10}
-              className="font-galano-alt font-semibold text-white/55 text-[clamp(21px,6.2vw,25.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center italic"
+              className="font-galano-alt font-semibold text-white/55 text-[clamp(24px,6.7vw,28px)] leading-[1.16] text-center drop-shadow-md mx-auto justify-center italic"
             />
             <BlurText
               text={line.suffix}
               effect="blur" animateBy="words" direction="bottom" trigger="load"
               delay={40 + (i + 1) * 60} stepDuration={0.24} blur={8} distance={10}
-              className="font-galano-alt font-semibold text-white text-[clamp(21px,6.2vw,25.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center"
+              className="font-galano-alt font-semibold text-white text-[clamp(24px,6.7vw,28px)] leading-[1.16] text-center drop-shadow-md mx-auto justify-center"
             />
           </div>
         ))}
       </div>
 
       {/* Scroll Arrow */}
-      <div className="flex flex-col items-center justify-center pt-4 sm:pt-4.5 pb-2.5 sm:pb-3 shrink-0">
+      <div className="flex flex-col items-center justify-center pt-[18px] pb-[18px] shrink-0">
         {renderScrollArrow()}
       </div>
 
@@ -389,20 +389,20 @@ export const Hero: React.FC<HeroProps> = ({
               text="But..."
               effect="blur" animateBy="words" direction="bottom" trigger="load"
               delay={50} stepDuration={0.26} blur={10} distance={12}
-              className="font-galano-alt font-semibold text-white text-[clamp(21px,6.2vw,25.5px)] leading-[1.22] text-center drop-shadow-md justify-center"
+              className="font-galano-alt font-semibold text-white text-[clamp(24px,6.7vw,28px)] leading-[1.16] text-center drop-shadow-md justify-center"
             />
             <BlurText
               text="as a witness,"
               effect="blur" animateBy="words" direction="bottom" trigger="load"
               delay={100} stepDuration={0.26} blur={10} distance={12}
-              className="font-galano-alt font-semibold text-[#ff0000] text-[clamp(21px,6.2vw,25.5px)] leading-[1.22] text-center drop-shadow-[0_2px_12px_rgba(255,0,0,0.35)] justify-center"
+              className="font-galano-alt font-semibold text-[#ff0000] text-[clamp(24px,6.7vw,28px)] leading-[1.16] text-center drop-shadow-[0_2px_12px_rgba(255,0,0,0.35)] justify-center"
             />
           </div>
           <BlurText
             text="he blesses the world!"
             effect="blur" animateBy="words" direction="bottom" trigger="load"
             delay={160} stepDuration={0.26} blur={10} distance={12}
-            className="font-galano-alt font-semibold text-white text-[clamp(21px,6.2vw,25.5px)] leading-[1.22] text-center drop-shadow-md justify-center"
+            className="font-galano-alt font-semibold text-white text-[clamp(24px,6.7vw,28px)] leading-[1.16] text-center drop-shadow-md justify-center"
           />
         </div>
 

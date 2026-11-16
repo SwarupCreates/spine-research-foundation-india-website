@@ -248,7 +248,7 @@ export const App: React.FC = () => {
                   <img
                     src={`${import.meta.env.BASE_URL}banners/Solitary%20Boy%20Amid%20the%20Moving%20Crowd%201.jpg`}
                     alt="Solitary Boy Amid the Moving Crowd"
-                    className="w-full h-full object-cover object-[48%_25%] md:object-center select-none"
+                    className="home-content-background-image w-full h-full object-cover object-[48%_25%] md:object-center select-none"
                   />
                 </picture>
               </motion.div>

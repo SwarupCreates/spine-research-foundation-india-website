@@ -203,6 +203,12 @@ body::-webkit-scrollbar,
 
 /* Mobile Welcome Journey Frame 1 & 2 background elevation */
 @media (max-width: 767px) {
+  /* Raise the homepage content background focal point on phones. The bottom
+     gradient already fades this cropped area into the page background. */
+  .home-content-background-image {
+    transform: translate3d(0, -12%, 0);
+  }
+
   .journey-frame-1-shift {
     transform: translateY(-10vh) !important;
   }

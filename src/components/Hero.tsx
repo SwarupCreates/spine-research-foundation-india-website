@@ -249,167 +249,172 @@ export const Hero: React.FC<HeroProps> = ({
       </div>
 
       {/* ------------------------------------------------------------- */}
-      {/* MOBILE VIEW (< md): Matches Figma Design (2e7cb40e.png)        */}
-      {/* Full-height stretched hero + larger font + refined spacing +  */}
-      {/* dotted scroll arrow + semibold red text + Google Sans button  */}
-      {/* + ample bottom gutter above floating action buttons            */}
+      {/* MOBILE VIEW (< md): Matches Figma Design (20da6066.jpg)        */}
+      {/* Slightly enlarged font + tighter spacing between stanzas,      */}
+      {/* arrow_cool_down icon + upward-pushed bottom cluster + airy    */}
+      {/* bottom gutter space above floating action buttons              */}
       {/* ------------------------------------------------------------- */}
-      <div className="md:hidden relative z-10 flex flex-col items-center justify-between text-center px-6 min-h-[calc(100dvh-86px)]">
-        {/* Top Spacer: gives breathing space below header/navbar */}
-        <div className="h-[5vh] min-h-[16px] shrink-0 pointer-events-none" aria-hidden="true" />
+      <div className="md:hidden relative z-10 flex flex-col items-center justify-between text-center px-6 min-h-[calc(100dvh-86px)] pt-3 sm:pt-5 pb-[122px] sm:pb-[138px]">
+        {/* Top Spacer: modest breathing space below mobile header */}
+        <div className="h-[2vh] min-h-[8px] shrink-0 pointer-events-none" aria-hidden="true" />
 
-        {/* Narrative Stanzas Block: slightly enlarged font & line-height matching Figma */}
-        <div className="flex flex-col items-center text-center space-y-5 sm:space-y-6 max-w-[295px] sm:max-w-[325px] mx-auto select-none shrink-0">
-          {/* Line 1 */}
-          <div className="w-full flex items-center justify-center text-center">
-            {showItem1 ? (
-              <BlurText
-                text="Two decades of commitment & counting ..."
-                effect="blur"
-                animateBy="words"
-                direction="bottom"
-                trigger="load"
-                delay={40}
-                stepDuration={0.24}
-                blur={8}
-                distance={10}
-                className="font-galano-alt font-semibold text-white text-[clamp(19.5px,5.7vw,23.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center"
-              />
-            ) : (
-              <div className="invisible font-galano-alt font-semibold text-white text-[clamp(19.5px,5.7vw,23.5px)] leading-[1.22] text-center mx-auto" aria-hidden="true">
-                Two decades of commitment &amp; counting ...
-              </div>
-            )}
+        {/* Main Cohesive Narrative & Action Flow */}
+        <div className="flex flex-col items-center text-center shrink-0 select-none w-full">
+          {/* 4 Narrative Stanzas: slightly increased font size matching Figma */}
+          <div className="flex flex-col items-center text-center space-y-4 sm:space-y-4.5 max-w-[310px] sm:max-w-[340px] mx-auto select-none">
+            {/* Line 1 */}
+            <div className="w-full flex items-center justify-center text-center">
+              {showItem1 ? (
+                <BlurText
+                  text="Two decades of commitment & counting ..."
+                  effect="blur"
+                  animateBy="words"
+                  direction="bottom"
+                  trigger="load"
+                  delay={40}
+                  stepDuration={0.24}
+                  blur={8}
+                  distance={10}
+                  className="font-galano-alt font-semibold text-white text-[clamp(21px,6.2vw,25.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center"
+                />
+              ) : (
+                <div className="invisible font-galano-alt font-semibold text-white text-[clamp(21px,6.2vw,25.5px)] leading-[1.22] text-center mx-auto" aria-hidden="true">
+                  Two decades of commitment &amp; counting ...
+                </div>
+              )}
+            </div>
+
+            {/* Line 2 */}
+            <div className="w-full flex items-center justify-center text-center">
+              {showItem2 ? (
+                <BlurText
+                  text="A family to work with – A family to work for"
+                  effect="blur"
+                  animateBy="words"
+                  direction="bottom"
+                  trigger="load"
+                  delay={40}
+                  stepDuration={0.24}
+                  blur={8}
+                  distance={10}
+                  className="font-galano-alt font-semibold text-white text-[clamp(21px,6.2vw,25.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center"
+                />
+              ) : (
+                <div className="invisible font-galano-alt font-semibold text-white text-[clamp(21px,6.2vw,25.5px)] leading-[1.22] text-center mx-auto" aria-hidden="true">
+                  A family to work with – A family to work for
+                </div>
+              )}
+            </div>
+
+            {/* Line 3 */}
+            <div className="w-full flex items-center justify-center text-center">
+              {showItem3 ? (
+                <BlurText
+                  text="A bounty of love, A legacy to uphold"
+                  effect="blur"
+                  animateBy="words"
+                  direction="bottom"
+                  trigger="load"
+                  delay={40}
+                  stepDuration={0.24}
+                  blur={8}
+                  distance={10}
+                  className="font-galano-alt font-semibold text-white text-[clamp(21px,6.2vw,25.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center"
+                />
+              ) : (
+                <div className="invisible font-galano-alt font-semibold text-white text-[clamp(21px,6.2vw,25.5px)] leading-[1.22] text-center mx-auto" aria-hidden="true">
+                  A bounty of love, A legacy to uphold
+                </div>
+              )}
+            </div>
+
+            {/* Line 4 */}
+            <div className="w-full flex items-center justify-center text-center">
+              {showItem4 ? (
+                <BlurText
+                  text="A promise spoken in silence – fulfilled with glory"
+                  effect="blur"
+                  animateBy="words"
+                  direction="bottom"
+                  trigger="load"
+                  delay={40}
+                  stepDuration={0.24}
+                  blur={8}
+                  distance={10}
+                  className="font-galano-alt font-semibold text-white text-[clamp(21px,6.2vw,25.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center"
+                />
+              ) : (
+                <div className="invisible font-galano-alt font-semibold text-white text-[clamp(21px,6.2vw,25.5px)] leading-[1.22] text-center mx-auto" aria-hidden="true">
+                  A promise spoken in silence – fulfilled with glory
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Line 2 */}
-          <div className="w-full flex items-center justify-center text-center">
-            {showItem2 ? (
-              <BlurText
-                text="A family to work with – A family to work for"
-                effect="blur"
-                animateBy="words"
-                direction="bottom"
-                trigger="load"
-                delay={40}
-                stepDuration={0.24}
-                blur={8}
-                distance={10}
-                className="font-galano-alt font-semibold text-white text-[clamp(19.5px,5.7vw,23.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center"
-              />
-            ) : (
-              <div className="invisible font-galano-alt font-semibold text-white text-[clamp(19.5px,5.7vw,23.5px)] leading-[1.22] text-center mx-auto" aria-hidden="true">
-                A family to work with – A family to work for
-              </div>
-            )}
+          {/* Google Symbols arrow_cool_down Scroll Indicator */}
+          <div className="flex flex-col items-center justify-center pt-3.5 sm:pt-4 pb-2 sm:pb-2.5 shrink-0">
+            <motion.button
+              type="button"
+              onClick={handleScrollDown}
+              animate={{ y: [0, 5, 0] }}
+              transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
+              className="text-white/60 hover:text-white active:scale-90 transition-all p-1.5 cursor-pointer flex items-center justify-center"
+              aria-label="Scroll down to reveal cards"
+              title="Scroll down to reveal cards"
+            >
+              <MaterialIcon name="arrow_cool_down" size={28} className="text-white/65" />
+            </motion.button>
           </div>
 
-          {/* Line 3 */}
-          <div className="w-full flex items-center justify-center text-center">
-            {showItem3 ? (
-              <BlurText
-                text="A bounty of love, A legacy to uphold"
-                effect="blur"
-                animateBy="words"
-                direction="bottom"
-                trigger="load"
-                delay={40}
-                stepDuration={0.24}
-                blur={8}
-                distance={10}
-                className="font-galano-alt font-semibold text-white text-[clamp(19.5px,5.7vw,23.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center"
-              />
-            ) : (
-              <div className="invisible font-galano-alt font-semibold text-white text-[clamp(19.5px,5.7vw,23.5px)] leading-[1.22] text-center mx-auto" aria-hidden="true">
-                A bounty of love, A legacy to uphold
-              </div>
-            )}
-          </div>
+          {/* Bottom Cluster: "One spine at a time" + Primary CTA button (pushed slightly upward) */}
+          <div className="shrink-0 flex flex-col items-center text-center select-none pt-0.5 sm:pt-1">
+            {/* Line 5: One spine at a time in Semibold Galano Grotesque Alt */}
+            <div className="flex items-center justify-center text-center min-h-[34px]">
+              {showItem5 ? (
+                <BlurText
+                  text="One spine at a time"
+                  effect="blur"
+                  animateBy="words"
+                  direction="bottom"
+                  trigger="load"
+                  delay={45}
+                  stepDuration={0.26}
+                  blur={10}
+                  distance={12}
+                  color="#ff0000"
+                  className="font-galano-alt font-semibold text-[#ff0000] text-[clamp(21.5px,6.2vw,26px)] leading-tight text-center drop-shadow-[0_2px_12px_rgba(255,0,0,0.35)] justify-center"
+                />
+              ) : (
+                <div className="invisible font-galano-alt font-semibold text-[#ff0000] text-[clamp(21.5px,6.2vw,26px)] leading-tight text-center justify-center" aria-hidden="true">
+                  One spine at a time
+                </div>
+              )}
+            </div>
 
-          {/* Line 4 */}
-          <div className="w-full flex items-center justify-center text-center">
-            {showItem4 ? (
-              <BlurText
-                text="A promise spoken in silence – fulfilled with glory"
-                effect="blur"
-                animateBy="words"
-                direction="bottom"
-                trigger="load"
-                delay={40}
-                stepDuration={0.24}
-                blur={8}
-                distance={10}
-                className="font-galano-alt font-semibold text-white text-[clamp(19.5px,5.7vw,23.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center"
-              />
-            ) : (
-              <div className="invisible font-galano-alt font-semibold text-white text-[clamp(19.5px,5.7vw,23.5px)] leading-[1.22] text-center mx-auto" aria-hidden="true">
-                A promise spoken in silence – fulfilled with glory
-              </div>
-            )}
+            {/* CTA Button: [📖 Read About SRF] - Styled with Google Sans & icon sizing matching card buttons */}
+            <div className="pt-3 sm:pt-3.5 flex items-center justify-center min-h-[46px]">
+              {showButton ? (
+                <motion.button
+                  type="button"
+                  onClick={onReadMore || (() => window.location.assign('/about'))}
+                  initial={{ opacity: 0, y: 12, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                  className="group inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-black/40 active:bg-black/60 border border-white/20 active:border-white/40 text-white font-sans font-medium text-sm backdrop-blur-md transition-all shadow-lg active:scale-95 cursor-pointer"
+                  aria-label="Read About SRF"
+                >
+                  <MaterialIcon name="menu_book" size={18} className="text-white/85 shrink-0" />
+                  <span className="font-medium whitespace-nowrap">Read About SRF</span>
+                </motion.button>
+              ) : (
+                <div className="invisible h-10 px-6" aria-hidden="true" />
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Dotted Down Arrow Scroll Indicator (matching Figma Image 2) */}
-        <div className="flex flex-col items-center justify-center py-2 shrink-0">
-          <motion.button
-            type="button"
-            onClick={handleScrollDown}
-            animate={{ y: [0, 5, 0] }}
-            transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
-            className="text-white/40 hover:text-white active:scale-90 transition-all p-1.5 cursor-pointer flex flex-col items-center gap-0.5"
-            aria-label="Scroll down to reveal cards"
-            title="Scroll down to reveal cards"
-          >
-            <span className="w-[1.5px] h-3.5 border-l-2 border-dashed border-white/40" />
-            <MaterialIcon name="keyboard_arrow_down" size={20} className="text-white/50 -mt-1.5" />
-          </motion.button>
-        </div>
-
-        {/* Bottom Section: "One spine at a time" + Primary CTA button with ample gutter above floating buttons */}
-        <div className="shrink-0 flex flex-col items-center text-center pb-[118px] sm:pb-[132px] select-none">
-          {/* Line 5: One spine at a time in Semibold Galano Grotesque Alt (matching white text weight) */}
-          <div className="flex items-center justify-center text-center min-h-[34px]">
-            {showItem5 ? (
-              <BlurText
-                text="One spine at a time"
-                effect="blur"
-                animateBy="words"
-                direction="bottom"
-                trigger="load"
-                delay={45}
-                stepDuration={0.26}
-                blur={10}
-                distance={12}
-                color="#ff0000"
-                className="font-galano-alt font-semibold text-[#ff0000] text-[clamp(21px,5.8vw,25px)] leading-tight text-center drop-shadow-[0_2px_12px_rgba(255,0,0,0.35)] justify-center"
-              />
-            ) : (
-              <div className="invisible font-galano-alt font-semibold text-[#ff0000] text-[clamp(21px,5.8vw,25px)] leading-tight text-center justify-center" aria-hidden="true">
-                One spine at a time
-              </div>
-            )}
-          </div>
-
-          {/* CTA Button: [📖 Read About SRF] - Styled with Google Sans & icon sizing matching card buttons */}
-          <div className="pt-3.5 sm:pt-4 flex items-center justify-center min-h-[46px]">
-            {showButton ? (
-              <motion.button
-                type="button"
-                onClick={onReadMore || (() => window.location.assign('/about'))}
-                initial={{ opacity: 0, y: 12, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="group inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-black/40 active:bg-black/60 border border-white/20 active:border-white/40 text-white font-sans font-medium text-sm backdrop-blur-md transition-all shadow-lg active:scale-95 cursor-pointer"
-                aria-label="Read About SRF"
-              >
-                <MaterialIcon name="menu_book" size={18} className="text-white/85 shrink-0" />
-                <span className="font-medium whitespace-nowrap">Read About SRF</span>
-              </motion.button>
-            ) : (
-              <div className="invisible h-10 px-6" aria-hidden="true" />
-            )}
-          </div>
-        </div>
+        {/* Bottom Spacer */}
+        <div className="h-1 shrink-0 pointer-events-none" aria-hidden="true" />
       </div>
     </section>
   )

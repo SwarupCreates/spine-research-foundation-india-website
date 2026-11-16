@@ -5,25 +5,21 @@ import { MaterialIcon } from './icons'
 interface HeroProps {
   onReplayJourney?: () => void
   isEnteringFromJourney?: boolean
+  onScrollToCards?: () => void
+  /** @deprecated Kept for backward compatibility */
   mobileScrollProgress?: number
+  /** @deprecated Kept for backward compatibility */
   isMobileCollapsed?: boolean
+  /** @deprecated Kept for backward compatibility */
   onCollapseMobile?: () => void
 }
 
 export const Hero: React.FC<HeroProps> = ({
   onReplayJourney,
   isEnteringFromJourney = false,
-  mobileScrollProgress,
-  isMobileCollapsed = false,
+  onScrollToCards,
   onCollapseMobile,
 }) => {
-  // Effective smooth scroll progress from 0 (full intermediate screen) to 1 (collapsed hero)
-  const p =
-    mobileScrollProgress !== undefined
-      ? mobileScrollProgress
-      : isMobileCollapsed
-      ? 1
-      : 0
   return (
     <section className="relative md:pt-36 md:pb-10 lg:pt-48 lg:pb-12 overflow-hidden">
       {/* Mobile-only Silent Journey Replay Button: Pinned to top-right of the hero banner image, scrolls away naturally with page scroll */}
@@ -93,102 +89,53 @@ export const Hero: React.FC<HeroProps> = ({
       </div>
 
       {/* ------------------------------------------------------------- */}
-      {/* MOBILE VIEW (< md): Continuous Scroll-Linked Morphing Hero   */}
+      {/* MOBILE VIEW (< md): Intermediate Extended Welcome Hero View  */}
+      {/* Stretches to occupy full screen height; scrolls past cleanly */}
       {/* ------------------------------------------------------------- */}
       <div
-        className="md:hidden relative z-10 flex flex-col items-center text-center px-6 transition-all duration-75"
-        style={{
-          minHeight: p >= 1 ? '0px' : `calc(${(1 - p).toFixed(3)} * (100dvh - 86px))`,
-          paddingTop: `${Math.round(p * 24)}px`,
-          paddingBottom: `${Math.round(p * 12)}px`,
-          justifyContent: p > 0.8 ? 'flex-start' : 'space-between',
-        }}
+        className="md:hidden relative z-10 flex flex-col items-center text-center px-6 min-h-[calc(100dvh-86px)] justify-between"
       >
-        {/* Extended Frame Top Spacer: Smoothly lowers height from 24vh down to 0 */}
-        <div
-          style={{
-            height: `${((1 - p) * 24).toFixed(1)}vh`,
-            minHeight: 0,
-            opacity: 1 - p,
-          }}
-          className="pointer-events-none transition-all duration-75 shrink-0"
-          aria-hidden="true"
-        />
+        {/* Extended Frame Top Spacer: gives breathing space below header/navbar */}
+        <div className="h-[14vh] min-h-[30px] shrink-0 pointer-events-none" aria-hidden="true" />
 
-        {/* Center Title Block: Font size and inter-line spacing gradually scale down */}
+        {/* Center Title Block: matches user's image 1 (media_1794847699250_5340a870.jpg) */}
         <div className="flex flex-col items-center text-center shrink-0">
-          <span
-            style={{
-              fontSize: `${(18 - p * 3.5).toFixed(1)}px`,
-              opacity: 1 - p * 0.3,
-            }}
-            className="text-white/70 font-normal tracking-normal leading-snug"
-          >
+          <span className="text-white/70 font-normal tracking-normal leading-snug text-[18px]">
             Welcome to
           </span>
-          <h1
-            style={{
-              fontSize: `${(32 - p * 9).toFixed(1)}px`,
-              lineHeight: 1.18,
-            }}
-            className="text-white font-bold tracking-tight flex flex-col items-center pt-1"
-          >
+          <h1 className="text-white font-bold tracking-tight flex flex-col items-center pt-1 text-[32px] sm:text-[34px] leading-[1.18]">
             <span>Spine Research</span>
             <span>
               Foundation{' '}
               <span className="text-white/60 font-normal">India</span>
             </span>
           </h1>
-          <p
-            style={{
-              fontSize: `${(16.5 - p * 2.5).toFixed(1)}px`,
-              paddingTop: `${Math.round(4 * (1 - p))}px`,
-            }}
-            className="text-gray-300 font-normal"
-          >
+          <p className="text-gray-300 font-normal text-[16.5px] pt-1">
             By your side always...
           </p>
         </div>
 
-        {/* Down Arrow Scroll Indicator: Smoothly dissolves as user starts scrolling */}
-        <div
-          style={{
-            opacity: Math.max(0, 1 - p * 2.5),
-            height: p > 0.4 ? 0 : 'auto',
-            pointerEvents: p > 0.3 ? 'none' : 'auto',
-          }}
-          className="flex flex-col items-center justify-center py-2 transition-opacity duration-150 shrink-0"
-        >
+        {/* Down Arrow Scroll Indicator: clicks to scroll smoothly down past hero to reveal cards */}
+        <div className="flex flex-col items-center justify-center py-2 shrink-0">
           <motion.button
             type="button"
-            onClick={onCollapseMobile}
+            onClick={onScrollToCards || onCollapseMobile || (() => window.scrollTo({ top: window.innerHeight - 80, behavior: 'smooth' }))}
             animate={{ y: [0, 8, 0] }}
             transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
             className="text-white/60 hover:text-white active:scale-90 transition-all p-3 cursor-pointer"
             aria-label="Scroll down to reveal cards"
-            title="Scroll down to reveal"
+            title="Scroll down to reveal cards"
           >
             <MaterialIcon name="arrow_cool_down" size={28} />
           </motion.button>
         </div>
 
-        {/* Lower Portion: Impact stat seamlessly settles from 3-line format to compact header */}
-        <div
-          style={{
-            paddingBottom: `${Math.round(14 + (1 - p) * 82)}px`,
-            paddingTop: `${Math.round(p * 8)}px`,
-          }}
-          className="shrink-0 transition-all duration-75"
-        >
-          <p
-            style={{
-              fontSize: `${(16.5 - p * 2.5).toFixed(1)}px`,
-            }}
-            className="text-white/95 font-normal leading-relaxed max-w-xs mx-auto"
-          >
+        {/* Lower Portion: Impact stat with ample gutter above bottom floating action buttons */}
+        <div className="shrink-0 pb-[96px] sm:pb-[104px]">
+          <p className="text-white/95 font-normal leading-relaxed max-w-xs mx-auto text-[16.5px]">
             Blessed to serve nearly{' '}
             <span className="font-semibold text-emerald-400">300</span>
-            {p < 0.6 ? <br /> : ' '}
+            <br />
             underprivileged
             <br />
             patients and counting

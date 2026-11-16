@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Hero from '../components/Hero'
 import GlassCard from '../components/GlassCard'
@@ -27,64 +27,26 @@ export const HomePage: React.FC<HomePageProps> = ({
   isEnteringFromJourney,
 }) => {
   const navigate = useNavigate()
-  const [isMobileCollapsed, setIsMobileCollapsed] = useState(false)
-  const [mobileScrollProgress, setMobileScrollProgress] = useState(0)
 
-  // Reset to intermediate extended frame on initial mount
+  // Ensure scroll is at top on mount or when entering from journey
   useEffect(() => {
-    setIsMobileCollapsed(false)
-    setMobileScrollProgress(0)
     if (window.scrollY === 0) {
       window.scrollTo(0, 0)
     }
   }, [])
 
-  // Reset to intermediate extended frame when entering from journey or replaying
   useEffect(() => {
-    if (isEnteringFromJourney) {
-      setIsMobileCollapsed(false)
-      setMobileScrollProgress(0)
-      if (window.scrollY === 0) {
-        window.scrollTo(0, 0)
-      }
+    if (isEnteringFromJourney && window.scrollY === 0) {
+      window.scrollTo(0, 0)
     }
   }, [isEnteringFromJourney])
-
-  // Continuous scroll-linked collapse on mobile (220px range)
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY || window.pageYOffset
-      const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
-
-      if (isMobile) {
-        const COLLAPSE_RANGE = 220
-        const p = Math.min(1, Math.max(0, scrollY / COLLAPSE_RANGE))
-        setMobileScrollProgress(p)
-        setIsMobileCollapsed(p >= 0.85)
-      } else {
-        setIsMobileCollapsed(false)
-        setMobileScrollProgress(0)
-      }
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    if (window.scrollY > 0) {
-      handleScroll()
-    }
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll)
-    }
-  }, [])
 
   return (
     <>
       <Hero
         onReplayJourney={onReplayJourney}
         isEnteringFromJourney={isEnteringFromJourney}
-        mobileScrollProgress={mobileScrollProgress}
-        isMobileCollapsed={isMobileCollapsed}
-        onCollapseMobile={() => window.scrollTo({ top: 220, behavior: 'smooth' })}
+        onScrollToCards={() => window.scrollTo({ top: window.innerHeight - 80, behavior: 'smooth' })}
       />
 
       {/* Floating Glass Cards with uniform 20px edge gutter and inter-card gap on mobile */}

@@ -112,6 +112,7 @@ export const App: React.FC = () => {
     return activeTab === 'home'
   })
   const [journeyFrame, setJourneyFrame] = useState<number>(1)
+  const [isJourneyBaseImageLoaded, setIsJourneyBaseImageLoaded] = useState(false)
   const [isEnteringFromJourney, setIsEnteringFromJourney] = useState(false)
 
   const handleLandedAtNavbar = React.useCallback(() => {
@@ -186,6 +187,7 @@ export const App: React.FC = () => {
                       src={`${import.meta.env.BASE_URL}banners/Silent%20Amidst%20the%20Passing%20Crowd%201.png`}
                       alt="Silent Amidst the Passing Crowd"
                       className="w-full h-full object-cover object-[50%_35%] md:object-center select-none"
+                      onLoad={() => setIsJourneyBaseImageLoaded(true)}
                     />
                   </picture>
                 </div>
@@ -273,6 +275,7 @@ export const App: React.FC = () => {
           onLandedAtNavbar={handleLandedAtNavbar}
           onFrameChange={setJourneyFrame}
           initialFrame={journeyFrame}
+          isBaseImageLoaded={isJourneyBaseImageLoaded}
         />
       )}
 

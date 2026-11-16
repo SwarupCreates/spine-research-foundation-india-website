@@ -10,6 +10,7 @@ interface WelcomeJourneyProps {
   onLandedAtNavbar?: () => void
   onFrameChange?: (frame: number) => void
   initialFrame?: number
+  isBaseImageLoaded?: boolean
 }
 
 const frameMotionVariants: Variants = {
@@ -38,6 +39,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
   onLandedAtNavbar,
   onFrameChange,
   initialFrame = 1,
+  isBaseImageLoaded = false,
 }) => {
   // Current journey frame: 1 and 2, then 3 for landing transition
   const [frame, setFrame] = useState<number>(initialFrame)
@@ -593,14 +595,12 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
         {/* Desktop only (>= md): 3D depth effect                    */}
         {/* -------------------------------------------------------- */}
         <AnimatePresence>
-          {frame === 1 && (
+          {frame === 1 && isBaseImageLoaded && (
             <motion.div
               key="boy-cutout-layer"
-              custom={transitionDirection}
-              variants={frameMotionVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1, transition: { duration: 0.85, ease: [0.16, 1, 0.3, 1] } }}
+              exit={{ opacity: 0, transition: { duration: 0.55, ease: 'easeInOut' } }}
               className="absolute inset-0 w-full h-full pointer-events-none z-20 hidden md:block"
             >
               <img

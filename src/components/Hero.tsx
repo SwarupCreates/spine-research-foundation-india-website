@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react'
+import React, { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MaterialIcon } from './icons'
 import { BlurText } from './BlurText'
@@ -25,7 +25,7 @@ const paneFadeVariants = {
   exit: { opacity: 0, filter: 'blur(12px)', transition: { duration: 0.55, ease: [0.55, 0, 0.9, 0.45] as const } },
 }
 
-const SLIDE_INTERVAL = 4000 // ms between slides
+const SLIDE_INTERVAL = 6000 // ms between slides
 const ENTRANCE_SETTLE_TIME = 2800 // ms to wait for entrance animation before starting rotation
 
 export const Hero: React.FC<HeroProps> = ({
@@ -37,6 +37,7 @@ export const Hero: React.FC<HeroProps> = ({
 }) => {
   /* ---- Slideshow state ---- */
   const [currentSlide, setCurrentSlide] = useState(0)
+  const visibleSlide = isEnteringFromJourney ? 0 : currentSlide
   const [slideshowReady, setSlideshowReady] = useState(!isEnteringFromJourney)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -49,7 +50,7 @@ export const Hero: React.FC<HeroProps> = ({
   const [showButton, setShowButton] = useState(!isEnteringFromJourney)
 
   // Entrance stagger logic (only for initial pane 0 reveal)
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isEnteringFromJourney) {
       setShowItem1(false)
       setShowItem2(false)
@@ -116,7 +117,7 @@ export const Hero: React.FC<HeroProps> = ({
   /* ================================================================ */
 
   /* ---- Scroll arrow (shared by both panes) ---- */
-  const ScrollArrow = ({ className = '' }: { className?: string }) => (
+  const renderScrollArrow = ({ className = '' }: { className?: string } = {}) => (
     <motion.button
       type="button"
       onClick={handleScrollDown}
@@ -131,7 +132,7 @@ export const Hero: React.FC<HeroProps> = ({
   )
 
   /* ---- CTA Button (shared by both panes) ---- */
-  const CTAButton = ({ animate: shouldAnimate = false, mobile = false }: { animate?: boolean; mobile?: boolean }) => (
+  const renderCTAButton = ({ animate: shouldAnimate = false, mobile = false }: { animate?: boolean; mobile?: boolean } = {}) => (
     <motion.button
       type="button"
       onClick={handleReadMore}
@@ -149,7 +150,7 @@ export const Hero: React.FC<HeroProps> = ({
   /* ================================================================ */
   /*  PANE 0: Narrative Content (existing)                            */
   /* ================================================================ */
-  const blurCommonDesktop = "text-white font-galano-alt font-semibold text-[clamp(20px,2.2vw,32px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] text-center justify-center"
+  const blurCommonDesktop = "text-white font-galano-alt font-semibold text-[clamp(20px,2vw,30px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] text-center justify-center"
   const blurCommonMobile = "font-galano-alt font-semibold text-white text-[clamp(21px,6.2vw,25.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center"
 
   const narrativeLines = [
@@ -160,8 +161,8 @@ export const Hero: React.FC<HeroProps> = ({
   ]
 
   /* ---- Desktop Pane 0 ---- */
-  const DesktopPane0 = () => (
-    <div className="max-w-2xl mx-auto flex flex-col items-center text-center space-y-3.5 lg:space-y-4 select-none">
+  const renderDesktopPane0 = () => (
+    <div className="max-w-3xl mx-auto flex flex-col items-center text-center space-y-3 select-none">
       {narrativeLines.map((line, i) => (
         <div key={i} className="w-full flex items-center justify-center text-center min-h-[36px]">
           {line.show ? (
@@ -172,7 +173,7 @@ export const Hero: React.FC<HeroProps> = ({
               className={blurCommonDesktop}
             />
           ) : (
-            <div className="invisible font-galano-alt font-semibold text-[clamp(20px,2.2vw,32px)] leading-tight" aria-hidden="true">
+            <div className="invisible font-galano-alt font-semibold text-[clamp(20px,2vw,30px)] leading-tight" aria-hidden="true">
               {line.text}
             </div>
           )}
@@ -186,10 +187,10 @@ export const Hero: React.FC<HeroProps> = ({
             text="One spine at a time"
             effect="blur" animateBy="words" direction="bottom" trigger="load"
             delay={50} stepDuration={0.28} blur={12} distance={14} color="#ff0000"
-            className="font-galano-alt font-semibold text-[#ff0000] text-[clamp(20px,2.2vw,32px)] leading-tight drop-shadow-[0_2px_16px_rgba(255,0,0,0.4)] text-center justify-center"
+            className="font-galano-alt font-semibold text-[#ff0000] text-[clamp(20px,2vw,30px)] leading-tight drop-shadow-[0_2px_16px_rgba(255,0,0,0.4)] text-center justify-center"
           />
         ) : (
-          <div className="invisible font-galano-alt font-semibold text-[#ff0000] text-[clamp(20px,2.2vw,32px)] leading-tight" aria-hidden="true">
+          <div className="invisible font-galano-alt font-semibold text-[#ff0000] text-[clamp(20px,2vw,30px)] leading-tight" aria-hidden="true">
             One spine at a time
           </div>
         )}
@@ -197,13 +198,13 @@ export const Hero: React.FC<HeroProps> = ({
 
       {/* CTA Button */}
       <div className="pt-3 min-h-[50px] flex items-center justify-center">
-        {showButton ? <CTAButton animate /> : <div className="invisible h-11 px-7" aria-hidden="true" />}
+        {showButton ? renderCTAButton({ animate: true }) : <div className="invisible h-11 px-7" aria-hidden="true" />}
       </div>
     </div>
   )
 
   /* ---- Mobile Pane 0 ---- */
-  const MobilePane0 = () => (
+  const renderMobilePane0 = () => (
     <div className="flex flex-col items-center text-center shrink-0 select-none w-full">
       {/* 4 Narrative Stanzas */}
       <div className="flex flex-col items-center text-center space-y-4 sm:space-y-4.5 max-w-[310px] sm:max-w-[340px] mx-auto select-none">
@@ -227,7 +228,7 @@ export const Hero: React.FC<HeroProps> = ({
 
       {/* Scroll Arrow */}
       <div className="flex flex-col items-center justify-center pt-3.5 sm:pt-4 pb-2 sm:pb-2.5 shrink-0">
-        <ScrollArrow />
+        {renderScrollArrow()}
       </div>
 
       {/* Bottom Cluster: "One spine at a time" + CTA */}
@@ -248,7 +249,7 @@ export const Hero: React.FC<HeroProps> = ({
         </div>
 
         <div className="pt-3 sm:pt-3.5 flex items-center justify-center min-h-[46px]">
-          {showButton ? <CTAButton animate mobile /> : <div className="invisible h-10 px-6" aria-hidden="true" />}
+          {showButton ? renderCTAButton({ animate: true, mobile: true }) : <div className="invisible h-10 px-6" aria-hidden="true" />}
         </div>
       </div>
     </div>
@@ -265,15 +266,15 @@ export const Hero: React.FC<HeroProps> = ({
   ]
 
   /* ---- Desktop Pane 1 ---- */
-  const DesktopPane1 = () => (
-    <div className="max-w-2xl mx-auto flex flex-col items-center text-center space-y-3.5 lg:space-y-4 select-none">
+  const renderDesktopPane1 = () => (
+    <div className="max-w-3xl mx-auto flex flex-col items-center text-center space-y-2 select-none">
       {/* "Meet Durga" title */}
       <div className="w-full flex items-center justify-center text-center min-h-[40px]">
         <BlurText
           text="Meet Durga"
           effect="blur" animateBy="words" direction="bottom" trigger="load"
           delay={60} stepDuration={0.3} blur={12} distance={14}
-          className="text-white font-galano-alt font-semibold text-[clamp(22px,2.4vw,36px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] text-center justify-center"
+          className="text-white font-galano-alt font-semibold text-[clamp(20px,2vw,30px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] text-center justify-center"
         />
       </div>
 
@@ -284,60 +285,60 @@ export const Hero: React.FC<HeroProps> = ({
             text={line.prefix}
             effect="blur" animateBy="words" direction="bottom" trigger="load"
             delay={40} stepDuration={0.25} blur={10} distance={12}
-            className="text-white/55 font-galano-alt font-semibold text-[clamp(20px,2.2vw,32px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] text-center justify-center italic"
+            className="text-white/55 font-galano-alt font-semibold text-[clamp(20px,2vw,30px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] text-center justify-center italic"
           />
           <BlurText
             text={line.suffix}
             effect="blur" animateBy="words" direction="bottom" trigger="load"
             delay={40 + (i + 1) * 80} stepDuration={0.25} blur={10} distance={12}
-            className="text-white font-galano-alt font-semibold text-[clamp(20px,2.2vw,32px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] text-center justify-center"
+            className="text-white font-galano-alt font-semibold text-[clamp(20px,2vw,30px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] text-center justify-center"
           />
         </div>
       ))}
 
-      {/* "But... as a witness," + "he blesses the world!" */}
-      <div className="w-full flex flex-col items-center justify-center text-center pt-2 min-h-[72px] space-y-0.5">
-        <div className="flex flex-wrap items-center justify-center gap-x-2">
+      {/* Keep the closing thought on one line on desktop. */}
+      <div className="w-full flex flex-nowrap items-center justify-center text-center min-h-[52px] gap-x-2">
+        <div className="flex flex-nowrap items-center justify-center gap-x-1.5">
           <BlurText
             text="But..."
             effect="blur" animateBy="words" direction="bottom" trigger="load"
             delay={60} stepDuration={0.28} blur={12} distance={14}
-            className="text-white font-galano font-black text-[clamp(20px,2.2vw,32px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] text-center justify-center"
+            className="text-white font-galano-alt font-semibold text-[clamp(20px,2vw,30px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] text-center justify-center"
           />
           <BlurText
             text="as a witness,"
             effect="blur" animateBy="words" direction="bottom" trigger="load"
             delay={120} stepDuration={0.28} blur={12} distance={14}
-            className="text-[#ff0000] font-galano font-black text-[clamp(20px,2.2vw,32px)] leading-tight drop-shadow-[0_2px_16px_rgba(255,0,0,0.4)] text-center justify-center"
+            className="text-[#ff0000] font-galano-alt font-semibold text-[clamp(20px,2vw,30px)] leading-tight drop-shadow-[0_2px_16px_rgba(255,0,0,0.4)] text-center justify-center"
           />
         </div>
         <BlurText
           text="he blesses the world!"
           effect="blur" animateBy="words" direction="bottom" trigger="load"
           delay={200} stepDuration={0.28} blur={12} distance={14}
-          className="text-white font-galano-alt font-semibold text-[clamp(20px,2.2vw,32px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] text-center justify-center"
+          className="text-white font-galano-alt font-semibold text-[clamp(20px,2vw,30px)] leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] text-center justify-center"
         />
       </div>
 
       {/* CTA Button */}
       <div className="pt-3 min-h-[50px] flex items-center justify-center">
-        <CTAButton />
+        {renderCTAButton()}
       </div>
     </div>
   )
 
   /* ---- Mobile Pane 1 ---- */
-  const MobilePane1 = () => (
+  const renderMobilePane1 = () => (
     <div className="flex flex-col items-center text-center shrink-0 select-none w-full">
       {/* "Meet Durga" + Poetic lines */}
-      <div className="flex flex-col items-center text-center space-y-3.5 sm:space-y-4 max-w-[310px] sm:max-w-[340px] mx-auto select-none">
+      <div className="flex flex-col items-center text-center space-y-4 sm:space-y-[18px] max-w-[310px] sm:max-w-[340px] mx-auto select-none">
         {/* Meet Durga title */}
         <div className="w-full flex items-center justify-center text-center">
           <BlurText
             text="Meet Durga"
             effect="blur" animateBy="words" direction="bottom" trigger="load"
             delay={50} stepDuration={0.28} blur={10} distance={12}
-            className="font-galano-alt font-semibold text-white text-[clamp(23px,6.5vw,28px)] leading-[1.18] text-center drop-shadow-md mx-auto justify-center"
+            className="font-galano-alt font-semibold text-white text-[clamp(21px,6.2vw,25.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center"
           />
         </div>
 
@@ -348,7 +349,7 @@ export const Hero: React.FC<HeroProps> = ({
               text={line.prefix}
               effect="blur" animateBy="words" direction="bottom" trigger="load"
               delay={40} stepDuration={0.24} blur={8} distance={10}
-              className="font-galano-alt font-semibold text-white/55 text-[clamp(20px,5.8vw,24px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center italic"
+              className="font-galano-alt font-semibold text-white/55 text-[clamp(21px,6.2vw,25.5px)] leading-[1.22] text-center drop-shadow-md mx-auto justify-center italic"
             />
             <BlurText
               text={line.suffix}
@@ -361,37 +362,37 @@ export const Hero: React.FC<HeroProps> = ({
       </div>
 
       {/* Scroll Arrow */}
-      <div className="flex flex-col items-center justify-center pt-3.5 sm:pt-4 pb-2 sm:pb-2.5 shrink-0">
-        <ScrollArrow />
+      <div className="flex flex-col items-center justify-center pt-4 sm:pt-4.5 pb-2.5 sm:pb-3 shrink-0">
+        {renderScrollArrow()}
       </div>
 
       {/* Bottom Cluster: "But... as a witness, he blesses the world!" + CTA */}
-      <div className="shrink-0 flex flex-col items-center text-center select-none pt-0.5 sm:pt-1">
+      <div className="shrink-0 flex flex-col items-center text-center select-none pt-1 sm:pt-1.5">
         <div className="flex flex-col items-center justify-center text-center min-h-[52px] space-y-0">
           <div className="flex flex-wrap items-center justify-center gap-x-1.5">
             <BlurText
               text="But..."
               effect="blur" animateBy="words" direction="bottom" trigger="load"
               delay={50} stepDuration={0.26} blur={10} distance={12}
-              className="font-galano font-black text-white text-[clamp(21px,6.2vw,25.5px)] leading-tight text-center drop-shadow-md justify-center"
+              className="font-galano-alt font-semibold text-white text-[clamp(21px,6.2vw,25.5px)] leading-[1.22] text-center drop-shadow-md justify-center"
             />
             <BlurText
               text="as a witness,"
               effect="blur" animateBy="words" direction="bottom" trigger="load"
               delay={100} stepDuration={0.26} blur={10} distance={12}
-              className="font-galano font-black text-[#ff0000] text-[clamp(21px,6.2vw,25.5px)] leading-tight text-center drop-shadow-[0_2px_12px_rgba(255,0,0,0.35)] justify-center"
+              className="font-galano-alt font-semibold text-[#ff0000] text-[clamp(21px,6.2vw,25.5px)] leading-[1.22] text-center drop-shadow-[0_2px_12px_rgba(255,0,0,0.35)] justify-center"
             />
           </div>
           <BlurText
             text="he blesses the world!"
             effect="blur" animateBy="words" direction="bottom" trigger="load"
             delay={160} stepDuration={0.26} blur={10} distance={12}
-            className="font-galano-alt font-semibold text-white text-[clamp(21px,6.2vw,25.5px)] leading-tight text-center drop-shadow-md justify-center"
+            className="font-galano-alt font-semibold text-white text-[clamp(21px,6.2vw,25.5px)] leading-[1.22] text-center drop-shadow-md justify-center"
           />
         </div>
 
-        <div className="pt-3 sm:pt-3.5 flex items-center justify-center min-h-[46px]">
-          <CTAButton mobile />
+        <div className="pt-4 sm:pt-4.5 flex items-center justify-center min-h-[46px]">
+          {renderCTAButton({ mobile: true })}
         </div>
       </div>
     </div>
@@ -438,18 +439,20 @@ export const Hero: React.FC<HeroProps> = ({
       {/* ------------------------------------------------------------- */}
       {/* DESKTOP VIEW (>= md): Slideshow between Pane 0 and Pane 1    */}
       {/* ------------------------------------------------------------- */}
-      <div className="hidden md:flex flex-col items-center justify-center text-center max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 pt-32 lg:pt-36 xl:pt-40 pb-16 lg:pb-24 relative z-10">
-        <AnimatePresence mode="wait">
-          {currentSlide === 0 ? (
-            <motion.div key="desktop-pane-0" variants={paneFadeVariants} initial={isEnteringFromJourney ? false : "initial"} animate="animate" exit="exit">
-              <DesktopPane0 />
-            </motion.div>
-          ) : (
-            <motion.div key="desktop-pane-1" variants={paneFadeVariants} initial="initial" animate="animate" exit="exit">
-              <DesktopPane1 />
-            </motion.div>
-          )}
-        </AnimatePresence>
+      <div className="hidden md:flex flex-col items-center justify-center text-center max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 pt-20 lg:pt-[88px] pb-0 relative z-10">
+        <div className="h-[320px] w-full flex items-start justify-center">
+          <AnimatePresence mode="wait">
+            {visibleSlide === 0 ? (
+              <motion.div key="desktop-pane-0" variants={paneFadeVariants} initial={isEnteringFromJourney ? false : "initial"} animate="animate" exit="exit">
+                {renderDesktopPane0()}
+              </motion.div>
+            ) : (
+              <motion.div key="desktop-pane-1" variants={paneFadeVariants} initial="initial" animate="animate" exit="exit">
+                {renderDesktopPane1()}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
       {/* ------------------------------------------------------------- */}
@@ -460,13 +463,13 @@ export const Hero: React.FC<HeroProps> = ({
         <div className="h-[2vh] min-h-[8px] shrink-0 pointer-events-none" aria-hidden="true" />
 
         <AnimatePresence mode="wait">
-          {currentSlide === 0 ? (
+          {visibleSlide === 0 ? (
             <motion.div key="mobile-pane-0" variants={paneFadeVariants} initial={isEnteringFromJourney ? false : "initial"} animate="animate" exit="exit" className="w-full">
-              <MobilePane0 />
+              {renderMobilePane0()}
             </motion.div>
           ) : (
             <motion.div key="mobile-pane-1" variants={paneFadeVariants} initial="initial" animate="animate" exit="exit" className="w-full">
-              <MobilePane1 />
+              {renderMobilePane1()}
             </motion.div>
           )}
         </AnimatePresence>

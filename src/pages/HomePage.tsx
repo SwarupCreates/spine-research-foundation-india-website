@@ -50,7 +50,7 @@ export const HomePage: React.FC<HomePageProps> = ({
       />
 
       {/* Floating Glass Cards with uniform 20px edge gutter and inter-card gap on mobile */}
-      <div className="max-w-[1536px] mx-auto px-5 sm:px-10 lg:px-14 xl:px-16 space-y-5 sm:space-y-5">
+      <div className="max-w-[1536px] mx-auto px-5 sm:px-10 lg:px-14 xl:px-16 space-y-5 sm:space-y-5 -mt-8 sm:mt-0">
         <GlassCard onReadMore={onReadMore || (() => navigate('/about'))} />
         <EventSection />
         <PromiseCard onCheckOutMore={onOpenPromise || (() => navigate('/care'))} />

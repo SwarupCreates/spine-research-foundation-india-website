@@ -130,8 +130,8 @@ export const Hero: React.FC<HeroProps> = ({
           </motion.button>
         </div>
 
-        {/* Lower Portion: Impact stat with ample gutter above bottom floating action buttons */}
-        <div className="shrink-0 pb-[96px] sm:pb-[104px]">
+        {/* Lower Portion: Impact stat with calibrated gutter above bottom floating action buttons */}
+        <div className="shrink-0 pb-[76px] sm:pb-[104px]">
           <p className="text-white/95 font-normal leading-relaxed max-w-xs mx-auto text-[16.5px]">
             Blessed to serve nearly{' '}
             <span className="font-semibold text-emerald-400">300</span>

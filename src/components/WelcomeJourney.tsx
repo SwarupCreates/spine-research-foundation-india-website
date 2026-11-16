@@ -999,7 +999,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.3, ease: 'easeOut' }}
-                    className="flex flex-row items-center justify-center gap-x-1.5 text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap pt-1.5 sm:pt-2"
+                    className="flex flex-row items-center justify-center gap-x-1.5 text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap pt-3 sm:pt-3.5"
                   >
                     <BlurText
                       text={line2Prefix}
@@ -1030,7 +1030,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   </motion.div>
                 ) : (
                   <div
-                    className="invisible select-none pointer-events-none flex flex-row items-center justify-center gap-x-1.5 text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap pt-1.5 sm:pt-2 font-galano-alt"
+                    className="invisible select-none pointer-events-none flex flex-row items-center justify-center gap-x-1.5 text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap pt-3 sm:pt-3.5 font-galano-alt"
                     aria-hidden="true"
                   >
                     <span className="font-normal">{line2Prefix}</span>
@@ -1044,7 +1044,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.3, ease: 'easeOut' }}
-                    className="flex flex-row items-center justify-center gap-x-1.5 text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap pt-1.5 sm:pt-2"
+                    className="flex flex-row items-center justify-center gap-x-1.5 text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap pt-3 sm:pt-3.5"
                   >
                     <BlurText
                       text={line3Prefix}
@@ -1075,7 +1075,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   </motion.div>
                 ) : (
                   <div
-                    className="invisible select-none pointer-events-none flex flex-row items-center justify-center gap-x-1.5 text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap pt-1.5 sm:pt-2 font-galano-alt"
+                    className="invisible select-none pointer-events-none flex flex-row items-center justify-center gap-x-1.5 text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap pt-3 sm:pt-3.5 font-galano-alt"
                     aria-hidden="true"
                   >
                     <span className="font-normal">{line3Prefix}</span>
@@ -1089,7 +1089,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.35, ease: 'easeOut' }}
-                    className="flex flex-row items-center justify-center gap-x-2 text-[clamp(24px,7.4vw,32px)] leading-none whitespace-nowrap pt-1 sm:pt-1.5"
+                    className="flex flex-row items-center justify-center gap-x-2 text-[clamp(24px,7.4vw,32px)] leading-none whitespace-nowrap pt-3 sm:pt-3.5"
                   >
                     <BlurText
                       text={line4Prefix}
@@ -1120,7 +1120,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   </motion.div>
                 ) : (
                   <div
-                    className="invisible select-none pointer-events-none flex flex-row items-center justify-center gap-x-2 text-[clamp(24px,7.4vw,32px)] leading-none whitespace-nowrap pt-1 sm:pt-1.5 font-galano font-black uppercase"
+                    className="invisible select-none pointer-events-none flex flex-row items-center justify-center gap-x-2 text-[clamp(24px,7.4vw,32px)] leading-none whitespace-nowrap pt-3 sm:pt-3.5 font-galano font-black uppercase"
                     aria-hidden="true"
                   >
                     <span>{line4Prefix}</span>
@@ -1134,7 +1134,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.3, ease: 'easeOut' }}
-                    className="pt-1.5 sm:pt-2"
+                    className="pt-3 sm:pt-3.5"
                   >
                     <BlurText
                       text={line5Text}
@@ -1152,7 +1152,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                   </motion.div>
                 ) : (
                   <div
-                    className="invisible select-none pointer-events-none pt-1.5 sm:pt-2 font-galano-alt font-bold text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap"
+                    className="invisible select-none pointer-events-none pt-3 sm:pt-3.5 font-galano-alt font-bold text-[clamp(16px,4.9vw,21.5px)] leading-tight whitespace-nowrap"
                     aria-hidden="true"
                   >
                     <span>{line5Text}</span>
@@ -1338,7 +1338,7 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
               </div>
 
               {/* Mobile View (< md): Unified vertical flow distributed to match Figma design */}
-              <div className="md:hidden absolute top-[11%] sm:top-[12%] bottom-[108px] sm:bottom-[116px] inset-x-0 flex flex-col items-center justify-between text-center px-4 pointer-events-none z-20">
+              <div className="md:hidden absolute top-[12%] sm:top-[13%] bottom-[114px] sm:bottom-[120px] inset-x-0 flex flex-col items-center justify-between text-center px-4 pointer-events-none z-20">
                 {/* Line 1: Two decades of commitment & counting ... */}
                 <div className="w-full max-w-[270px] sm:max-w-[290px] flex items-center justify-center text-center">
                   {showCard1 ? (
@@ -1352,11 +1352,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                       stepDuration={0.3}
                       blur={10}
                       distance={14}
-                      className="font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.28] text-center drop-shadow-md mx-auto justify-center"
+                      className="font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.16] text-center drop-shadow-md mx-auto justify-center"
                     />
                   ) : (
                     <div
-                      className="invisible select-none pointer-events-none font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.28] text-center mx-auto"
+                      className="invisible select-none pointer-events-none font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.16] text-center mx-auto"
                       aria-hidden="true"
                     >
                       Two decades of commitment &amp; counting ...
@@ -1377,11 +1377,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                       stepDuration={0.3}
                       blur={10}
                       distance={14}
-                      className="font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.28] text-center drop-shadow-md mx-auto justify-center"
+                      className="font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.16] text-center drop-shadow-md mx-auto justify-center"
                     />
                   ) : (
                     <div
-                      className="invisible select-none pointer-events-none font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.28] text-center mx-auto"
+                      className="invisible select-none pointer-events-none font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.16] text-center mx-auto"
                       aria-hidden="true"
                     >
                       A family to work with – A family to work for
@@ -1402,11 +1402,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                       stepDuration={0.3}
                       blur={10}
                       distance={14}
-                      className="font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.28] text-center drop-shadow-md mx-auto justify-center"
+                      className="font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.16] text-center drop-shadow-md mx-auto justify-center"
                     />
                   ) : (
                     <div
-                      className="invisible select-none pointer-events-none font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.28] text-center mx-auto"
+                      className="invisible select-none pointer-events-none font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.16] text-center mx-auto"
                       aria-hidden="true"
                     >
                       A bounty of love, A legacy to uphold
@@ -1427,11 +1427,11 @@ export const WelcomeJourney: React.FC<WelcomeJourneyProps> = ({
                       stepDuration={0.3}
                       blur={10}
                       distance={14}
-                      className="font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.28] text-center drop-shadow-md mx-auto justify-center"
+                      className="font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.16] text-center drop-shadow-md mx-auto justify-center"
                     />
                   ) : (
                     <div
-                      className="invisible select-none pointer-events-none font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.28] text-center mx-auto"
+                      className="invisible select-none pointer-events-none font-galano-alt font-bold text-white text-[clamp(17px,5.0vw,21px)] leading-[1.16] text-center mx-auto"
                       aria-hidden="true"
                     >
                       A promise spoken in silence – fulfilled with glory

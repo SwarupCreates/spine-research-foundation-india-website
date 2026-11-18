@@ -4,7 +4,6 @@ import { MaterialIcon } from './icons'
 import { BlurText } from './BlurText'
 
 interface HeroProps {
-  onReplayJourney?: () => void
   isEnteringFromJourney?: boolean
   onScrollToCards?: () => void
   onReadMore?: () => void
@@ -29,7 +28,6 @@ const SLIDE_INTERVAL = 6000 // ms between slides
 const ENTRANCE_SETTLE_TIME = 6800 // entrance animation plus a 4-second pause before rotation
 
 export const Hero: React.FC<HeroProps> = ({
-  onReplayJourney,
   isEnteringFromJourney = false,
   onScrollToCards,
   onReadMore,
@@ -419,38 +417,6 @@ export const Hero: React.FC<HeroProps> = ({
 
   return (
     <section className="relative overflow-hidden font-galano-alt">
-      {/* Mobile-only Silent Journey Replay Button */}
-      {onReplayJourney && (
-        <motion.div
-          id="mobile-hero-replay-action"
-          data-testid="mobile-hero-replay-action"
-          initial={isEnteringFromJourney ? { opacity: 0, scale: 0.75 } : false}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={
-            isEnteringFromJourney
-              ? { duration: 0.45, ease: 'easeOut', delay: 0.45 }
-              : undefined
-          }
-          className="md:hidden absolute top-2 right-5 sm:right-6 z-20 pointer-events-auto"
-        >
-          <button
-            type="button"
-            onClick={onReplayJourney}
-            aria-label="Replay welcome journey"
-            title="Replay welcome journey"
-            className="group relative p-1.5 -m-1.5 flex items-center justify-center cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-white/40 rounded-full"
-          >
-            <span className="w-8 h-8 rounded-full aspect-square bg-black/40 border border-white/[0.12] backdrop-blur-md shadow-[0_2px_8px_rgba(0,0,0,0.25)] flex items-center justify-center text-white/60 active:text-white active:bg-black/65 active:border-white/30 transition-all duration-200 active:scale-95">
-              <MaterialIcon
-                name="replay"
-                size={16}
-                className="group-active:rotate-[-180deg] transition-transform duration-300 ease-out"
-              />
-            </span>
-          </button>
-        </motion.div>
-      )}
-
       {/* ------------------------------------------------------------- */}
       {/* DESKTOP VIEW (>= md): Slideshow between Pane 0 and Pane 1    */}
       {/* ------------------------------------------------------------- */}

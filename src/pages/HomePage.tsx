@@ -97,7 +97,6 @@ export const HomePage: React.FC<HomePageProps> = ({
   return (
     <>
       <Hero
-        onReplayJourney={onReplayJourney ? () => onReplayJourney(1) : undefined}
         isEnteringFromJourney={isEnteringFromJourney}
         onScrollToCards={() => window.scrollTo({ top: window.innerHeight - 80, behavior: 'smooth' })}
         onReadMore={onReadMore || (() => navigate('/about'))}
